@@ -1,0 +1,8 @@
+{
+  "regex-error": "El valor introducido no es válido",
+  "minlength-error": "El valor introducido es demasiado corto",
+  "date-error": "La fecha seleccionada no es válida",
+  "today": "Hoy",
+  "done": "Hecho",
+  "back": "Volver"
+}

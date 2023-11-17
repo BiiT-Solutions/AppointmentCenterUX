@@ -1,0 +1,10 @@
+{
+  "username-empty": "Username is mandatory.",
+  "password-empty": "Password is mandatory.",
+  "username": "Username",
+  "password": "Password",
+  "take_me_in": "take me in",
+  "forgot": "forgot my password",
+  "cant_remember": "can't remember my password",
+  "remember": "Remember me"
+}

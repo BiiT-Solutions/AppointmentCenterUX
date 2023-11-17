@@ -1,0 +1,8 @@
+{
+  "regex-error": "Value not valid",
+  "minlength-error": "Value does not meet minimum length",
+  "date-error": "Selected date is not valid",
+  "today": "Today",
+  "done": "Done",
+  "back": "Back"
+}
