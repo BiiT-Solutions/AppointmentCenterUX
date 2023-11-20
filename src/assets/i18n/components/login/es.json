@@ -1,0 +1,9 @@
+{
+  "400": "Oh! Parece que esta página y su servidor no están en sincronía!. Por favor, pruebe a refrescar la página y limpiar la cache.",
+  "401": "Ups! Parece que tu usuario y contraseña no son correctos. Por favor, compruébalo e insténtalo de nuevo.",
+  "404": "Lo sentimos, pero parece que nuestros servicios no se encuentran disponibles en este momento. Pruebe de nuevo más tarde.",
+  "423": "Has alcanzado el número máximo de intentos. Por favor, pruebe de nuevo más tarde.",
+  "500": "Lo lamentamos, pero parece que existe algún problema con nuestros servicios. Inténtalo de nuevo más tarde.",
+  "expired": "Su sesión ha caducado.",
+  "logout": "Su sessión se ha cerrado correctamente."
+}

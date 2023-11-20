@@ -1,14 +1,17 @@
-import { registerLocaleData } from '@angular/common';
-import { NgModule } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import {NgModule} from '@angular/core';
+import {BrowserModule} from '@angular/platform-browser';
+
+import {AppRoutingModule} from './app-routing.module';
+import {AppComponent} from './app.component';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {BiitSnackbarModule} from "biit-ui/info";
+import {TranslocoRootModule} from "biit-ui/i18n";
+import {CommonModule, registerLocaleData} from "@angular/common";
+import {HeaderInterceptor} from "./config/header-interceptor";
 
 import localeEn from '@angular/common/locales/en';
 import localeEs from '@angular/common/locales/es';
 import localeNL from '@angular/common/locales/nl';
-
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import {TranslocoRootModule} from "biit-ui/i18n";
 
 registerLocaleData(localeEn, 'en')
 registerLocaleData(localeEs, 'es');
@@ -20,10 +23,15 @@ registerLocaleData(localeNL, 'nl');
   ],
   imports: [
     BrowserModule,
+    CommonModule,
+    AppRoutingModule,
+    HttpClientModule,
     TranslocoRootModule,
-    AppRoutingModule
+    BiitSnackbarModule
   ],
-  providers: [],
+  providers: [
+    {provide: HTTP_INTERCEPTORS, useClass: HeaderInterceptor, multi: true}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
