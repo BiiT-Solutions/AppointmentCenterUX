@@ -6,6 +6,9 @@
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
 <app-root></app-root>
@@ -13,39 +16,4 @@
 </html>
 
 <style>
-  * {
-    font-family: Montserrat, "Montserrat", sans-serif;
-  }
-  input {
-    font-family: Montserrat, "Montserrat", sans-serif;
-  }
-  /* Works in Firefox */
-  @-moz-document url-prefix() {
-    * {
-      scrollbar-width: thin;
-      scrollbar-color: #262626 #EDEDED;
-    }
-    *:hover {
-      scrollbar-color: #F20D5E #EDEDED;
-    }
-
-    *:active {
-      scrollbar-color: #F20D5E #EDEDED;
-    }
-  }
-
-  /* Works on Chrome, Edge, and Safari */
-  ::-webkit-scrollbar {
-    width: 0.7rem;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    border: 0.2rem solid rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-    background-color: #262626;
-  }
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: #F20D5E;
-  }
-
 </style>

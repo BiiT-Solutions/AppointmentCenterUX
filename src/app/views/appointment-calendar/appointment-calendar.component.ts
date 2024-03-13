@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import {CalendarEvent, CalendarMode} from "biit-ui/calendar";
 
 @Component({
   selector: 'app-appointment-calendar',
@@ -6,5 +7,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./appointment-calendar.component.scss']
 })
 export class AppointmentCalendarComponent {
-
+  protected viewDate: Date = new Date();
+  protected events: CalendarEvent[] = [];
+  protected readonly CalendarMode = CalendarMode;
 }

@@ -1,1 +1,38 @@
-<p>appointment-calendar works!</p>
+<div class="canvas">
+  <div class="sidebar">
+    <div class="workshops">
+      <div class="top">
+        <a>Workshops</a>
+        <button biit-icon icon="plus"></button>
+        <button biit-icon icon="minus"></button>
+      </div>
+      <div class="middle">
+
+      </div>
+      <div class="bottom">
+        <biit-input-text placeholder="Search"></biit-input-text>
+      </div>
+    </div>
+    <biit-datepicker calendar-mode
+                     class="mini-calendar"
+                     [(ngModel)]="viewDate"
+    ></biit-datepicker>
+  </div>
+  <div class="main">
+    <div class="top">
+      <div class="left">
+        <a>September 2023</a>
+        <button biit-icon icon="plus"></button>
+        <button biit-icon icon="minus"></button>
+      </div>
+      <div class="right">
+
+      </div>
+    </div>
+    <biit-calendar
+                   [calendarMode]="CalendarMode.WEEK"
+                   [viewDate]="viewDate"
+                   [events]="events"
+    ></biit-calendar>
+  </div>
+</div>

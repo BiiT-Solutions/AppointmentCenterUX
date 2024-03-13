@@ -1,2 +1,9 @@
 <biit-snackbar></biit-snackbar>
-<router-outlet id="router-outlet"></router-outlet>
+<div class="container">
+  <div class="header">
+    <biit-navbar *ngIf="sessionService.isLoggedIn"></biit-navbar>
+  </div>
+  <div class="content">
+    <router-outlet id="router-outlet"></router-outlet>
+  </div>
+</div>

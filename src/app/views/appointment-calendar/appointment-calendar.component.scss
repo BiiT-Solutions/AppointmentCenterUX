@@ -1,0 +1,154 @@
+$default-color: #262626;
+
+.canvas {
+  height: 100%;
+  width: 100%;
+  padding: 3em;
+  display: flex;
+}
+
+@media (max-width: 1279px) {
+  .canvas {
+    flex-direction: column;
+    gap: 1em;
+
+    .sidebar {
+      .workshops {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        padding: 1em;
+        gap: 0.75em;
+        border: 3px solid $default-color;
+        background: white;
+
+        .top {
+          display: flex;
+          align-items: center;
+          height: 2.125em;
+
+          a {
+            font-size: 1.3em;
+            font-weight: 700;
+            text-transform: uppercase;
+            padding-left: 0.3em;
+            padding-right: 0.75em;
+          }
+        }
+
+        .middle {
+          display: flex;
+          min-height: 5em;
+          max-height: 7.5em;
+        }
+
+        .bottom {
+          position: absolute;
+          top: 0;
+          right: 1em;
+        }
+      }
+
+      .mini-calendar {
+        display: none;
+      }
+    }
+  }
+}
+
+@media (min-width: 1280px) {
+  .canvas {
+    flex-direction: row;
+    gap: 3em;
+  }
+
+  .sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1em;
+
+    .workshops {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+      padding: 0.75em;
+      gap: 0.75em;
+      border: 3px solid $default-color;
+      background: white;
+
+      .top {
+        display: flex;
+        align-items: center;
+        height: 2.125em;
+        flex-shrink: 0;
+
+        a {
+          font-size: 1.3em;
+          font-weight: 700;
+          text-transform: uppercase;
+          padding-left: 0.3em;
+          padding-right: 0.75em;
+          flex-grow: 1;
+        }
+      }
+
+      .middle {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+        overflow-y: auto;
+      }
+
+      .bottom {
+        flex-shrink: 0;
+
+        biit-input-text {
+          height: 3.2em;
+          display: block;
+          margin-top: -1.05em;
+        }
+      }
+    }
+
+    .mini-calendar {
+      font-size: 18px;
+    }
+  }
+
+
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 1em;
+  gap: 1em;
+  background: white;
+  border: 3px solid $default-color;
+
+  .top {
+    height: 2.125em;
+    display: flex;
+    justify-content: space-between;
+
+    .left {
+      display: flex;
+      align-items: center;
+
+      a {
+        font-size: 1.5em;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding-left: 0.5em;
+        padding-right: 0.75em;
+      }
+    }
+
+    .right {
+      display: flex;
+    }
+  }
+}
