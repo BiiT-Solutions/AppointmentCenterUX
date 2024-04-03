@@ -1,0 +1,6 @@
+{
+  "400": "Oh! Parece que esta página y su servidor no están en sincronía!. Por favor, pruebe a refrescar la página y limpiar la cache.",
+  "500": "Lo lamentamos, pero parece que existe algún problema con nuestros servicios. Inténtalo de nuevo más tarde.",
+  "create_appointment": "Crear Cita",
+  "edit_appointment": "Editar Cita"
+}

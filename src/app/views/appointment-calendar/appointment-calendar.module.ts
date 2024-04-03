@@ -6,6 +6,9 @@ import {BiitDatePickerModule, BiitInputTextModule} from "biit-ui/inputs";
 import {BiitIconButtonModule} from "biit-ui/button";
 import {FormsModule} from "@angular/forms";
 import {BiitCalendarModule} from "biit-ui/calendar";
+import {BiitPopupModule} from "biit-ui/popup";
+import {AppointmentFormModule} from "../../shared/appointment-form/appointment-form.module";
+import {TranslocoModule} from "@ngneat/transloco";
 
 
 
@@ -20,7 +23,10 @@ import {BiitCalendarModule} from "biit-ui/calendar";
     BiitIconButtonModule,
     BiitDatePickerModule,
     FormsModule,
-    BiitCalendarModule
+    BiitCalendarModule,
+    BiitPopupModule,
+    AppointmentFormModule,
+    TranslocoModule
   ]
 })
 export class AppointmentCalendarModule { }

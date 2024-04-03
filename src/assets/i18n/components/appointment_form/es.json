@@ -1,0 +1,14 @@
+{
+  "title": "Título",
+  "description": "Descripción",
+  "start_date": "Fecha Inicio",
+  "end_date": "Fecha Final",
+  "status": "Estado",
+  "all_day": "Todo el día",
+  "speakers": "Speakers",
+  "atendees": "Atendees",
+  "cost": "Coste",
+  "recurrence": "Recurrencia",
+  "save": "Guardar",
+  "update": "Actualizar"
+}

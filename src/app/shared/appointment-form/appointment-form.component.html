@@ -1,0 +1,58 @@
+<div class="canvas">
+  <div class="row">
+    <biit-input-text [(ngModel)]="appointment.title"
+                     placeholder="{{'form.title' | transloco}}"
+                     error="{{errors | mapGet: ApplicationFormValidationFields.TITLE_MANDATORY}}"
+    ></biit-input-text>
+  </div>
+  <div class="row">
+    <biit-datepicker [(ngModel)]="appointment.startTime"
+                     placeholder="{{'form.start_date' | transloco}}"
+                     [timePicker]="true"
+                     [max]="appointment.endTime"
+                     error="{{errors | mapGet: ApplicationFormValidationFields.START_DATE_MANDATORY}}"
+    ></biit-datepicker>
+    <biit-datepicker [(ngModel)]="appointment.endTime"
+                     placeholder="{{'form.end_date' | transloco}}"
+                     [timePicker]="true"
+                     [min]="appointment.startTime"
+                     error="{{errors | mapGet: ApplicationFormValidationFields.END_DATE_MANDATORY}}"
+    ></biit-datepicker>
+  </div>
+  <div class="row">
+    <biit-dropdown [ngModel]="appointment.status"
+                   [data]="status"
+                   [primitive]="true"
+                   title="{{'form.status' | transloco}}"
+    ></biit-dropdown>
+    <biit-toggle [(ngModel)]="appointment.allDay">All Day</biit-toggle>
+  </div>
+  <div class="row">
+    <biit-multiselect [(ngModel)]="appointment.speakers"
+                      [data]="[]"
+                      [label]="'name'"
+                      title="{{'form.speakers' | transloco}}"
+    ></biit-multiselect>
+    <biit-multiselect [(ngModel)]="appointment.attendees"
+                      [data]="[]"
+                      [label]="'name'"
+                      title="{{'form.speakers' | transloco}}"
+    ></biit-multiselect>
+  </div>
+  <div class="row">
+    <biit-textarea [(ngModel)]="appointment.description"
+                   placeholder="{{'form.description' | transloco}}"
+    ></biit-textarea>
+  </div>
+  <div class="row">
+    <biit-input-text [(ngModel)]="appointment.cost"
+                     [type]="Type.NUMBER"
+                     placeholder="{{'form.cost' | transloco}}"
+    ></biit-input-text>
+  </div>
+  <div class="row">
+    <button biit-button (click)="onSave()">
+      {{'form.save' | transloco}}
+    </button>
+  </div>
+</div>

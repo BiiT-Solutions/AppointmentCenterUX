@@ -22,17 +22,30 @@
     <div class="top">
       <div class="left">
         <a>September 2023</a>
-        <button biit-icon icon="plus"></button>
+        <button biit-icon icon="plus" (click)="onAddAppointment()"></button>
         <button biit-icon icon="minus"></button>
+        <button biit-icon icon="edit"></button>
       </div>
       <div class="right">
 
       </div>
     </div>
-    <biit-calendar
-                   [calendarMode]="CalendarMode.WEEK"
+    <biit-calendar [events]="events"
                    [viewDate]="viewDate"
-                   [events]="events"
+                   [calendarMode]="CalendarMode.WEEK"
+                   (onEventDrop)="onEventDrop($event)"
+                   (onEventClick)="targetEvent = $event.event"
     ></biit-calendar>
   </div>
 </div>
+
+<biit-popup sixty-view closable
+            *ngIf="targetEvent"
+            (onClosed)="targetEvent = undefined"
+            title="{{targetEvent.id ? ('app.edit_appointment'|transloco) : ('app.create_appointment'|transloco)}}"
+>
+  <appointment-form [event]="targetEvent"
+                    (onSaved)="targetEvent = undefined; nextData();"
+                    style="width: 100%"
+  ></appointment-form>
+</biit-popup>
