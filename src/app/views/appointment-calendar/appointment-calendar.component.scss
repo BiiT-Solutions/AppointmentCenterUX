@@ -44,7 +44,7 @@ $default-color: #262626;
 
         .bottom {
           position: absolute;
-          top: 0;
+          top: 1em;
           right: 1em;
         }
       }
@@ -103,9 +103,7 @@ $default-color: #262626;
         flex-shrink: 0;
 
         biit-input-text {
-          height: 3.2em;
           display: block;
-          margin-top: -1.05em;
         }
       }
     }

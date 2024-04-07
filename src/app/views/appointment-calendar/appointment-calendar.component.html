@@ -7,7 +7,10 @@
         <button biit-icon icon="minus"></button>
       </div>
       <div class="middle">
-
+        <div *ngFor="let workshop of workshops"
+             class="workshop">
+          <a>{{workshop.title}}</a>
+        </div>
       </div>
       <div class="bottom">
         <biit-input-text placeholder="Search"></biit-input-text>
@@ -21,7 +24,10 @@
   <div class="main">
     <div class="top">
       <div class="left">
-        <a>September 2023</a>
+        <a>
+          {{viewDate | translocoDate: {month: 'long'} }}
+          {{viewDate | translocoDate: {year: 'numeric'} }}
+        </a>
         <button biit-icon icon="plus" (click)="onAddAppointment()"></button>
         <button biit-icon icon="minus"></button>
         <button biit-icon icon="edit"></button>

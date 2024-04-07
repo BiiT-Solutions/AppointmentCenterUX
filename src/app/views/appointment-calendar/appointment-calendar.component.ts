@@ -1,6 +1,11 @@
 import {Component, OnInit} from '@angular/core';
 import {CalendarEvent, CalendarMode} from "biit-ui/calendar";
-import {Appointment, AppointmentService} from "appointment-center-structure-lib";
+import {
+  Appointment,
+  AppointmentTemplate,
+  AppointmentService,
+  AppointmentTemplateService
+} from "appointment-center-structure-lib";
 import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
@@ -21,15 +26,33 @@ import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from
 export class AppointmentCalendarComponent {
   protected viewDate: Date = new Date();
   protected events: CalendarEvent[] = [];
+  protected workshops: AppointmentTemplate[] = [];
   protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
 
   protected targetEvent: CalendarEvent;
 
   constructor(private appointmentService: AppointmentService,
+              private templateService: AppointmentTemplateService,
               private biitSnackbarService: BiitSnackbarService,
               private translocoService: TranslocoService) {
+    this.loadWorkshops();
     this.nextData();
+  }
+
+  protected loadWorkshops() {
+    this.templateService.getAll().subscribe({
+      next: (templates: AppointmentTemplate[]) => {
+        this.workshops = templates;
+      },
+      error: (response: any) => {
+        const error: string = response.status.toString();
+        // Transloco does not load translation files. We need to load it manually;
+        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+        });
+      }
+    })
   }
 
   protected nextData(): void {
