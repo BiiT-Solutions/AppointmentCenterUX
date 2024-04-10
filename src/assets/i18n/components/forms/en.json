@@ -1,0 +1,14 @@
+{
+  "title": "Title",
+  "description": "Description",
+  "start_date": "Start Date",
+  "end_date": "End Date",
+  "status": "Status",
+  "all_day": "All Day",
+  "speakers": "Speakers",
+  "attendees": "Atendees",
+  "cost": "Cost",
+  "recurrence": "Recurrence",
+  "save": "Save",
+  "update": "Update"
+}

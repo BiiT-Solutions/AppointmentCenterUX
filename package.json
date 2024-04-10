@@ -25,6 +25,7 @@
     "@angular/router": "v15-lts",
     "@ngneat/transloco": "^4.3.0",
     "appointment-center-structure-lib": "latest",
+    "user-manager-structure-lib": "latest",
     "biit-icons-collection": "latest",
     "biit-ui": "latest",
     "rxjs": "~7.8.0",

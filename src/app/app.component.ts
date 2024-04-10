@@ -6,6 +6,7 @@ import {Route, Router} from "@angular/router";
 import {completeIconSet} from "biit-icons-collection";
 import {BiitIconService} from "biit-ui/icon";
 import {AppointmentCenterStructureRootService, SessionService} from "appointment-center-structure-lib";
+import {UserManagerRootService} from "user-manager-structure-lib";
 
 @Component({
   selector: 'app-root',
@@ -22,6 +23,7 @@ import {AppointmentCenterStructureRootService, SessionService} from "appointment
 export class AppComponent {
   protected menu: Route[]= [];
   constructor(appointmentCenterStructureRootService: AppointmentCenterStructureRootService,
+              userManagerRootService: UserManagerRootService,
               biitSnackbarService: BiitSnackbarService,
               biitIconService: BiitIconService,
               protected sessionService: SessionService,
@@ -29,6 +31,7 @@ export class AppComponent {
               private translocoService: TranslocoService) {
     this.setLanguage();
     appointmentCenterStructureRootService.serverUrl = new URL(`${Environment.ROOT_URL}${Environment.APPOINTMENT_CENTER_PATH}`);
+    userManagerRootService.serverUrl = new URL(`${Environment.ROOT_URL}${Environment.USER_MANAGER_PATH}`);
     biitSnackbarService.setPosition(BiitSnackbarVerticalPosition.TOP, BiitSnackbarHorizontalPosition.CENTER);
     biitIconService.registerIcons(completeIconSet);
   }

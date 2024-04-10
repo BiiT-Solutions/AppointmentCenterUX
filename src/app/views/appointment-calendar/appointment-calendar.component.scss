@@ -44,7 +44,7 @@ $default-color: #262626;
 
         .bottom {
           position: absolute;
-          top: 0;
+          top: 1em;
           right: 1em;
         }
       }
@@ -97,15 +97,14 @@ $default-color: #262626;
         flex-direction: column;
         flex-grow: 1;
         overflow-y: auto;
+        gap: 0.125em;
       }
 
       .bottom {
         flex-shrink: 0;
 
         biit-input-text {
-          height: 3.2em;
           display: block;
-          margin-top: -1.05em;
         }
       }
     }
@@ -150,5 +149,49 @@ $default-color: #262626;
     .right {
       display: flex;
     }
+  }
+}
+
+.workshop {
+  height: 2.5em;
+  display: flex;
+  flex-direction: column;
+  border-left: 0.2em solid #F20D5E;
+  background: #FDD6E4;
+  padding: 0.225em;
+
+  &:hover {
+    background: #F3C0D4;
+  }
+
+  a {
+    color: #A1093F;
+
+    &.duration {
+      font-size: 0.56em;
+      line-height: 1em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    &.title {
+      margin-top: 0.125em;
+      font-size: 0.69em;
+      font-weight: bold;
+      line-height: 1em;
+      text-transform: uppercase;
+      user-select: none;
+    }
+
+    &.speakers {
+      margin-top: 0.025em;
+      font-size: 0.69em;
+      line-height: 1em;
+      user-select: none;
+    }
+  }
+
+  &.drag-active {
+    z-index: 3;
   }
 }

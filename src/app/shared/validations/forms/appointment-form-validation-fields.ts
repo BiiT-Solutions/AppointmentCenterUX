@@ -1,4 +1,4 @@
-export enum ApplicationFormValidationFields {
+export enum AppointmentFormValidationFields {
   TITLE_MANDATORY = 'TITLE_MANDATORY',
   START_DATE_MANDATORY = 'START_DATE_MANDATORY',
   END_DATE_MANDATORY = 'END_DATE_MANDATORY'

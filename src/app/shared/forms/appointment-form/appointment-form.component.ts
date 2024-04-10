@@ -1,34 +1,29 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
-import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
+import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
 import {CalendarEvent} from "biit-ui/calendar";
-import {Appointment, AppointmentService, Status} from "appointment-center-structure-lib";
+import {Appointment, AppointmentService, AppointmentTemplate, Status} from "appointment-center-structure-lib";
 import {Type} from "biit-ui/inputs";
-import {parseISO, format} from "date-fns"
-import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
-import {HttpErrorResponse, HttpStatusCode} from "@angular/common/http";
+import {addMinutes} from "date-fns"
+import {CalendarEventConversor} from "../../../utils/calendar-event-conversor";
+import {HttpErrorResponse} from "@angular/common/http";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
-import {ApplicationFormValidationFields} from "../validations/forms/application-form-validation-fields";
+import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 
 @Component({
   selector: 'appointment-form',
   templateUrl: './appointment-form.component.html',
   styleUrls: ['./appointment-form.component.scss'],
-  providers: [
-    {
-      provide: TRANSLOCO_SCOPE,
-      multi:true,
-      useValue: {scope: 'components/appointment_form', alias: 'form'}
-    }
-  ]
+  providers: [provideTranslocoScope({scope: 'components/forms', alias: 'form'})]
 })
 export class AppointmentFormComponent implements OnInit {
   @Input() event: CalendarEvent;
+  @Input() template: AppointmentTemplate;
   @Output() onSaved: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
   protected appointment: Appointment = new Appointment();
-  protected errors: Map<ApplicationFormValidationFields, string> = new Map<ApplicationFormValidationFields, string>();
+  protected errors: Map<AppointmentFormValidationFields, string> = new Map<AppointmentFormValidationFields, string>();
   protected status = Object.keys(Status);
   protected readonly Type = Type;
-  protected readonly ApplicationFormValidationFields = ApplicationFormValidationFields;
+  protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
 
   constructor(private appointmentService: AppointmentService,
               private snackbarService: BiitSnackbarService,
@@ -39,6 +34,17 @@ export class AppointmentFormComponent implements OnInit {
     if (this.event.id) {
       this.appointmentService.getById(+this.event.id)
         .subscribe(appointment => this.appointment = appointment);
+    } else if (this.template) {
+      this.appointment.title = this.template.title;
+      this.appointment.description = this.template.description;
+      this.appointment.startTime = this.event.start;
+      if (this.template.duration) {
+        this.appointment.endTime = addMinutes(this.appointment.startTime, this.template.duration);
+      }
+      this.appointment.organizationId = this.template.organizationId;
+      this.appointment.examinationType = this.template.examinationType;
+      this.appointment.speakers = this.template.speakers;
+      this.appointment.cost = this.template.cost;
     }
   }
 
@@ -74,15 +80,15 @@ export class AppointmentFormComponent implements OnInit {
     let verdict: boolean = true;
     if (!this.appointment.title) {
       verdict = false;
-      this.errors.set(ApplicationFormValidationFields.TITLE_MANDATORY, this.transloco.translate(`form.${ApplicationFormValidationFields.TITLE_MANDATORY.toString()}`));
+      this.errors.set(AppointmentFormValidationFields.TITLE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.TITLE_MANDATORY.toString()}`));
     }
     if (!this.appointment.startTime) {
       verdict = false;
-      this.errors.set(ApplicationFormValidationFields.START_DATE_MANDATORY, this.transloco.translate(`form.${ApplicationFormValidationFields.START_DATE_MANDATORY.toString()}`));
+      this.errors.set(AppointmentFormValidationFields.START_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.START_DATE_MANDATORY.toString()}`));
     }
     if (!this.appointment.endTime) {
       verdict = false;
-      this.errors.set(ApplicationFormValidationFields.END_DATE_MANDATORY, this.transloco.translate(`form.${ApplicationFormValidationFields.END_DATE_MANDATORY.toString()}`));
+      this.errors.set(AppointmentFormValidationFields.END_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.END_DATE_MANDATORY.toString()}`));
     }
     return verdict;
   }
