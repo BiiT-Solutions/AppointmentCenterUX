@@ -18,6 +18,12 @@
 
     * {
       flex-grow: 1;
+      width: inherit;
+    }
+
+    biit-toggle {
+      display: flex;
+      align-items: center;
     }
   }
 }

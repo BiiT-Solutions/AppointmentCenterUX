@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component} from '@angular/core';
 import {CalendarEvent, CalendarMode} from "biit-ui/calendar";
 import {
   Appointment,
@@ -10,6 +10,8 @@ import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
+import {User} from "authorization-services-lib";
+import {UserService} from "user-manager-structure-lib";
 
 @Component({
   selector: 'appointment-calendar',
@@ -27,12 +29,16 @@ export class AppointmentCalendarComponent {
   protected viewDate: Date = new Date();
   protected events: CalendarEvent[] = [];
   protected workshops: AppointmentTemplate[] = [];
+  protected workshopSpeakers: User[] = [];
   protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
 
   protected targetEvent: CalendarEvent;
+  protected targetTemplate: AppointmentTemplate;
+  protected targetWorkshop: AppointmentTemplate;
 
   constructor(private appointmentService: AppointmentService,
+              private userService: UserService,
               private templateService: AppointmentTemplateService,
               private biitSnackbarService: BiitSnackbarService,
               private translocoService: TranslocoService) {
@@ -44,6 +50,8 @@ export class AppointmentCalendarComponent {
     this.templateService.getAll().subscribe({
       next: (templates: AppointmentTemplate[]) => {
         this.workshops = templates;
+        const speakers = Array.from(new Set(templates.map(w => w.speakers).flat()));
+        this.userService.getByIds(speakers).subscribe(users => this.workshopSpeakers = users);
       },
       error: (response: any) => {
         const error: string = response.status.toString();
@@ -89,7 +97,8 @@ export class AppointmentCalendarComponent {
         }
         break;
       case CalendarEventTimesChangedEventType.Drop:
-
+        this.targetTemplate = (event.event as any) as AppointmentTemplate;
+        this.onAddAppointment(event.newStart);
         break;
       case CalendarEventTimesChangedEventType.Resize:
         if (event.newStart.toString() !== event.event.start.toString() || event.newEnd.toString() !== event.event.end.toString()) {
@@ -109,7 +118,11 @@ export class AppointmentCalendarComponent {
     }
   }
 
-  onAddAppointment() {
-    this.targetEvent = new CalendarEvent(undefined, undefined, undefined, undefined);
+  onAddAppointment(startDate?: Date) {
+    this.targetEvent = new CalendarEvent(undefined, undefined, startDate, undefined);
+  }
+
+  onAddWorkshop() {
+    this.targetWorkshop = new AppointmentTemplate();
   }
 }

@@ -1,15 +1,24 @@
-<div class="canvas">
+<div class="canvas" slot="{{'empty' | transloco}}">
   <div class="sidebar">
     <div class="workshops">
       <div class="top">
-        <a>Workshops</a>
-        <button biit-icon icon="plus"></button>
+        <a>{{ 'app.workshops' | transloco }}</a>
+        <button biit-icon icon="plus" (click)="onAddWorkshop()"></button>
         <button biit-icon icon="minus"></button>
       </div>
-      <div class="middle">
+      <div class="middle"
+           mwlDroppable
+           dragOverClass="drag-over">
         <div *ngFor="let workshop of workshops"
-             class="workshop">
-          <a>{{workshop.title}}</a>
+             class="workshop"
+             mwlDraggable
+             [dropData]="{event: workshop}"
+             [touchStartLongPress]="{ delay: 300, delta: 30 }"
+             dragActiveClass="drag-active"
+        >
+          <a class="duration">{{workshop.duration | timeDuration}}</a>
+          <a class="title">{{workshop.title}}</a>
+          <a class="speakers">{{workshop | speakerList: workshopSpeakers}}</a>
         </div>
       </div>
       <div class="bottom">
@@ -47,11 +56,25 @@
 
 <biit-popup sixty-view closable
             *ngIf="targetEvent"
-            (onClosed)="targetEvent = undefined"
+            (onClosed)="targetEvent = undefined; targetTemplate = undefined;"
             title="{{targetEvent.id ? ('app.edit_appointment'|transloco) : ('app.create_appointment'|transloco)}}"
+            slot="{{'empty' | transloco}}"
 >
   <appointment-form [event]="targetEvent"
-                    (onSaved)="targetEvent = undefined; nextData();"
+                    [template]="targetTemplate"
+                    (onSaved)="targetEvent = undefined; targetTemplate = undefined; nextData();"
                     style="width: 100%"
   ></appointment-form>
+</biit-popup>
+
+<biit-popup sixty-view closable
+            *ngIf="targetWorkshop"
+            (onClosed)="targetWorkshop = undefined"
+            title="{{targetWorkshop.id ? ('app.edit_workshop'|transloco) : ('app.create_workshop'|transloco)}}"
+            slot="{{'empty' | transloco}}"
+>
+  <workshop-form [workshop]="targetWorkshop"
+                 (onSaved)="targetWorkshop = undefined; workshops.push($event);"
+                 style="width: 100%"
+  ></workshop-form>
 </biit-popup>

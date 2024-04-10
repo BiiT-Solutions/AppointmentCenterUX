@@ -1,6 +1,11 @@
 {
   "400": "Oops! It looks this app and our server are not on sync!. Please try to refresh the page and clear cache.",
   "500": "We apologize, but it looks something is wrong with our services. Please try again later.",
+  "workshops": "Workshops",
   "create_appointment": "Create Appointment",
-  "edit_appointment": "Edit Appointment"
+  "edit_appointment": "Edit Appointment",
+  "delete_appointment": "Delete Appointment",
+  "create_workshop": "Create Workshop",
+  "edit_workshop": "Edit Workshop",
+  "delete_workshop": "Delete Workshop"
 }

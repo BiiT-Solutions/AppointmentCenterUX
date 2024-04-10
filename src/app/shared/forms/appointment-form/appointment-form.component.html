@@ -1,22 +1,22 @@
-<div class="canvas">
+<div class="canvas" slot="{{'empty' | transloco}}">
   <div class="row">
     <biit-input-text [(ngModel)]="appointment.title"
-                     placeholder="{{'form.title' | transloco}}"
-                     error="{{errors | mapGet: ApplicationFormValidationFields.TITLE_MANDATORY}}"
+                     [placeholder]="('form.title' | transloco)"
+                     error="{{errors | mapGet: AppointmentFormValidationFields.TITLE_MANDATORY}}"
     ></biit-input-text>
   </div>
   <div class="row">
     <biit-datepicker [(ngModel)]="appointment.startTime"
-                     placeholder="{{'form.start_date' | transloco}}"
+                     [placeholder]="('form.start_date' | transloco)"
                      [timePicker]="true"
                      [max]="appointment.endTime"
-                     error="{{errors | mapGet: ApplicationFormValidationFields.START_DATE_MANDATORY}}"
+                     error="{{errors | mapGet: AppointmentFormValidationFields.START_DATE_MANDATORY}}"
     ></biit-datepicker>
     <biit-datepicker [(ngModel)]="appointment.endTime"
-                     placeholder="{{'form.end_date' | transloco}}"
+                     [placeholder]="('form.end_date' | transloco)"
                      [timePicker]="true"
                      [min]="appointment.startTime"
-                     error="{{errors | mapGet: ApplicationFormValidationFields.END_DATE_MANDATORY}}"
+                     error="{{errors | mapGet: AppointmentFormValidationFields.END_DATE_MANDATORY}}"
     ></biit-datepicker>
   </div>
   <div class="row">
@@ -25,7 +25,7 @@
                    [primitive]="true"
                    title="{{'form.status' | transloco}}"
     ></biit-dropdown>
-    <biit-toggle [(ngModel)]="appointment.allDay">All Day</biit-toggle>
+    <biit-toggle [(ngModel)]="appointment.allDay">{{ 'form.all_day' | transloco }}</biit-toggle>
   </div>
   <div class="row">
     <biit-multiselect [(ngModel)]="appointment.speakers"
@@ -36,7 +36,7 @@
     <biit-multiselect [(ngModel)]="appointment.attendees"
                       [data]="[]"
                       [label]="'name'"
-                      title="{{'form.speakers' | transloco}}"
+                      title="{{'form.attendees' | transloco}}"
     ></biit-multiselect>
   </div>
   <div class="row">
@@ -50,9 +50,7 @@
                      placeholder="{{'form.cost' | transloco}}"
     ></biit-input-text>
   </div>
-  <div class="row">
-    <button biit-button (click)="onSave()">
-      {{'form.save' | transloco}}
-    </button>
-  </div>
+  <button biit-button (click)="onSave()">
+    {{'form.save' | transloco}}
+  </button>
 </div>
