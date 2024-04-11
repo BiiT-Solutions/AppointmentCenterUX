@@ -10,9 +10,10 @@ import {
   BiitToggleModule
 } from "biit-ui/inputs";
 import {FormsModule} from "@angular/forms";
-import {TranslocoModule} from "@ngneat/transloco";
 import {BiitButtonModule} from "biit-ui/button";
 import {MapGetPipeModule} from "biit-ui/utils";
+import {TranslocoRootModule} from "biit-ui/i18n";
+import {DropdownTranslatorPipeModule} from "../../pipes/dropdown-translator-pipe/dropdown-translator-pipe.module";
 
 @NgModule({
   declarations: [
@@ -24,13 +25,14 @@ import {MapGetPipeModule} from "biit-ui/utils";
     BiitInputTextModule,
     FormsModule,
     BiitTextareaModule,
-    TranslocoModule,
+    TranslocoRootModule,
     BiitDatePickerModule,
     BiitToggleModule,
     BiitMultiselectModule,
     BiitDropdownModule,
     BiitButtonModule,
-    MapGetPipeModule
+    MapGetPipeModule,
+    DropdownTranslatorPipeModule
   ],
   exports: [
     AppointmentFormComponent

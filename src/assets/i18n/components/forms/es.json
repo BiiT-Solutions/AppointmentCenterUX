@@ -10,5 +10,11 @@
   "cost": "Coste",
   "recurrence": "Recurrencia",
   "save": "Guardar",
-  "update": "Actualizar"
+  "update": "Actualizar",
+  "SUGGESTED": "Sugerido",
+  "NOT_STARTED": "No Iniciado",
+  "CANCELLED": "Cancelado",
+  "NO_SHOW": "No Acudió",
+  "STARTED": "Iniciado",
+  "FINISHED": "Finalizado"
 }

@@ -8,6 +8,7 @@ import {CalendarEventConversor} from "../../../utils/calendar-event-conversor";
 import {HttpErrorResponse} from "@angular/common/http";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
+import {combineLatest} from "rxjs";
 
 @Component({
   selector: 'appointment-form',
@@ -22,6 +23,8 @@ export class AppointmentFormComponent implements OnInit {
   protected appointment: Appointment = new Appointment();
   protected errors: Map<AppointmentFormValidationFields, string> = new Map<AppointmentFormValidationFields, string>();
   protected status = Object.keys(Status);
+  protected translatedStatus: {value:string, label:string}[] = [];
+
   protected readonly Type = Type;
   protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
 
@@ -46,6 +49,11 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.speakers = this.template.speakers;
       this.appointment.cost = this.template.cost;
     }
+
+    const translocoPromises = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
+    combineLatest(translocoPromises).subscribe((translations)=> {
+      translations.forEach((label, index) => this.translatedStatus.push({value: this.status[index], label: label}));
+    });
   }
 
   onSave() {
