@@ -1,80 +1,86 @@
-<div class="canvas" slot="{{'empty' | transloco}}">
-  <div class="sidebar">
-    <div class="workshops">
-      <div class="top">
-        <a>{{ 'app.workshops' | transloco }}</a>
-        <button biit-icon icon="plus" (click)="onAddWorkshop()"></button>
-        <button biit-icon icon="minus"></button>
-      </div>
-      <div class="middle"
-           mwlDroppable
-           dragOverClass="drag-over">
-        <div *ngFor="let workshop of workshops"
-             class="workshop"
-             mwlDraggable
-             [dropData]="{event: workshop}"
-             [touchStartLongPress]="{ delay: 300, delta: 30 }"
-             dragActiveClass="drag-active"
-        >
-          <a class="duration">{{workshop.duration | timeDuration}}</a>
-          <a class="title">{{workshop.title}}</a>
-          <a class="speakers">{{workshop | speakerList: workshopSpeakers}}</a>
+<ng-container *transloco="let t">
+  <div class="canvas">
+    <div class="sidebar">
+      <div class="workshops">
+        <div class="top">
+          <a>{{t('app.workshops')}}</a>
+          <button biit-icon icon="plus" (click)="onAddWorkshop()"></button>
+        </div>
+        <div class="middle"
+             mwlDroppable
+             dragOverClass="drag-over">
+          <div *ngFor="let workshop of filteredWorkshops"
+               class="workshop"
+               mwlDraggable
+               [dropData]="{event: workshop}"
+               [touchStartLongPress]="{ delay: 300, delta: 30 }"
+               dragActiveClass="drag-active"
+          >
+            <a class="duration">{{workshop.duration | timeDuration}}</a>
+            <a class="title">{{workshop.title}}</a>
+            <a class="speakers">{{workshop | speakerList: workshopSpeakers}}</a>
+          </div>
+        </div>
+        <div class="bottom">
+          <biit-input-text [ngModel]="search"
+                           (onActionPerformed)="search = $event;
+                                              filterWorkshops();"
+                           (focusout)="resetInputValue($event, search)"
+                           icon="search"
+                           [placeholder]="t('app.search')"
+          ></biit-input-text>
         </div>
       </div>
-      <div class="bottom">
-        <biit-input-text placeholder="Search"></biit-input-text>
-      </div>
+      <biit-datepicker calendar-mode
+                       class="mini-calendar"
+                       [(ngModel)]="viewDate"
+      ></biit-datepicker>
     </div>
-    <biit-datepicker calendar-mode
-                     class="mini-calendar"
-                     [(ngModel)]="viewDate"
-    ></biit-datepicker>
-  </div>
-  <div class="main">
-    <div class="top">
-      <div class="left">
-        <a>
-          {{viewDate | translocoDate: {month: 'long'} }}
-          {{viewDate | translocoDate: {year: 'numeric'} }}
-        </a>
-        <button biit-icon icon="plus" (click)="onAddAppointment()"></button>
-        <button biit-icon icon="minus"></button>
-        <button biit-icon icon="edit"></button>
-      </div>
-      <div class="right">
+    <div class="main">
+      <div class="top">
+        <div class="left">
+          <a>
+            {{viewDate | translocoDate: {month: 'long'} }}
+            {{viewDate | translocoDate: {year: 'numeric'} }}
+          </a>
+          <button biit-icon icon="plus" (click)="onAddAppointment()"></button>
+        </div>
+        <div class="right">
 
+        </div>
       </div>
+      <biit-calendar [events]="events"
+                     [viewDate]="viewDate"
+                     [calendarMode]="CalendarMode.WEEK"
+                     (onEventDrop)="onEventDrop($event)"
+                     (onEventClick)="targetEvent = $event.event"
+      ></biit-calendar>
     </div>
-    <biit-calendar [events]="events"
-                   [viewDate]="viewDate"
-                   [calendarMode]="CalendarMode.WEEK"
-                   (onEventDrop)="onEventDrop($event)"
-                   (onEventClick)="targetEvent = $event.event"
-    ></biit-calendar>
   </div>
-</div>
 
-<biit-popup sixty-view closable
-            *ngIf="targetEvent"
-            (onClosed)="targetEvent = undefined; targetTemplate = undefined;"
-            title="{{targetEvent.id ? ('app.edit_appointment'|transloco) : ('app.create_appointment'|transloco)}}"
-            slot="{{'empty' | transloco}}"
->
-  <appointment-form [event]="targetEvent"
-                    [template]="targetTemplate"
-                    (onSaved)="targetEvent = undefined; targetTemplate = undefined; nextData();"
-                    style="width: 100%"
-  ></appointment-form>
-</biit-popup>
+  <biit-popup sixty-view closable
+              *ngIf="targetEvent"
+              (onClosed)="targetEvent = undefined; targetTemplate = undefined;"
+              title="{{targetEvent.id ? t('app.edit_appointment') : t('app.create_appointment')}}"
+  >
+    <appointment-form [event]="targetEvent"
+                      [template]="targetTemplate"
+                      (onSaved)="targetEvent = undefined; targetTemplate = undefined; nextData();"
+                      style="width: 100%"
+    ></appointment-form>
+  </biit-popup>
 
-<biit-popup sixty-view closable
-            *ngIf="targetWorkshop"
-            (onClosed)="targetWorkshop = undefined"
-            title="{{targetWorkshop.id ? ('app.edit_workshop'|transloco) : ('app.create_workshop'|transloco)}}"
-            slot="{{'empty' | transloco}}"
->
-  <workshop-form [workshop]="targetWorkshop"
-                 (onSaved)="targetWorkshop = undefined; workshops.push($event);"
-                 style="width: 100%"
-  ></workshop-form>
-</biit-popup>
+  <biit-popup sixty-view closable
+              *ngIf="targetWorkshop"
+              (onClosed)="targetWorkshop = undefined"
+              title="{{targetWorkshop.id ? t('app.edit_workshop') : t('app.create_workshop')}}"
+  >
+    <workshop-form [workshop]="targetWorkshop"
+                   (onSaved)="targetWorkshop = undefined;
+                            workshops.push($event);
+                            filterWorkshops();"
+                   style="width: 100%"
+    ></workshop-form>
+  </biit-popup>
+
+</ng-container>

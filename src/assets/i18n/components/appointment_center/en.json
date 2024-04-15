@@ -7,5 +7,6 @@
   "delete_appointment": "Delete Appointment",
   "create_workshop": "Create Workshop",
   "edit_workshop": "Edit Workshop",
-  "delete_workshop": "Delete Workshop"
+  "delete_workshop": "Delete Workshop",
+  "search": "Search"
 }

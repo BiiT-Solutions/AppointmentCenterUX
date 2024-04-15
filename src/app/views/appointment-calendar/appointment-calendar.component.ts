@@ -29,9 +29,11 @@ export class AppointmentCalendarComponent {
   protected viewDate: Date = new Date();
   protected events: CalendarEvent[] = [];
   protected workshops: AppointmentTemplate[] = [];
+  protected filteredWorkshops: AppointmentTemplate[] = [];
   protected workshopSpeakers: User[] = [];
   protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
+  protected search: string = "";
 
   protected targetEvent: CalendarEvent;
   protected targetTemplate: AppointmentTemplate;
@@ -50,6 +52,7 @@ export class AppointmentCalendarComponent {
     this.templateService.getAll().subscribe({
       next: (templates: AppointmentTemplate[]) => {
         this.workshops = templates;
+        this.filteredWorkshops = templates;
         const speakers = Array.from(new Set(templates.map(w => w.speakers).flat()));
         this.userService.getByIds(speakers).subscribe(users => this.workshopSpeakers = users);
       },
@@ -124,5 +127,16 @@ export class AppointmentCalendarComponent {
 
   onAddWorkshop() {
     this.targetWorkshop = new AppointmentTemplate();
+  }
+
+  filterWorkshops() {
+    this.filteredWorkshops = this.workshops.map(workshop => AppointmentTemplate.clone(workshop));
+    if (this.search.length) {
+      this.filteredWorkshops = this.filteredWorkshops.filter(workshop => workshop.title.toLowerCase().includes(this.search.toLowerCase()));
+    }
+  }
+
+  resetInputValue(event: Event, value: string) {
+    (event.target as HTMLInputElement).value = value;
   }
 }

@@ -16,5 +16,9 @@
   "CANCELLED": "Cancelado",
   "NO_SHOW": "No Acudió",
   "STARTED": "Iniciado",
-  "FINISHED": "Finalizado"
+  "FINISHED": "Finalizado",
+  "validation_failed": "La validación falló. Por favor, compruebe si algún campo está vacío o no es válido.",
+  "TITLE_MANDATORY": "El título es obligatorio",
+  "START_DATE_MANDATORY": "La fecha de inicio es obligatoria",
+  "END_DATE_MANDATORY": "La fecha de final es obligatoria"
 }

@@ -16,5 +16,9 @@
   "CANCELLED": "Cancelled",
   "NO_SHOW": "No Show",
   "STARTED": "Started",
-  "FINISHED": "Finished"
+  "FINISHED": "Finished",
+  "validation_failed": "Validation failed. Please, check if some fields are empty or invalid.",
+  "TITLE_MANDATORY": "Title is mandatory",
+  "START_DATE_MANDATORY": "Start date is mandatory",
+  "END_DATE_MANDATORY": "End date is mandatory"
 }

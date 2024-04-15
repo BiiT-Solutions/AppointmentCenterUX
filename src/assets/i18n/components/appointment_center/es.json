@@ -7,5 +7,6 @@
   "delete_appointment": "Eliminar Cita",
   "create_workshop": "Crear Taller",
   "edit_workshop": "Editar Taller",
-  "delete_workshop": "Eliminar Taller"
+  "delete_workshop": "Eliminar Taller",
+  "search": "Buscar"
 }
