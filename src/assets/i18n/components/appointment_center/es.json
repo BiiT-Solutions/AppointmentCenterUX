@@ -5,8 +5,14 @@
   "create_appointment": "Crear Cita",
   "edit_appointment": "Editar Cita",
   "delete_appointment": "Eliminar Cita",
+  "delete_appointment_confirm": "¿Seguro que desea eliminar la cita?",
+  "delete_appointment_success": "La cita se ha eliminado con éxito",
   "create_workshop": "Crear Taller",
   "edit_workshop": "Editar Taller",
   "delete_workshop": "Eliminar Taller",
-  "search": "Buscar"
+  "delete_workshop_confirm": "¿Seguro que desea eliminar el taller?",
+  "delete_workshop_success": "El taller se ha eliminado con éxito",
+  "search": "Buscar",
+  "delete": "Eliminar",
+  "cancel": "Cancelar"
 }

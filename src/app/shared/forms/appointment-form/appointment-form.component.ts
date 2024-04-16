@@ -48,6 +48,8 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.examinationType = this.template.examinationType;
       this.appointment.speakers = this.template.speakers;
       this.appointment.cost = this.template.cost;
+    } else {
+      this.appointment.startTime = this.event.start;
     }
 
     const translocoPromises = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));

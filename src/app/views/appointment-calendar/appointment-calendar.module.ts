@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AppointmentCalendarComponent } from './appointment-calendar.component';
 import {AppointmentCalendarRoutingModule} from "./appointment-calendar-routing.module";
 import {BiitDatePickerModule, BiitInputTextModule} from "biit-ui/inputs";
-import {BiitIconButtonModule} from "biit-ui/button";
+import {BiitButtonModule, BiitIconButtonModule} from "biit-ui/button";
 import {FormsModule} from "@angular/forms";
 import {BiitCalendarModule} from "biit-ui/calendar";
 import {BiitPopupModule} from "biit-ui/popup";
@@ -14,6 +14,7 @@ import {TimeDurationPipeModule} from "../../shared/pipes/time-duration-pipe/time
 import {SpeakerListPipeModule} from "../../shared/pipes/speaker-list-pipe/speaker-list-pipe.module";
 import {DragAndDropModule} from "angular-draggable-droppable";
 import {WorkshopFormModule} from "../../shared/forms/workshop-form/workshop-form.module";
+import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
 
 
 
@@ -21,22 +22,24 @@ import {WorkshopFormModule} from "../../shared/forms/workshop-form/workshop-form
   declarations: [
     AppointmentCalendarComponent
   ],
-  imports: [
-    CommonModule,
-    AppointmentCalendarRoutingModule,
-    BiitInputTextModule,
-    BiitIconButtonModule,
-    BiitDatePickerModule,
-    FormsModule,
-    BiitCalendarModule,
-    BiitPopupModule,
-    AppointmentFormModule,
-    TranslocoModule,
-    TranslocoDatePipe,
-    TimeDurationPipeModule,
-    SpeakerListPipeModule,
-    DragAndDropModule,
-    WorkshopFormModule
-  ]
+    imports: [
+        CommonModule,
+        AppointmentCalendarRoutingModule,
+        BiitInputTextModule,
+        BiitIconButtonModule,
+        BiitDatePickerModule,
+        FormsModule,
+        BiitCalendarModule,
+        BiitPopupModule,
+        AppointmentFormModule,
+        TranslocoModule,
+        TranslocoDatePipe,
+        TimeDurationPipeModule,
+        SpeakerListPipeModule,
+        DragAndDropModule,
+        WorkshopFormModule,
+        ContextMenuModule,
+        BiitButtonModule
+    ]
 })
 export class AppointmentCalendarModule { }

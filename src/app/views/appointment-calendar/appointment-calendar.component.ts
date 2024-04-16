@@ -36,8 +36,10 @@ export class AppointmentCalendarComponent {
   protected search: string = "";
 
   protected targetEvent: CalendarEvent;
-  protected targetTemplate: AppointmentTemplate;
+  protected targetEventTemplate: AppointmentTemplate;
+  protected deleteEvent: CalendarEvent;
   protected targetWorkshop: AppointmentTemplate;
+  protected deleteWorkshop: AppointmentTemplate;
 
   constructor(private appointmentService: AppointmentService,
               private userService: UserService,
@@ -100,7 +102,7 @@ export class AppointmentCalendarComponent {
         }
         break;
       case CalendarEventTimesChangedEventType.Drop:
-        this.targetTemplate = (event.event as any) as AppointmentTemplate;
+        this.targetEventTemplate = (event.event as any) as AppointmentTemplate;
         this.onAddAppointment(event.newStart);
         break;
       case CalendarEventTimesChangedEventType.Resize:
@@ -125,8 +127,51 @@ export class AppointmentCalendarComponent {
     this.targetEvent = new CalendarEvent(undefined, undefined, startDate, undefined);
   }
 
+  onDeleteAppointment() {
+    this.appointmentService.deleteById(+this.deleteEvent.id).subscribe({
+      next: () => {
+        // Transloco does not load translation files. We need to load it manually;
+        this.translocoService.selectTranslate('delete_appointment_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
+        });
+        this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
+        this.deleteEvent = undefined;
+      }, error: (response: any) => {
+        const error: string = response.status.toString();
+        // Transloco does not load translation files. We need to load it manually;
+        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+        });
+        this.deleteEvent = undefined;
+      }
+    }).add(() => {
+      this.deleteEvent = undefined;
+    });
+  }
+
   onAddWorkshop() {
     this.targetWorkshop = new AppointmentTemplate();
+  }
+
+  onDeleteWorkshop() {
+    this.templateService.deleteById(+this.deleteWorkshop.id).subscribe({
+      next: () => {
+        // Transloco does not load translation files. We need to load it manually;
+        this.translocoService.selectTranslate('delete_workshop_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
+        });
+        this.workshops = this.workshops.filter(w => w.id !== this.deleteWorkshop.id);
+        this.filterWorkshops();
+      }, error: (response: any) => {
+        const error: string = response.status.toString();
+        // Transloco does not load translation files. We need to load it manually;
+        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+        });
+      }
+    }).add(() => {
+      this.deleteWorkshop = undefined;
+    });
   }
 
   filterWorkshops() {

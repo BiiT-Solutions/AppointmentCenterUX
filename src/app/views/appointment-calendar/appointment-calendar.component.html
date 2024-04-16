@@ -15,6 +15,8 @@
                [dropData]="{event: workshop}"
                [touchStartLongPress]="{ delay: 300, delta: 30 }"
                dragActiveClass="drag-active"
+               [contextMenu]="workshopMenu"
+               [contextMenuValue]="workshop"
           >
             <a class="duration">{{workshop.duration | timeDuration}}</a>
             <a class="title">{{workshop.title}}</a>
@@ -52,6 +54,8 @@
       <biit-calendar [events]="events"
                      [viewDate]="viewDate"
                      [calendarMode]="CalendarMode.WEEK"
+                     [gridContextMenu]="gridMenu"
+                     [eventContextMenu]="eventMenu"
                      (onEventDrop)="onEventDrop($event)"
                      (onEventClick)="targetEvent = $event.event"
       ></biit-calendar>
@@ -60,12 +64,12 @@
 
   <biit-popup sixty-view closable
               *ngIf="targetEvent"
-              (onClosed)="targetEvent = undefined; targetTemplate = undefined;"
+              (onClosed)="targetEvent = undefined; targetEventTemplate = undefined;"
               title="{{targetEvent.id ? t('app.edit_appointment') : t('app.create_appointment')}}"
   >
     <appointment-form [event]="targetEvent"
-                      [template]="targetTemplate"
-                      (onSaved)="targetEvent = undefined; targetTemplate = undefined; nextData();"
+                      [template]="targetEventTemplate"
+                      (onSaved)="targetEvent = undefined; targetEventTemplate = undefined; nextData();"
                       style="width: 100%"
     ></appointment-form>
   </biit-popup>
@@ -83,4 +87,65 @@
     ></workshop-form>
   </biit-popup>
 
+  <biit-popup closable no-header
+              *ngIf="deleteEvent"
+              (onClosed)="deleteEvent = undefined"
+  >
+    <div style="width: 100%; display: flex; align-items: center; flex-direction: column; gap: 2em;">
+      <a>
+        {{t('app.delete_appointment_confirm')}}
+      </a>
+      <div style="display: flex; gap: 3em">
+        <button biit-button tertiary (click)="deleteEvent = undefined">
+          {{t('app.cancel')}}
+        </button>
+        <button biit-button (click)="onDeleteAppointment()">
+          {{t('app.delete')}}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+
+  <biit-popup closable no-header
+              *ngIf="deleteWorkshop"
+              (onClosed)="deleteWorkshop = undefined"
+  >
+    <div style="width: 100%; display: flex; align-items: center; flex-direction: column; gap: 2em;">
+      <a>
+        {{t('app.delete_workshop_confirm')}}
+      </a>
+      <div style="display: flex; gap: 3em">
+        <button biit-button tertiary (click)="deleteWorkshop = undefined">
+          {{t('app.cancel')}}
+        </button>
+        <button biit-button (click)="onDeleteWorkshop()">
+          {{t('app.delete')}}
+        </button>
+      </div>
+    </div>
+  </biit-popup>
+
+  <context-menu #gridMenu>
+    <ng-template contextMenuItem (execute)="onAddAppointment($event.value)">
+      {{ t('app.create_appointment') }}
+    </ng-template>
+  </context-menu>
+
+  <context-menu #eventMenu>
+    <ng-template contextMenuItem (execute)="targetEvent = $event.value">
+      {{ t('app.edit_appointment') }}
+    </ng-template>
+    <ng-template contextMenuItem (execute)="deleteEvent = $event.value">
+      {{ t('app.delete_appointment') }}
+    </ng-template>
+  </context-menu>
+
+  <context-menu #workshopMenu>
+    <ng-template contextMenuItem (execute)="targetWorkshop = $event.value">
+      {{ t('app.edit_workshop') }}
+    </ng-template>
+    <ng-template contextMenuItem (execute)="deleteWorkshop = $event.value">
+      {{ t('app.delete_workshop') }}
+    </ng-template>
+  </context-menu>
 </ng-container>
