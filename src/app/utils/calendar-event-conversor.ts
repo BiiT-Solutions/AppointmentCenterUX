@@ -3,6 +3,6 @@ import {CalendarEvent} from "biit-ui/calendar";
 
 export class CalendarEventConversor {
   public static convertToCalendarEvent(appointment: Appointment): CalendarEvent {
-    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, undefined, undefined, true, true);
+    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, undefined, undefined, true, true, appointment);
   }
 }

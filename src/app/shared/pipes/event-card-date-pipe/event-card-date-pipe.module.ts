@@ -1,16 +1,14 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {SpeakerListPipe} from "./speaker-list.pipe";
-
-
+import {EventCardDatePipe} from "./event-card-date.pipe";
 
 @NgModule({
-  declarations: [SpeakerListPipe],
+  declarations: [EventCardDatePipe],
   exports: [
-    SpeakerListPipe
+    EventCardDatePipe
   ],
   imports: [
     CommonModule,
   ]
 })
-export class SpeakerListPipeModule { }
+export class EventCardDatePipeModule { }
