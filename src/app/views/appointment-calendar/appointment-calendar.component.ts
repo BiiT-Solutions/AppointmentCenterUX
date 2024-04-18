@@ -1,5 +1,5 @@
 import {Component} from '@angular/core';
-import {CalendarEvent, CalendarEventClickEvent, CalendarMode} from "biit-ui/calendar";
+import {CalendarEvent, CalendarMode, castTo} from "biit-ui/calendar";
 import {
   Appointment,
   AppointmentTemplate,
@@ -35,13 +35,16 @@ export class AppointmentCalendarComponent {
   protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
   protected search: string = "";
+  protected mousePosition: MouseEvent;
 
-  protected cardEvent: CalendarEventClickEvent;
+  protected cardEvent: CalendarEvent;
   protected targetEvent: CalendarEvent;
   protected targetEventTemplate: AppointmentTemplate;
   protected deleteEvent: CalendarEvent;
   protected targetWorkshop: AppointmentTemplate;
   protected deleteWorkshop: AppointmentTemplate;
+
+  $mouseEvent = castTo<MouseEvent>();
 
   constructor(private appointmentService: AppointmentService,
               private userService: UserService,
@@ -104,7 +107,6 @@ export class AppointmentCalendarComponent {
         if (event.newStart.toString() !== event.event.start.toString()) {
           this.onUpdateAppointment(event);
         }
-        this.log(event)
         break;
       case CalendarEventTimesChangedEventType.Drop:
         this.targetEventTemplate = (event.event as any) as AppointmentTemplate;
@@ -193,14 +195,14 @@ export class AppointmentCalendarComponent {
     });
   }
 
-  filterWorkshops() {
+  protected filterWorkshops() {
     this.filteredWorkshops = this.workshops.map(workshop => AppointmentTemplate.clone(workshop));
     if (this.search.length) {
       this.filteredWorkshops = this.filteredWorkshops.filter(workshop => workshop.title.toLowerCase().includes(this.search.toLowerCase()));
     }
   }
 
-  resetInputValue(event: Event, value: string) {
+  protected resetInputValue(event: Event, value: string) {
     (event.target as HTMLInputElement).value = value;
   }
 

@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import {CommonModule, DatePipe} from '@angular/common';
 import {EventCardDatePipe} from "./event-card-date.pipe";
 
 @NgModule({
@@ -9,6 +9,10 @@ import {EventCardDatePipe} from "./event-card-date.pipe";
   ],
   imports: [
     CommonModule,
+    DatePipe
+  ],
+  providers: [
+    DatePipe
   ]
 })
 export class EventCardDatePipeModule { }

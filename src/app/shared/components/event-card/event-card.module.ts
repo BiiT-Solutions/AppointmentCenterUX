@@ -4,6 +4,8 @@ import {EventCardComponent} from "./event-card.component";
 import {BiitIconModule} from "biit-ui/icon";
 import {UserNameListPipeModule} from "../../pipes/user-name-list-pipe/user-name-list-pipe.module";
 import {EventCardDatePipeModule} from "../../pipes/event-card-date-pipe/event-card-date-pipe.module";
+import {BiitButtonModule} from "biit-ui/button";
+import {TranslocoRootModule} from "biit-ui/i18n";
 
 @NgModule({
   declarations: [
@@ -13,7 +15,9 @@ import {EventCardDatePipeModule} from "../../pipes/event-card-date-pipe/event-ca
     CommonModule,
     BiitIconModule,
     UserNameListPipeModule,
-    EventCardDatePipeModule
+    EventCardDatePipeModule,
+    BiitButtonModule,
+    TranslocoRootModule
   ],
   exports: [
     EventCardComponent

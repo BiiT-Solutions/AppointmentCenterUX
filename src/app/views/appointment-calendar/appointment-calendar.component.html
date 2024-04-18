@@ -57,7 +57,7 @@
                      [gridContextMenu]="gridMenu"
                      [eventContextMenu]="eventMenu"
                      (onEventDrop)="onEventChange($event)"
-                     (onEventClick)="targetEvent = $event.event"
+                     (onEventClick)="mousePosition = $mouseEvent($event.sourceEvent); cardEvent = $event.event"
       ></biit-calendar>
     </div>
   </div>
@@ -148,11 +148,13 @@
     </ng-template>
   </context-menu>
 
-<!--  [event]="cardEvent"-->
-<!--  [speakers]="speakers"-->
-<!--  (onEdit)="targetEvent = cardEvent.event;-->
-<!--  cardEvent = undefined;"-->
-<!--  (onClosed)="cardEvent = undefined"-->
   <event-card *ngIf="cardEvent"
+              class="event-card"
+              [style.top]="mousePosition?.y + 10 + 'px'"
+              [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
+              [event]="cardEvent"
+              [speakers]="speakers"
+              (onEdit)="targetEvent = cardEvent; cardEvent = undefined;"
+              (onClosed)="cardEvent = undefined"
   ></event-card>
 </ng-container>
