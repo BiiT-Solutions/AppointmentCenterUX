@@ -20,13 +20,13 @@
           >
             <a class="duration">{{workshop.duration | timeDuration}}</a>
             <a class="title">{{workshop.title}}</a>
-            <a class="speakers">{{workshop | speakerList: workshopSpeakers}}</a>
+            <a class="speakers">{{workshop.speakers | userNameList: speakers}}</a>
           </div>
         </div>
         <div class="bottom">
           <biit-input-text [ngModel]="search"
                            (onActionPerformed)="search = $event;
-                                              filterWorkshops();"
+                                                filterWorkshops();"
                            (focusout)="resetInputValue($event, search)"
                            icon="search"
                            [placeholder]="t('app.search')"
@@ -56,8 +56,8 @@
                      [calendarMode]="CalendarMode.WEEK"
                      [gridContextMenu]="gridMenu"
                      [eventContextMenu]="eventMenu"
-                     (onEventDrop)="onEventDrop($event)"
-                     (onEventClick)="targetEvent = $event.event"
+                     (onEventDrop)="onEventChange($event)"
+                     (onEventClick)="mousePosition = $mouseEvent($event.sourceEvent); cardEvent = $event.event"
       ></biit-calendar>
     </div>
   </div>
@@ -69,7 +69,7 @@
   >
     <appointment-form [event]="targetEvent"
                       [template]="targetEventTemplate"
-                      (onSaved)="targetEvent = undefined; targetEventTemplate = undefined; nextData();"
+                      (onSaved)="targetEvent = undefined; targetEventTemplate = undefined; loadEvents();"
                       style="width: 100%"
     ></appointment-form>
   </biit-popup>
@@ -81,8 +81,7 @@
   >
     <workshop-form [workshop]="targetWorkshop"
                    (onSaved)="targetWorkshop = undefined;
-                            workshops.push($event);
-                            filterWorkshops();"
+                              onUpdateWorkshop($event);"
                    style="width: 100%"
     ></workshop-form>
   </biit-popup>
@@ -148,4 +147,14 @@
       {{ t('app.delete_workshop') }}
     </ng-template>
   </context-menu>
+
+  <event-card *ngIf="cardEvent"
+              class="event-card"
+              [style.top]="mousePosition?.y + 10 + 'px'"
+              [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
+              [event]="cardEvent"
+              [speakers]="speakers"
+              (onEdit)="targetEvent = cardEvent; cardEvent = undefined;"
+              (onClosed)="cardEvent = undefined"
+  ></event-card>
 </ng-container>

@@ -203,3 +203,8 @@ $default-color: #262626;
     z-index: 3;
   }
 }
+
+.event-card {
+  position: fixed;
+  z-index: 10;
+}
