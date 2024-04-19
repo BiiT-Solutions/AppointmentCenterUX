@@ -15,29 +15,29 @@ export class EventCardDatePipe implements PipeTransform {
   transform(event: CalendarEvent): string {
     let label = "";
     if (isSameDay(event.start, event.end)) {
-      label = label.concat(this.datePipe.transform(event.start, 'fullDate'));
+      label += this.datePipe.transform(event.start, 'fullDate');
       label = label.substring(0, label.length - 6);
 
       if (event.allDay) {
         return label;
       } else {
-        return label.concat(' - ', this.datePipe.transform(event.start, 'H:mm'),
-          ' - ', this.datePipe.transform(event.end, 'H:mm'));
+        return label + ' - ' + this.datePipe.transform(event.start, 'H:mm') +
+          ' - ' + this.datePipe.transform(event.end, 'H:mm');
       }
     } else {
-      label = label.concat(this.datePipe.transform(event.start, 'fullDate'));
+      label += this.datePipe.transform(event.start, 'fullDate');
       label = label.substring(0, label.length - 6);
 
       if (event.allDay) {
-        label = label.concat('<br>');
+        label += String.fromCharCode(10);
         label = label.concat(this.datePipe.transform(event.end, 'fullDate'));
         return label.substring(0, label.length - 6);
       } else {
-        label = label.concat(' - ', this.datePipe.transform(event.start, 'H:mm'));
-        label = label.concat('<br>');
-        label = label.concat(this.datePipe.transform(event.end, 'fullDate'));
+        label += ' - ' + this.datePipe.transform(event.start, 'H:mm');
+        label += String.fromCharCode(10);
+        label += this.datePipe.transform(event.end, 'fullDate');
         label = label.substring(0, label.length - 6);
-        return label.concat(' - ', this.datePipe.transform(event.end, 'H:mm'));
+        return label + ' - ' + this.datePipe.transform(event.end, 'H:mm');
       }
     }
   }

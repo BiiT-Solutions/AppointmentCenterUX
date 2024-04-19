@@ -16,11 +16,7 @@
 
   .row {
     display: flex;
-    align-items: center;
-
-    &:first-child {
-      align-items: start;
-    }
+    align-items: start;
 
     &:last-child {
       margin-top: 0.75em;
@@ -31,9 +27,11 @@
     height: 1em;
     width: 1em;
     flex-shrink: 0;
+    margin-top: 0.15em;
 
     &.info {
-      margin: 0 0.5em 0;
+      margin-left: 0.5em;
+      margin-right: 0.5em;
     }
 
     &:not(.info) {

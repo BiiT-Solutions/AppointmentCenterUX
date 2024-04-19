@@ -1,7 +1,7 @@
-<div class="canvas" slot="{{'empty' | transloco}}">
+<div class="canvas" *transloco="let t">
   <div class="row">
     <biit-input-text [(ngModel)]="workshop.title"
-                     [placeholder]="('form.title' | transloco)"
+                     [placeholder]="t('form.title')"
                      error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
     ></biit-input-text>
   </div>
@@ -9,22 +9,22 @@
     <biit-multiselect [(ngModel)]="workshop.speakers"
                       [data]="[]"
                       [label]="'name'"
-                      title="{{'form.speakers' | transloco}}"
+                      title="{{t('form.speakers')}}"
     ></biit-multiselect>
     <biit-input-text [(ngModel)]="workshop.duration"
                      [type]="Type.NUMBER"
-                     placeholder="{{'form.duration' | transloco}}"
+                     placeholder="{{t('form.duration')}}"
     ></biit-input-text>
   </div>
   <div class="row">
     <biit-textarea [(ngModel)]="workshop.description"
-                   placeholder="{{'form.description' | transloco}}"
+                   placeholder="{{t('form.description')}}"
     ></biit-textarea>
   </div>
   <div class="row">
     <biit-input-text [(ngModel)]="workshop.cost"
                      [type]="Type.NUMBER"
-                     placeholder="{{'form.cost' | transloco}}"
+                     placeholder="{{t('form.cost')}}"
     ></biit-input-text>
   </div>
   <button biit-button (click)="onSave()">
