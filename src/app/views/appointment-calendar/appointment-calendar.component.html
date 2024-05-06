@@ -20,7 +20,7 @@
           >
             <a class="duration">{{workshop.duration | timeDuration}}</a>
             <a class="title">{{workshop.title}}</a>
-            <a class="speakers">{{workshop.speakers | userNameList: speakers}}</a>
+            <a class="speakers">{{workshop.speakers | userNameList: organizationUsers}}</a>
           </div>
         </div>
         <div class="bottom">
@@ -69,6 +69,7 @@
   >
     <appointment-form [event]="targetEvent"
                       [template]="targetEventTemplate"
+                      [organizationUsers]="organizationUsers"
                       (onSaved)="targetEvent = undefined; targetEventTemplate = undefined; loadEvents();"
                       style="width: 100%"
     ></appointment-form>
@@ -80,6 +81,7 @@
               title="{{targetWorkshop.id ? t('app.edit_workshop') : t('app.create_workshop')}}"
   >
     <workshop-form [workshop]="targetWorkshop"
+                   [organizationUsers]="organizationUsers"
                    (onSaved)="targetWorkshop = undefined;
                               onUpdateWorkshop($event);"
                    style="width: 100%"
@@ -153,7 +155,7 @@
               [style.top]="mousePosition?.y + 10 + 'px'"
               [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
               [event]="cardEvent"
-              [speakers]="speakers"
+              [organizationUsers]="organizationUsers"
               (onEdit)="targetEvent = cardEvent; cardEvent = undefined;"
               (onClosed)="cardEvent = undefined"
   ></event-card>

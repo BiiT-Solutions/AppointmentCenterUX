@@ -6,10 +6,12 @@
     ></biit-input-text>
   </div>
   <div class="row">
-    <biit-multiselect [(ngModel)]="workshop.speakers"
-                      [data]="[]"
-                      [label]="'name'"
-                      title="{{t('form.speakers')}}"
+    <biit-multiselect [ngModel]="workshop.speakers | multiselectInterface: speakers"
+                      (ngModelChange)="onMultiselectSelection($event)"
+                      [data]="speakers"
+                      [label]="'label'"
+                      [value]="'value'"
+                      [title]="t('form.speakers')"
     ></biit-multiselect>
     <biit-input-text [(ngModel)]="workshop.duration"
                      [type]="Type.NUMBER"

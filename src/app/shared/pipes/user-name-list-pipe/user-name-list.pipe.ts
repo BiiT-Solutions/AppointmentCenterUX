@@ -11,11 +11,11 @@ export class UserNameListPipe implements PipeTransform {
   constructor(private transloco: TranslocoService) {
   }
 
-  transform(ids: number[], speakers: User[]): string {
-    if (ids.length == 0) {
-      return `(${this.transloco.translate('empty')})`
+  transform(uuids: string[], speakers: User[]): string {
+    if (uuids.length == 0) {
+      return `(${this.transloco.translate('empty')})`;
     }
-    const selected = speakers.filter(u => ids.includes(u.id));
+    const selected = speakers.filter(u => uuids.includes(u.uuid));
     return selected.map(u => u.name + " " + u.lastname).join(", ");
   }
 }

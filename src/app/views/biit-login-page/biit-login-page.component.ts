@@ -7,7 +7,11 @@ import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoginRequest, User} from "authorization-services-lib";
 import {AuthService as AppointmentCenterAuthService, SessionService as AppointmentCenterSessionService} from 'appointment-center-structure-lib';
-import {AuthService as UserManagerAuthService, SessionService as UserManagerSessionService} from 'user-manager-structure-lib';
+import {
+  AuthService as UserManagerAuthService,
+  SessionService as UserManagerSessionService,
+  OrganizationService
+} from 'user-manager-structure-lib';
 import {combineLatest} from "rxjs";
 
 @Component({
@@ -30,6 +34,7 @@ export class BiitLoginPageComponent implements OnInit {
               private appointmentCenterSessionService: AppointmentCenterSessionService,
               private userManagerAuthService: UserManagerAuthService,
               private userManagerSessionService: UserManagerSessionService,
+              private organizationService: OrganizationService,
               private biitSnackbarService: BiitSnackbarService,
               private activateRoute: ActivatedRoute,
               private router: Router,
@@ -74,8 +79,20 @@ export class BiitLoginPageComponent implements OnInit {
         this.userManagerSessionService.setToken(userManagerToken, userManagerExpiration, login.remember, true);
         this.userManagerSessionService.setUser(user);
 
-        this.router.navigate([Constants.PATHS.APPOINTMENTS]);
-        this.waiting = false;
+        this.organizationService.getAllByUser(user.id).subscribe(orgs => {
+          if (orgs[0] == undefined) {
+            this.waiting = false;
+            this.translocoService.selectTranslate('access_denied_permissions').subscribe(msg => {
+              this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+            });
+            return;
+          }
+
+          sessionStorage.setItem('organization', orgs[0].id);
+
+          this.router.navigate([Constants.PATHS.APPOINTMENTS]);
+          this.waiting = false;
+        })
       },
       error: (response: HttpResponse<void>) => {
         const error: string = response.status.toString();

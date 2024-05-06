@@ -13,25 +13,27 @@ import {FormsModule} from "@angular/forms";
 import {TranslocoModule} from "@ngneat/transloco";
 import {BiitButtonModule} from "biit-ui/button";
 import {MapGetPipeModule} from "biit-ui/utils";
+import {MultiselectInterfacePipeModule} from "../../pipes/multiselect-interface-pipe/multiselect-interface-pipe.module";
 
 @NgModule({
   declarations: [
     WorkshopFormComponent
   ],
-  imports: [
-    CommonModule,
-    BiitTabGroupModule,
-    BiitInputTextModule,
-    FormsModule,
-    BiitTextareaModule,
-    TranslocoModule,
-    BiitDatePickerModule,
-    BiitToggleModule,
-    BiitMultiselectModule,
-    BiitDropdownModule,
-    BiitButtonModule,
-    MapGetPipeModule
-  ],
+    imports: [
+        CommonModule,
+        BiitTabGroupModule,
+        BiitInputTextModule,
+        FormsModule,
+        BiitTextareaModule,
+        TranslocoModule,
+        BiitDatePickerModule,
+        BiitToggleModule,
+        BiitMultiselectModule,
+        BiitDropdownModule,
+        BiitButtonModule,
+        MapGetPipeModule,
+        MultiselectInterfacePipeModule
+    ],
   exports: [
     WorkshopFormComponent
   ]

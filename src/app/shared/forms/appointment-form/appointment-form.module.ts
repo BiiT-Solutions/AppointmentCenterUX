@@ -13,7 +13,9 @@ import {FormsModule} from "@angular/forms";
 import {BiitButtonModule} from "biit-ui/button";
 import {MapGetPipeModule} from "biit-ui/utils";
 import {TranslocoRootModule} from "biit-ui/i18n";
-import {DropdownTranslatorPipeModule} from "../../pipes/dropdown-translator-pipe/dropdown-translator-pipe.module";
+import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
+import {UserUuidListPipeModule} from "../../pipes/user-uuid-list-pipe/user-uuid-list-pipe.module";
+import {MultiselectInterfacePipeModule} from "../../pipes/multiselect-interface-pipe/multiselect-interface-pipe.module";
 
 @NgModule({
   declarations: [
@@ -32,7 +34,9 @@ import {DropdownTranslatorPipeModule} from "../../pipes/dropdown-translator-pipe
     BiitDropdownModule,
     BiitButtonModule,
     MapGetPipeModule,
-    DropdownTranslatorPipeModule
+    DropdownInterfacePipeModule,
+    UserUuidListPipeModule,
+    MultiselectInterfacePipeModule
   ],
   exports: [
     AppointmentFormComponent

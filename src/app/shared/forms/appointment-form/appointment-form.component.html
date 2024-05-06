@@ -21,7 +21,7 @@
       ></biit-datepicker>
     </div>
     <div class="row">
-      <biit-dropdown [ngModel]="appointment.status | dropdownTranslator: translatedStatus"
+      <biit-dropdown [ngModel]="appointment.status | dropdownInterface: translatedStatus"
                      (ngModelChange)="appointment.status = $event.value"
                      [data]="translatedStatus"
                      [label]="'label'"
@@ -31,15 +31,20 @@
       <biit-toggle [(ngModel)]="appointment.allDay">{{ t('form.all_day') }}</biit-toggle>
     </div>
     <div class="row">
-      <biit-multiselect [(ngModel)]="appointment.speakers"
-                        [data]="[]"
-                        [label]="'name'"
+      <biit-multiselect [ngModel]="appointment.speakers | multiselectInterface: speakers"
+                        (ngModelChange)="onMultiselectSelection($event, 'speakers')"
+                        [data]="speakers"
+                        [label]="'label'"
+                        [value]="'value'"
                         [title]="t('form.speakers')"
       ></biit-multiselect>
-      <biit-multiselect [(ngModel)]="appointment.attendees"
-                        [data]="[]"
+      <biit-multiselect [ngModel]="appointment.attendees | multiselectInterface: attendees"
+                        (ngModelChange)="onMultiselectSelection($event, 'attendees')"
+                        [data]="attendees"
                         [label]="'name'"
+                        [value]="'value'"
                         [title]="t('form.attendees')"
+                        [disabled]="!appointment.id"
       ></biit-multiselect>
     </div>
     <div class="row">

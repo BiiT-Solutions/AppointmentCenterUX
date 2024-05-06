@@ -31,7 +31,7 @@ export class AppointmentCalendarComponent {
   protected events: CalendarEvent[] = [];
   protected workshops: AppointmentTemplate[] = [];
   protected filteredWorkshops: AppointmentTemplate[] = [];
-  protected speakers: User[] = [];
+  protected organizationUsers: User[] = [];
   protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
   protected search: string = "";
@@ -87,10 +87,7 @@ export class AppointmentCalendarComponent {
   }
 
   private loadSpeakers() {
-    const eventSpeakers = this.events.map(e => e.meta.speakers).flat();
-    const workshopSpeakers = this.workshops.map(w => w.speakers).flat();
-    const allSpeakers = Array.from(new Set(eventSpeakers.concat(workshopSpeakers)));
-    this.userService.getByIds(allSpeakers).subscribe(users => this.speakers = users);
+    this.userService.getOrganizationUsers(sessionStorage.getItem('organization')).subscribe(users => this.organizationUsers = users);
   }
 
   private notifyLoadError(response: any) {

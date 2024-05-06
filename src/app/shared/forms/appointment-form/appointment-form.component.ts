@@ -9,6 +9,8 @@ import {HttpErrorResponse} from "@angular/common/http";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 import {combineLatest} from "rxjs";
+import {UserService} from "user-manager-structure-lib";
+import {User} from "authorization-services-lib";
 
 @Component({
   selector: 'appointment-form',
@@ -19,16 +21,20 @@ import {combineLatest} from "rxjs";
 export class AppointmentFormComponent implements OnInit {
   @Input() event: CalendarEvent;
   @Input() template: AppointmentTemplate;
+  @Input() organizationUsers: User[];
   @Output() onSaved: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
   protected appointment: Appointment = new Appointment();
   protected errors: Map<AppointmentFormValidationFields, string> = new Map<AppointmentFormValidationFields, string>();
   protected status = Object.keys(Status);
   protected translatedStatus: {value:string, label:string}[] = [];
+  protected speakers: {value:string, label:string}[] = [];
+  protected attendees: {value:string, label:string}[] = [];
 
   protected readonly Type = Type;
   protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
 
   constructor(private appointmentService: AppointmentService,
+              private userService: UserService,
               private snackbarService: BiitSnackbarService,
               private transloco: TranslocoService) {
   }
@@ -36,7 +42,17 @@ export class AppointmentFormComponent implements OnInit {
   ngOnInit() {
     if (this.event.id) {
       this.appointmentService.getById(+this.event.id)
-        .subscribe(appointment => this.appointment = appointment);
+        .subscribe(appointment => this.appointment = appointment)
+        .add(() => {
+          if(this.appointment.attendees.length) {
+            this.userService.getByUuids(this.appointment.attendees)
+              .subscribe(users =>
+                this.attendees = users.map(user => {
+                  return {value:user.uuid, label:`${user.name} ${user.lastname}`}
+                })
+              )
+          }
+        });
     } else if (this.template) {
       this.appointment.title = this.template.title;
       this.appointment.description = this.template.description;
@@ -50,12 +66,15 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.cost = this.template.cost;
     } else {
       this.appointment.startTime = this.event.start;
+      this.appointment.speakers = [];
     }
 
     const translocoPromises = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
     combineLatest(translocoPromises).subscribe((translations)=> {
       translations.forEach((label, index) => this.translatedStatus.push({value: this.status[index], label: label}));
     });
+
+    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
   }
 
   onSave() {
@@ -101,5 +120,13 @@ export class AppointmentFormComponent implements OnInit {
       this.errors.set(AppointmentFormValidationFields.END_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.END_DATE_MANDATORY.toString()}`));
     }
     return verdict;
+  }
+
+  protected onMultiselectSelection(values: {value:string, label:string}[], target: string): void {
+    (this.appointment as any)[target] = values.map(i => i.value);
+  }
+
+  protected log(event: any) {
+    console.log("DEVELOPMENT LOG: ", event);
   }
 }

@@ -9,6 +9,8 @@ import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 import {WorkshopFormValidationFields} from "../../validations/forms/workshop-form-validation-fields";
 import {Type} from "biit-ui/inputs";
+import {UserService} from "user-manager-structure-lib";
+import {User} from "authorization-services-lib";
 
 @Component({
   selector: 'workshop-form',
@@ -18,17 +20,23 @@ import {Type} from "biit-ui/inputs";
 })
 export class WorkshopFormComponent implements OnInit {
   @Input() workshop: AppointmentTemplate;
+  @Input() organizationUsers: User[];
   @Output() onSaved: EventEmitter<AppointmentTemplate> = new EventEmitter<AppointmentTemplate>();
+  protected speakers: {value:string, label:string}[] = [];
+
   protected errors: Map<WorkshopFormValidationFields, string> = new Map<WorkshopFormValidationFields, string>();
   protected readonly WorkshopFormValidationFields = WorkshopFormValidationFields;
 
+  protected readonly Type = Type;
+
   constructor(private appointmentTemplateService: AppointmentTemplateService,
+              private userService: UserService,
               private snackbarService: BiitSnackbarService,
               private transloco: TranslocoService) {
   }
 
   ngOnInit() {
-
+    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
   }
 
   onSave() {
@@ -68,5 +76,7 @@ export class WorkshopFormComponent implements OnInit {
     return verdict;
   }
 
-  protected readonly Type = Type;
+  protected onMultiselectSelection(values: {value:string, label:string}[]): void {
+    this.workshop.speakers = values.map(i => i.value);
+  }
 }

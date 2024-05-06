@@ -14,7 +14,7 @@ import {User} from "authorization-services-lib";
 })
 export class EventCardComponent {
   @Input() event: CalendarEvent;
-  @Input() speakers: User[];
+  @Input() organizationUsers: User[];
   @Output() onEdit: EventEmitter<CalendarEvent> = new EventEmitter<CalendarEvent>();
   @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
 
