@@ -36,7 +36,24 @@ export class WorkshopFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+    const currentOrganization = sessionStorage.getItem('organization');
+
+    if (!this.workshop.id) {
+      this.workshop.organizationId = currentOrganization;
+    }
+
+    if (this.workshop.organizationId == currentOrganization) {
+      this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+    } else {
+      this.userService.getOrganizationUsers(this.workshop.organizationId).subscribe({
+        next: (users: User[]): void => {
+          this.speakers = users.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+        },
+        error: () => {
+          this.snackbarService.showNotification(this.transloco.translate('form.server_failed'), NotificationType.WARNING, null, 5);
+        }
+      })
+    }
   }
 
   onSave() {

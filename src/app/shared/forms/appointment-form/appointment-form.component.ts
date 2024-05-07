@@ -44,6 +44,8 @@ export class AppointmentFormComponent implements OnInit {
       this.appointmentService.getById(+this.event.id)
         .subscribe(appointment => this.appointment = appointment)
         .add(() => {
+          this.loadOrganizationUsers();
+
           if(this.appointment.attendees.length) {
             this.userService.getByUuids(this.appointment.attendees)
               .subscribe(users =>
@@ -64,9 +66,12 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.examinationType = this.template.examinationType;
       this.appointment.speakers = this.template.speakers;
       this.appointment.cost = this.template.cost;
+
+      this.loadOrganizationUsers();
     } else {
       this.appointment.startTime = this.event.start;
-      this.appointment.speakers = [];
+
+      this.loadOrganizationUsers();
     }
 
     const translocoPromises = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
@@ -75,6 +80,27 @@ export class AppointmentFormComponent implements OnInit {
     });
 
     this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+  }
+
+  private loadOrganizationUsers() {
+    const currentOrganization = sessionStorage.getItem('organization');
+
+    if (!this.appointment.id) {
+      this.appointment.organizationId = currentOrganization;
+    }
+
+    if (this.appointment.organizationId == currentOrganization) {
+      this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+    } else {
+      this.userService.getOrganizationUsers(this.appointment.organizationId).subscribe({
+        next: (users: User[]): void => {
+          this.speakers = users.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+        },
+        error: () => {
+          this.snackbarService.showNotification(this.transloco.translate('form.server_failed'), NotificationType.WARNING, null, 5);
+        }
+      })
+    }
   }
 
   onSave() {
