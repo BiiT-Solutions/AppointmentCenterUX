@@ -55,6 +55,7 @@
     <div class="row">
       <biit-input-text [(ngModel)]="appointment.cost"
                        [type]="Type.NUMBER"
+                       [min]="0"
                        [placeholder]="t('form.cost')"
       ></biit-input-text>
     </div>
