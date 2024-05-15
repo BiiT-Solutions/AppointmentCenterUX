@@ -22,5 +22,13 @@
   "validation_failed": "La validación falló. Por favor, compruebe si algún campo está vacío o no es válido.",
   "TITLE_MANDATORY": "El título es obligatorio",
   "START_DATE_MANDATORY": "La fecha de inicio es obligatoria",
-  "END_DATE_MANDATORY": "La fecha de final es obligatoria"
+  "END_DATE_MANDATORY": "La fecha de final es obligatoria",
+  "RED": "Rojo",
+  "GREEN": "Verde",
+  "YELLOW": "Amarillo",
+  "BLUE": "Azul",
+  "PURPLE": "Morado",
+  "color_theme": "Tema de color",
+  "subscribe": "Suscribirse",
+  "unsubscribe": "Desuscribirse"
 }

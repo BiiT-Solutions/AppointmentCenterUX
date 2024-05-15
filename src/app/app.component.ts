@@ -7,6 +7,8 @@ import {completeIconSet} from "biit-icons-collection";
 import {BiitIconService} from "biit-ui/icon";
 import {AppointmentCenterStructureRootService, SessionService} from "appointment-center-structure-lib";
 import {UserManagerRootService} from "user-manager-structure-lib";
+import {PermissionService} from "./services/permission.service";
+import {User} from "authorization-services-lib";
 
 @Component({
   selector: 'app-root',
@@ -27,6 +29,7 @@ export class AppComponent {
               biitSnackbarService: BiitSnackbarService,
               biitIconService: BiitIconService,
               protected sessionService: SessionService,
+              private permissionService: PermissionService,
               private router: Router,
               private translocoService: TranslocoService) {
     this.setLanguage();
@@ -34,6 +37,15 @@ export class AppComponent {
     userManagerRootService.serverUrl = new URL(`${Environment.ROOT_URL}${Environment.USER_MANAGER_PATH}`);
     biitSnackbarService.setPosition(BiitSnackbarVerticalPosition.TOP, BiitSnackbarHorizontalPosition.CENTER);
     biitIconService.registerIcons(completeIconSet);
+    this.setPermissions();
+  }
+
+  private setPermissions(): void {
+    const user: User = this.sessionService.getUser();
+    if (!user) {
+      return;
+    }
+    this.permissionService.setRole(user.applicationRoles);
   }
 
   private setLanguage(): void {

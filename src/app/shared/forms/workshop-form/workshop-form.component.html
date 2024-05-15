@@ -29,6 +29,13 @@
                      [min]="0"
                      placeholder="{{t('form.cost')}}"
     ></biit-input-text>
+    <biit-dropdown [ngModel]="workshop.colorTheme | dropdownInterface: translatedColors"
+                   (ngModelChange)="workshop.colorTheme = $event.value"
+                   [data]="translatedColors"
+                   [label]="'label'"
+                   [value]="'value'"
+                   [title]="t('form.color_theme')"
+    ></biit-dropdown>
   </div>
   <button biit-button (click)="onSave()">
     {{'form.save' | transloco}}

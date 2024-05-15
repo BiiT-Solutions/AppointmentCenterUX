@@ -46,6 +46,7 @@ $default-color: #262626;
         }
 
         .bottom {
+          display: flex;
           position: absolute;
           top: 1em;
           right: 1em;
@@ -104,10 +105,12 @@ $default-color: #262626;
       }
 
       .bottom {
+        display: flex;
         flex-shrink: 0;
 
         biit-input-text {
           display: block;
+          width: 100%;
         }
       }
     }
@@ -160,20 +163,21 @@ $default-color: #262626;
   min-width: 15em;
   display: flex;
   flex-direction: column;
-  border-left: 0.2em solid #F20D5E;
-  background: #FDD6E4;
-  padding: 0.225em;
+  border-left: 0.2em solid var(--event-primary);
+  background: var(--event-secondary);
+  padding: 0.25em;
+  cursor: pointer;
 
   @media (max-width: 1279px) {
     flex-basis: 24.86%;
   }
 
   &:hover {
-    background: #F3C0D4;
+    background: var(--event-hover);
   }
 
   a {
-    color: #A1093F;
+    color: var(--event-tertiary);
 
     &.duration {
       font-size: 0.56em;
@@ -202,6 +206,18 @@ $default-color: #262626;
   &.drag-active {
     z-index: 3;
   }
+
+  &.selected {
+    background: var(--event-primary);
+
+    a {
+      color: white;
+    }
+  }
+}
+
+::ng-deep .card-unsubscribed .cal-event {
+  box-shadow: inset 0 0 0 1px var(--event-primary);
 }
 
 .event-card {

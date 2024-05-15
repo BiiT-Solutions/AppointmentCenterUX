@@ -14,6 +14,7 @@ import {TranslocoModule} from "@ngneat/transloco";
 import {BiitButtonModule} from "biit-ui/button";
 import {MapGetPipeModule} from "biit-ui/utils";
 import {MultiselectInterfacePipeModule} from "../../pipes/multiselect-interface-pipe/multiselect-interface-pipe.module";
+import {DropdownInterfacePipeModule} from "../../pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
 
 @NgModule({
   declarations: [
@@ -32,7 +33,8 @@ import {MultiselectInterfacePipeModule} from "../../pipes/multiselect-interface-
         BiitDropdownModule,
         BiitButtonModule,
         MapGetPipeModule,
-        MultiselectInterfacePipeModule
+        MultiselectInterfacePipeModule,
+        DropdownInterfacePipeModule
     ],
   exports: [
     WorkshopFormComponent

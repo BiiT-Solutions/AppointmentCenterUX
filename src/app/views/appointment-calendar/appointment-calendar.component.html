@@ -1,16 +1,26 @@
 <ng-container *transloco="let t">
+  <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
   <div class="canvas">
     <div class="sidebar">
       <div class="workshops">
         <div class="top">
-          <a>{{t('app.workshops')}}</a>
-          <button biit-icon icon="plus" (click)="onAddWorkshop()"></button>
+          <a *ngIf="[Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission">{{t('app.workshops')}}</a>
+          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.ALL_WORKSHOPS">{{t('app.all_workshops')}}</a>
+          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.MY_WORKSHOPS">{{t('app.my_workshops')}}</a>
+          <button biit-icon
+                  icon="plus"
+                  *ngIf="Permission.WORKSHOP.CREATE | hasPermission"
+                  (click)="onAddWorkshop()"
+          ></button>
         </div>
         <div class="middle"
              mwlDroppable
              dragOverClass="drag-over">
           <div *ngFor="let workshop of filteredWorkshops"
                class="workshop"
+               [class.selected]="selectedWorkshops.has(workshop)"
+               [ngStyle]="eventStyles(workshop.colorTheme | colorTheme)"
+               (click)="workshopSelectionHandler(workshop);"
                mwlDraggable
                [dropData]="{event: workshop}"
                [touchStartLongPress]="{ delay: 300, delta: 30 }"
@@ -31,6 +41,14 @@
                            icon="search"
                            [placeholder]="t('app.search')"
           ></biit-input-text>
+          <button biit-icon
+                  [icon]="workshopMode == WorkshopMode.ALL_WORKSHOPS ? 'user_single' : 'user_group'"
+                  *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
+                  (click)="workshopMode == WorkshopMode.ALL_WORKSHOPS ?
+                           workshopMode = WorkshopMode.MY_WORKSHOPS :
+                           workshopMode = WorkshopMode.ALL_WORKSHOPS;
+                           loadWorkshops();"
+          ></button>
         </div>
       </div>
       <biit-datepicker calendar-mode
@@ -45,7 +63,11 @@
             {{viewDate | translocoDate: {month: 'long'} }}
             {{viewDate | translocoDate: {year: 'numeric'} }}
           </a>
-          <button biit-icon icon="plus" (click)="onAddAppointment()"></button>
+          <button biit-icon
+                  icon="plus"
+                  *ngIf="Permission.APPOINTMENT.CREATE | hasPermission"
+                  (click)="onAddAppointment()"
+          ></button>
         </div>
         <div class="right">
 
@@ -63,7 +85,7 @@
   </div>
 
   <biit-popup sixty-view closable
-              *ngIf="targetEvent"
+              *ngIf="targetEvent && ([Permission.APPOINTMENT.CREATE, Permission.APPOINTMENT.EDIT] | hasPermission)"
               (onClosed)="targetEvent = undefined; targetEventTemplate = undefined;"
               title="{{targetEvent.id ? t('app.edit_appointment') : t('app.create_appointment')}}"
   >
@@ -76,7 +98,7 @@
   </biit-popup>
 
   <biit-popup sixty-view closable
-              *ngIf="targetWorkshop"
+              *ngIf="targetWorkshop && ([Permission.WORKSHOP.CREATE, Permission.WORKSHOP.EDIT] | hasPermission)"
               (onClosed)="targetWorkshop = undefined"
               title="{{targetWorkshop.id ? t('app.edit_workshop') : t('app.create_workshop')}}"
   >
@@ -89,7 +111,7 @@
   </biit-popup>
 
   <biit-popup closable no-header
-              *ngIf="deleteEvent"
+              *ngIf="deleteEvent && (Permission.APPOINTMENT.DELETE | hasPermission)"
               (onClosed)="deleteEvent = undefined"
   >
     <div style="width: 100%; display: flex; align-items: center; flex-direction: column; gap: 2em;">
@@ -108,7 +130,7 @@
   </biit-popup>
 
   <biit-popup closable no-header
-              *ngIf="deleteWorkshop"
+              *ngIf="deleteWorkshop && (Permission.WORKSHOP.DELETE | hasPermission)"
               (onClosed)="deleteWorkshop = undefined"
   >
     <div style="width: 100%; display: flex; align-items: center; flex-direction: column; gap: 2em;">
@@ -127,25 +149,35 @@
   </biit-popup>
 
   <context-menu #gridMenu>
-    <ng-template contextMenuItem (execute)="onAddAppointment($event.value)">
+    <ng-template contextMenuItem
+                 *ngIf="Permission.APPOINTMENT.CREATE | hasPermission"
+                 (execute)="onAddAppointment($event.value)">
       {{ t('app.create_appointment') }}
     </ng-template>
   </context-menu>
 
   <context-menu #eventMenu>
-    <ng-template contextMenuItem (execute)="targetEvent = $event.value">
+    <ng-template contextMenuItem
+                 *ngIf="Permission.APPOINTMENT.EDIT | hasPermission"
+                 (execute)="targetEvent = $event.value">
       {{ t('app.edit_appointment') }}
     </ng-template>
-    <ng-template contextMenuItem (execute)="deleteEvent = $event.value">
+    <ng-template contextMenuItem
+                 *ngIf="Permission.APPOINTMENT.DELETE | hasPermission"
+                 (execute)="deleteEvent = $event.value">
       {{ t('app.delete_appointment') }}
     </ng-template>
   </context-menu>
 
   <context-menu #workshopMenu>
-    <ng-template contextMenuItem (execute)="targetWorkshop = $event.value">
+    <ng-template contextMenuItem
+                 *ngIf="Permission.WORKSHOP.EDIT | hasPermission"
+                 (execute)="targetWorkshop = $event.value">
       {{ t('app.edit_workshop') }}
     </ng-template>
-    <ng-template contextMenuItem (execute)="deleteWorkshop = $event.value">
+    <ng-template contextMenuItem
+                 *ngIf="Permission.WORKSHOP.DELETE"
+                 (execute)="deleteWorkshop = $event.value">
       {{ t('app.delete_workshop') }}
     </ng-template>
   </context-menu>
@@ -156,6 +188,9 @@
               [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
               [event]="cardEvent"
               [organizationUsers]="organizationUsers"
+              [subscribed]="sessionService.getUser().uuid | includesString: cardEvent.meta.attendees"
+              (onSubscribe)="onSubscribeAppointment(+cardEvent.id); cardEvent = undefined;"
+              (onUnsubscribe)="onUnsubscribeAppointment(+cardEvent.id); cardEvent = undefined;"
               (onEdit)="targetEvent = cardEvent; cardEvent = undefined;"
               (onClosed)="cardEvent = undefined"
   ></event-card>

@@ -1,8 +1,16 @@
 import {Appointment} from "appointment-center-structure-lib";
-import {CalendarEvent} from "biit-ui/calendar";
+import {CalendarEvent, EventColor} from "biit-ui/calendar";
+import {NgModule} from "@angular/core";
+import {ColorThemePipeModule} from "../shared/pipes/color-theme-event/color-theme-pipe.module";
 
+@NgModule({
+  imports: [
+    ColorThemePipeModule
+  ]
+})
 export class CalendarEventConversor {
   public static convertToCalendarEvent(appointment: Appointment): CalendarEvent {
-    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, undefined, undefined, true, true, appointment);
+    // @ts-ignore
+    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, EventColor[appointment.colorTheme], undefined, true, true, appointment);
   }
 }

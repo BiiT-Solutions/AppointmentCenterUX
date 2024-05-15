@@ -1,18 +1,22 @@
 import {Component} from '@angular/core';
-import {CalendarEvent, CalendarMode, castTo} from "biit-ui/calendar";
+import {CalendarEvent, CalendarMode, castTo, EventColor} from "biit-ui/calendar";
 import {
   Appointment,
-  AppointmentTemplate,
   AppointmentService,
-  AppointmentTemplateService
+  AppointmentTemplate,
+  AppointmentTemplateService,
+  SessionService
 } from "appointment-center-structure-lib";
 import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
-import {BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
 import {User} from "authorization-services-lib";
 import {UserService} from "user-manager-structure-lib";
-import {combineLatest} from "rxjs";
+import {Observable} from "rxjs";
+import {PermissionService} from "../../services/permission.service";
+import {Permission} from "../../config/rbac/permission";
+import {WorkshopMode} from "./enums/workshop-mode";
 
 @Component({
   selector: 'appointment-calendar',
@@ -31,8 +35,8 @@ export class AppointmentCalendarComponent {
   protected events: CalendarEvent[] = [];
   protected workshops: AppointmentTemplate[] = [];
   protected filteredWorkshops: AppointmentTemplate[] = [];
+  protected selectedWorkshops: Set<AppointmentTemplate> = new Set<AppointmentTemplate>();
   protected organizationUsers: User[] = [];
-  protected readonly CalendarMode = CalendarMode;
   protected waiting: boolean = false;
   protected search: string = "";
   protected mousePosition: MouseEvent;
@@ -44,39 +48,64 @@ export class AppointmentCalendarComponent {
   protected targetWorkshop: AppointmentTemplate;
   protected deleteWorkshop: AppointmentTemplate;
 
+  protected workshopMode: WorkshopMode = WorkshopMode.ALL_WORKSHOPS;
+  protected readonly CalendarMode = CalendarMode;
+  protected readonly WorkshopMode = WorkshopMode;
+  protected readonly Permission = Permission;
+
   $mouseEvent = castTo<MouseEvent>();
 
   constructor(private appointmentService: AppointmentService,
               private userService: UserService,
               private templateService: AppointmentTemplateService,
+              protected sessionService: SessionService,
+              protected permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
               private translocoService: TranslocoService) {
-    this.initLoad();
-  }
-
-  protected initLoad() {
-    combineLatest([
-      this.appointmentService.getAll(),
-      this.templateService.getAll()
-    ]).subscribe({
-      next: ([appointments, templates]) => {
-        this.events = appointments.map(CalendarEventConversor.convertToCalendarEvent);
-        this.workshops = templates;
-        this.filteredWorkshops = templates;
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
-    }).add(() => {
-      this.loadSpeakers();
-      this.waiting = false;
-    });
+    this.loadEvents();
+    this.loadWorkshops();
+    this.loadSpeakers();
   }
 
   protected loadEvents(): void {
+    let promise;
+
+    if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
+      promise = this.selectedWorkshops.size ?
+        this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id))
+        : this.appointmentService.getAll();
+    } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+      promise = this.selectedWorkshops.size ?
+        this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id))
+        : this.appointmentService.getAll();
+    } else {
+      promise = this.selectedWorkshops.size ?
+        this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id))
+        : this.appointmentService.getByAttendee(this.sessionService.getUser().uuid);
+    }
+
     this.waiting = true;
-    this.appointmentService.getAll().subscribe({
+    promise.subscribe({
       next: (appointments: Appointment[]) => {
-        this.events = appointments.map(CalendarEventConversor.convertToCalendarEvent);
+        if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+          appointments.map(a => {
+            if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
+              if (a.colorTheme) {
+                a.colorTheme = "EMPTY_" + a.colorTheme;
+              } else {
+                a.colorTheme = "EMPTY_RED";
+              }
+            }
+          });
+        }
+        this.events = appointments.map(e => {
+          const event = CalendarEventConversor.convertToCalendarEvent(e);
+          event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
+            !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
+          return event;
+        });
       },
       error: (response: any) => {
         this.notifyLoadError(response);
@@ -87,7 +116,35 @@ export class AppointmentCalendarComponent {
   }
 
   private loadSpeakers() {
-    this.userService.getOrganizationUsers(sessionStorage.getItem('organization')).subscribe(users => this.organizationUsers = users);
+    this.userService.getByUserGroupName('speakers').subscribe(users => this.organizationUsers = users);
+  }
+
+  protected loadWorkshops() {
+    let call: Observable<AppointmentTemplate[]>;
+
+    if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) ||
+        this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+      call = this.templateService.getAll();
+    } else {
+      if (this.workshopMode == WorkshopMode.ALL_WORKSHOPS) {
+        call = this.templateService.getAllViewer();
+      } else {
+        call = this.templateService.getAllByAttendee(this.sessionService.getUser().uuid);
+      }
+    }
+
+    this.waiting = true;
+    call.subscribe({
+      next: (templates: AppointmentTemplate[]) => {
+        this.workshops = templates;
+        this.filteredWorkshops = templates;
+        this.search = "";
+      }, error: (response: any) => {
+        this.notifyLoadError(response);
+      }
+    }).add(() => {
+      this.waiting = false;
+    });
   }
 
   private notifyLoadError(response: any) {
@@ -101,17 +158,38 @@ export class AppointmentCalendarComponent {
   protected onEventChange(event: CalendarEventTimesChangedEvent) {
     switch (event.type) {
       case CalendarEventTimesChangedEventType.Drag:
-        if (event.newStart.toString() !== event.event.start.toString()) {
-          this.onUpdateAppointment(event);
+        if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT) &&
+            this.permissionService.hasPermission(Permission.CALENDAR.DRAG)) {
+          if (event.newStart.toString() !== event.event.start.toString()) {
+            this.onUpdateAppointment(event);
+          }
+        } else {
+          this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+          });
         }
         break;
       case CalendarEventTimesChangedEventType.Drop:
-        this.targetEventTemplate = (event.event as any) as AppointmentTemplate;
-        this.onAddAppointment(event.newStart);
+        if (this.permissionService.hasPermission(Permission.APPOINTMENT.CREATE) &&
+            this.permissionService.hasPermission(Permission.CALENDAR.DROP)) {
+          this.targetEventTemplate = (event.event as any) as AppointmentTemplate;
+          this.onAddAppointment(event.newStart);
+        } else {
+          this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+          });
+        }
         break;
       case CalendarEventTimesChangedEventType.Resize:
-        if (event.newStart.toString() !== event.event.start.toString() || event.newEnd.toString() !== event.event.end.toString()) {
-          this.onUpdateAppointment(event);
+        if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT) &&
+            this.permissionService.hasPermission(Permission.CALENDAR.RESIZE)) {
+          if (event.newStart.toString() !== event.event.start.toString() || event.newEnd.toString() !== event.event.end.toString()) {
+            this.onUpdateAppointment(event);
+          }
+        } else {
+          this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+          });
         }
         break;
       default:
@@ -120,40 +198,84 @@ export class AppointmentCalendarComponent {
   }
 
   protected onAddAppointment(startDate?: Date) {
-    this.targetEvent = new CalendarEvent(undefined, undefined, startDate, undefined);
+    if (this.permissionService.hasPermission(Permission.APPOINTMENT.CREATE)) {
+      this.targetEvent = new CalendarEvent(undefined, undefined, startDate, undefined);
+    } else {
+      this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+        this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+      });
+    }
   }
 
   private onUpdateAppointment(event: CalendarEventTimesChangedEvent<any>) {
-    this.appointmentService.getById(+event.event.id).subscribe(appointment => {
-      appointment.startTime = event.newStart;
-      appointment.endTime = event.newEnd;
-      this.appointmentService.update(appointment).subscribe(newAppointment => {
-        this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
-        this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
-        this.events = [...this.events];
+    if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT)) {
+      this.appointmentService.getById(+event.event.id).subscribe(appointment => {
+        appointment.startTime = event.newStart;
+        appointment.endTime = event.newEnd;
+        this.appointmentService.update(appointment).subscribe(newAppointment => {
+          this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
+          this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
+          this.events = [...this.events];
+        });
       });
-    });
+    } else {
+      this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+        this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+      });
+    }
   }
 
   protected onDeleteAppointment() {
-    this.appointmentService.deleteById(+this.deleteEvent.id).subscribe({
+    if (this.permissionService.hasPermission(Permission.APPOINTMENT.DELETE)) {
+      this.appointmentService.deleteById(+this.deleteEvent.id).subscribe({
+        next: () => {
+          // Transloco does not load translation files. We need to load it manually;
+          this.translocoService.selectTranslate('delete_appointment_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+            this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
+          });
+          this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
+          this.deleteEvent = undefined;
+        }, error: (response: any) => {
+          const error: string = response.status.toString();
+          // Transloco does not load translation files. We need to load it manually;
+          this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+          });
+          this.deleteEvent = undefined;
+        }
+      }).add(() => {
+        this.deleteEvent = undefined;
+      });
+    } else {
+      this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
+        this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
+      });
+    }
+  }
+
+  protected onSubscribeAppointment(appointmentId: number) {
+    this.waiting = true;
+    this.appointmentService.subscribeCurrentUser(appointmentId).subscribe({
       next: () => {
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate('delete_appointment_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
-        });
-        this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
-        this.deleteEvent = undefined;
+        this.loadEvents();
       }, error: (response: any) => {
-        const error: string = response.status.toString();
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-        this.deleteEvent = undefined;
+        this.notifyLoadError(response);
       }
     }).add(() => {
-      this.deleteEvent = undefined;
+      this.waiting = false;
+    });
+  }
+
+  protected onUnsubscribeAppointment(appointmentId: number) {
+    this.waiting = true;
+    this.appointmentService.unsubscribeCurrentUser(appointmentId).subscribe({
+      next: () => {
+        this.loadEvents();
+      }, error: (response: any) => {
+        this.notifyLoadError(response);
+      }
+    }).add(() => {
+      this.waiting = false;
     });
   }
 
@@ -203,7 +325,29 @@ export class AppointmentCalendarComponent {
     (event.target as HTMLInputElement).value = value;
   }
 
+  protected workshopSelectionHandler(workshop: AppointmentTemplate) {
+    if (!this.selectedWorkshops.has(workshop)) {
+      this.selectedWorkshops.add(workshop);
+    } else {
+      this.selectedWorkshops.delete(workshop);
+    }
+
+    this.loadEvents();
+  }
+
+  eventStyles(color: EventColor): Record<string, string> {
+    return {
+      '--event-primary': color.primary,
+      '--event-secondary': color.secondary,
+      '--event-hover': color.hover,
+      '--event-tertiary': color.tertiary
+    }
+  }
+
   log(event: any) {
     console.log("DEVELOPMENT LOG: ", event);
   }
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected readonly sessionStorage = sessionStorage;
 }

@@ -1,4 +1,5 @@
 {
   "empty" : "empty",
-  "access_denied_permissions": "You don't have permissions to access this resource. If you think this is a mistake, please contact with support team."
+  "access_denied_permissions": "You don't have permissions to access this resource. If you think this is a mistake, please contact with support team.",
+  "action_denied_permissions": "You don't have permissions to perform this action. If you think this is a mistake, please contact with support team."
 }

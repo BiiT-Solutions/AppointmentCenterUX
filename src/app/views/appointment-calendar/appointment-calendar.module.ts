@@ -16,6 +16,12 @@ import {DragAndDropModule} from "angular-draggable-droppable";
 import {WorkshopFormModule} from "../../shared/forms/workshop-form/workshop-form.module";
 import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
 import {EventCardModule} from "../../shared/components/event-card/event-card.module";
+import {HasPermissionPipeModule} from "../../shared/pipes/has-permission-pipe/has-permission-pipe.module";
+import {ColorThemePipeModule} from "../../shared/pipes/color-theme-event/color-theme-pipe.module";
+import {BiitProgressBarModule} from "biit-ui/info";
+import {
+  ArrayIncludesStringPipeModule
+} from "../../shared/pipes/array-includes-string-pipe/array-includes-string-pipe.module";
 
 
 
@@ -41,7 +47,11 @@ import {EventCardModule} from "../../shared/components/event-card/event-card.mod
     WorkshopFormModule,
     ContextMenuModule,
     BiitButtonModule,
-    EventCardModule
+    EventCardModule,
+    HasPermissionPipeModule,
+    ColorThemePipeModule,
+    BiitProgressBarModule,
+    ArrayIncludesStringPipeModule
   ]
 })
 export class AppointmentCalendarModule { }

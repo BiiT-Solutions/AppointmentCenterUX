@@ -1,0 +1,4 @@
+export enum WorkshopMode {
+  ALL_WORKSHOPS = 'ALL_WORKSHOPS',
+  MY_WORKSHOPS = 'MY_WORKSHOPS'
+}

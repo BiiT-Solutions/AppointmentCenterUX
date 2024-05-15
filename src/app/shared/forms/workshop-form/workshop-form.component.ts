@@ -11,6 +11,8 @@ import {WorkshopFormValidationFields} from "../../validations/forms/workshop-for
 import {Type} from "biit-ui/inputs";
 import {UserService} from "user-manager-structure-lib";
 import {User} from "authorization-services-lib";
+import {ColorTheme} from "../../enums/color-theme";
+import {combineLatest} from "rxjs";
 
 @Component({
   selector: 'workshop-form',
@@ -23,6 +25,8 @@ export class WorkshopFormComponent implements OnInit {
   @Input() organizationUsers: User[];
   @Output() onSaved: EventEmitter<AppointmentTemplate> = new EventEmitter<AppointmentTemplate>();
   protected speakers: {value:string, label:string}[] = [];
+  protected colors = Object.keys(ColorTheme);
+  protected translatedColors: {value:string, label:string}[] = [];
 
   protected errors: Map<WorkshopFormValidationFields, string> = new Map<WorkshopFormValidationFields, string>();
   protected readonly WorkshopFormValidationFields = WorkshopFormValidationFields;
@@ -54,6 +58,11 @@ export class WorkshopFormComponent implements OnInit {
         }
       })
     }
+
+    const colorTranslations = this.colors.map(color=> this.transloco.selectTranslate(`${color}`,{}, {scope: 'components/forms', alias: 'form'}));
+    combineLatest(colorTranslations).subscribe((translations)=> {
+      translations.forEach((label, index) => this.translatedColors.push({value: this.colors[index], label: label}));
+    });
   }
 
   onSave() {

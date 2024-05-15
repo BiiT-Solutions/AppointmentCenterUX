@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {UserUuidListPipe} from "./user-uuid-list.pipe";
-import {TranslocoRootModule} from "biit-ui/i18n";
 
 @NgModule({
   declarations: [UserUuidListPipe],
@@ -9,11 +8,7 @@ import {TranslocoRootModule} from "biit-ui/i18n";
     UserUuidListPipe
   ],
   imports: [
-    CommonModule,
-    TranslocoRootModule
-  ],
-  providers: [
-    TranslocoRootModule
+    CommonModule
   ]
 })
 export class UserUuidListPipeModule { }

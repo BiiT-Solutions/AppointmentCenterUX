@@ -26,8 +26,19 @@
     </div>
     <div class="row">
       <button biit-button tertiary
+              *ngIf="Permission.APPOINTMENT.EDIT | hasPermission"
               (click)="onEdit.emit()">
         {{t('form.edit')}}
+      </button>
+      <button biit-button primary
+              *ngIf="!(Permission.APPOINTMENT.EDIT | hasPermission) && !subscribed"
+              (click)="onSubscribe.emit()">
+        {{t('form.subscribe')}}
+      </button>
+      <button biit-button tertiary
+              *ngIf="!(Permission.APPOINTMENT.EDIT | hasPermission) && subscribed"
+              (click)="onUnsubscribe.emit()">
+        {{t('form.unsubscribe')}}
       </button>
     </div>
   </div>

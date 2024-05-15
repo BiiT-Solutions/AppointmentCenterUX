@@ -11,6 +11,7 @@ import {AppointmentFormValidationFields} from "../../validations/forms/appointme
 import {combineLatest} from "rxjs";
 import {UserService} from "user-manager-structure-lib";
 import {User} from "authorization-services-lib";
+import {ColorTheme} from "../../enums/color-theme";
 
 @Component({
   selector: 'appointment-form',
@@ -27,6 +28,8 @@ export class AppointmentFormComponent implements OnInit {
   protected errors: Map<AppointmentFormValidationFields, string> = new Map<AppointmentFormValidationFields, string>();
   protected status = Object.keys(Status);
   protected translatedStatus: {value:string, label:string}[] = [];
+  protected colors = Object.keys(ColorTheme);
+  protected translatedColors: {value:string, label:string}[] = [];
   protected speakers: {value:string, label:string}[] = [];
   protected attendees: {value:string, label:string}[] = [];
 
@@ -40,12 +43,12 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+
     if (this.event.id) {
       this.appointmentService.getById(+this.event.id)
         .subscribe(appointment => this.appointment = appointment)
         .add(() => {
-          this.loadOrganizationUsers();
-
           if(this.appointment.attendees.length) {
             this.userService.getByUuids(this.appointment.attendees)
               .subscribe(users =>
@@ -63,44 +66,26 @@ export class AppointmentFormComponent implements OnInit {
         this.appointment.endTime = addMinutes(this.appointment.startTime, this.template.duration);
       }
       this.appointment.organizationId = this.template.organizationId;
+      this.appointment.appointmentTemplateId = this.template.id;
       this.appointment.examinationType = this.template.examinationType;
       this.appointment.speakers = this.template.speakers;
       this.appointment.cost = this.template.cost;
-
-      this.loadOrganizationUsers();
+      this.appointment.colorTheme = this.template.colorTheme;
     } else {
       this.appointment.startTime = this.event.start;
-
-      this.loadOrganizationUsers();
     }
 
-    const translocoPromises = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
-    combineLatest(translocoPromises).subscribe((translations)=> {
+    const statusTranslations = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
+    combineLatest(statusTranslations).subscribe((translations)=> {
       translations.forEach((label, index) => this.translatedStatus.push({value: this.status[index], label: label}));
     });
 
+    const colorTranslations = this.colors.map(color=> this.transloco.selectTranslate(`${color}`,{}, {scope: 'components/forms', alias: 'form'}));
+    combineLatest(colorTranslations).subscribe((translations)=> {
+      translations.forEach((label, index) => this.translatedColors.push({value: this.colors[index], label: label}));
+    });
+
     this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
-  }
-
-  private loadOrganizationUsers() {
-    const currentOrganization = sessionStorage.getItem('organization');
-
-    if (!this.appointment.id) {
-      this.appointment.organizationId = currentOrganization;
-    }
-
-    if (this.appointment.organizationId == currentOrganization) {
-      this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
-    } else {
-      this.userService.getOrganizationUsers(this.appointment.organizationId).subscribe({
-        next: (users: User[]): void => {
-          this.speakers = users.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
-        },
-        error: () => {
-          this.snackbarService.showNotification(this.transloco.translate('form.server_failed'), NotificationType.WARNING, null, 5);
-        }
-      })
-    }
   }
 
   onSave() {

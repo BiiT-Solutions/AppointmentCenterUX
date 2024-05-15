@@ -13,6 +13,7 @@ import {
   OrganizationService
 } from 'user-manager-structure-lib';
 import {combineLatest} from "rxjs";
+import {PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'biit-login-page',
@@ -35,6 +36,7 @@ export class BiitLoginPageComponent implements OnInit {
               private userManagerAuthService: UserManagerAuthService,
               private userManagerSessionService: UserManagerSessionService,
               private organizationService: OrganizationService,
+              private permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
               private activateRoute: ActivatedRoute,
               private router: Router,
@@ -68,6 +70,7 @@ export class BiitLoginPageComponent implements OnInit {
           });
           return;
         }
+        this.permissionService.setRole(user.applicationRoles);
 
         const appointmentCenterToken: string = appointmentCenterResponse.headers.get(Constants.HEADERS.AUTHORIZATION_RESPONSE);
         const appointmentCenterExpiration: number = +appointmentCenterResponse.headers.get(Constants.HEADERS.EXPIRES);
@@ -80,19 +83,12 @@ export class BiitLoginPageComponent implements OnInit {
         this.userManagerSessionService.setUser(user);
 
         this.organizationService.getAllByUser(user.id).subscribe(orgs => {
-          if (orgs[0] == undefined) {
-            this.waiting = false;
-            this.translocoService.selectTranslate('access_denied_permissions').subscribe(msg => {
-              this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
-            });
-            return;
+          if (orgs[0] !== undefined) {
+            sessionStorage.setItem('organization', orgs[0].id);
           }
+        });
 
-          sessionStorage.setItem('organization', orgs[0].id);
-
-          this.router.navigate([Constants.PATHS.APPOINTMENTS]);
-          this.waiting = false;
-        })
+        this.router.navigate([Constants.PATHS.APPOINTMENTS]);
       },
       error: (response: HttpResponse<void>) => {
         const error: string = response.status.toString();
@@ -100,8 +96,9 @@ export class BiitLoginPageComponent implements OnInit {
         this.translocoService.selectTranslate(error, {},  {scope: 'components/login'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
         });
-        this.waiting = false;
       }
+    }).add(() => {
+      this.waiting = false;
     });
   }
 
@@ -121,6 +118,7 @@ export class BiitLoginPageComponent implements OnInit {
       if (params[Constants.PATHS.QUERY.LOGOUT] !== undefined) {
         this.appointmentCenterSessionService.clearToken();
         this.userManagerSessionService.clearToken();
+        this.permissionService.clear();
         this.translocoService.selectTranslate(Constants.PATHS.QUERY.LOGOUT, {},  {scope: 'components/login'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
         });
