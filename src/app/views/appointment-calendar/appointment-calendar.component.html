@@ -5,8 +5,9 @@
       <div class="workshops">
         <div class="top">
           <a *ngIf="[Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission">{{t('app.workshops')}}</a>
-          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.ALL_WORKSHOPS">{{t('app.all_workshops')}}</a>
-          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.MY_WORKSHOPS">{{t('app.my_workshops')}}</a>
+          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.ALL_WORKSHOPS">{{t('app.ALL_WORKSHOPS')}}</a>
+          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.OTHER_WORKSHOPS">{{t('app.OTHER_WORKSHOPS')}}</a>
+          <a *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.MY_WORKSHOPS">{{t('app.MY_WORKSHOPS')}}</a>
           <button biit-icon
                   icon="plus"
                   *ngIf="Permission.WORKSHOP.CREATE | hasPermission"
@@ -18,19 +19,34 @@
              dragOverClass="drag-over">
           <div *ngFor="let workshop of filteredWorkshops"
                class="workshop"
-               [class.selected]="selectedWorkshops.has(workshop)"
                [ngStyle]="eventStyles(workshop.colorTheme | colorTheme)"
-               (click)="workshopSelectionHandler(workshop);"
+               (click)="mousePosition = $mouseEvent($event); openWorkshopCard(workshop)"
                mwlDraggable
                [dropData]="{event: workshop}"
                [touchStartLongPress]="{ delay: 300, delta: 30 }"
                dragActiveClass="drag-active"
                [contextMenu]="workshopMenu"
                [contextMenuValue]="workshop"
+               [validateDrag]="workshopDragValidation"
           >
             <a class="duration">{{workshop.duration | timeDuration}}</a>
             <a class="title">{{workshop.title}}</a>
             <a class="speakers">{{workshop.speakers | userNameList: organizationUsers}}</a>
+            <div [style.opacity]="$any(workshop).subscribed ? '1' : '0'"
+                 class="subscribed">
+              <a>{{t('app.subscribed')}}</a>
+              <biit-icon [name]="'thick'"
+                         [pathStyle]="{fill:(workshop.colorTheme | colorTheme).tertiary}"
+                         style="display: block; height: 0.6rem; width: 0.6rem"
+              ></biit-icon>
+            </div>
+            <button biit-icon
+                    [icon]="selectedWorkshops.has(workshop) ? 'show' : 'hide'"
+                    class="eye"
+                    [class.show]="selectedWorkshops.has(workshop)"
+                    [ngStyle]="eventStyles(workshop.colorTheme | colorTheme)"
+                    (click)="workshopSelectionHandler(workshop); $event.stopPropagation()"
+            ></button>
           </div>
         </div>
         <div class="bottom">
@@ -41,14 +57,15 @@
                            icon="search"
                            [placeholder]="t('app.search')"
           ></biit-input-text>
-          <button biit-icon
-                  [icon]="workshopMode == WorkshopMode.ALL_WORKSHOPS ? 'user_single' : 'user_group'"
-                  *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
-                  (click)="workshopMode == WorkshopMode.ALL_WORKSHOPS ?
-                           workshopMode = WorkshopMode.MY_WORKSHOPS :
-                           workshopMode = WorkshopMode.ALL_WORKSHOPS;
-                           loadWorkshops();"
-          ></button>
+          <biit-dropdown compact
+                         *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
+                         [icon]="'column_selection'"
+                         [ngModel]="workshopMode | dropdownInterface: translatedWorkshopModes"
+                         (ngModelChange)="workshopMode = $event.value; selectedWorkshops.clear(); loadWorkshops(); loadEvents();"
+                         [data]="translatedWorkshopModes"
+                         [label]="'label'"
+                         [value]="'value'"
+          ></biit-dropdown>
         </div>
       </div>
       <biit-datepicker calendar-mode
@@ -70,7 +87,18 @@
           ></button>
         </div>
         <div class="right">
-
+          <div style="display: flex; gap: 0.5rem">
+            <button biit-icon
+                    [icon]="'right_arrow'"
+                    (click)="viewDate = subWeeks(viewDate, 1)"
+                    style="rotate: 180deg"></button>
+            <button biit-button tertiary
+                    (click)="viewDate = startOfToday()"
+                    style="font-size: 1.1em">{{ t('app.today') }}</button>
+            <button biit-icon
+                    [icon]="'right_arrow'"
+                    (click)="viewDate = addWeeks(viewDate, 1)"></button>
+          </div>
         </div>
       </div>
       <biit-calendar [events]="events"
@@ -194,4 +222,15 @@
               (onEdit)="targetEvent = cardEvent; cardEvent = undefined;"
               (onClosed)="cardEvent = undefined"
   ></event-card>
+
+  <workshop-card *ngIf="cardWorkshop"
+              class="event-card"
+              [style.top]="mousePosition?.y + 10 + 'px'"
+              [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
+              [workshop]="cardWorkshop"
+              [speakersLabel]="cardWorkshop.speakers | userNameList: organizationUsers"
+              [subscribedEvents]="cardWorkshopSubs"
+              (onNextDate)="onWorkshopNextDate($event)"
+              (onClosed)="cardWorkshop = undefined; cardWorkshopSubs = undefined;"
+  ></workshop-card>
 </ng-container>

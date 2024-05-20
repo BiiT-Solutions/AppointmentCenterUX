@@ -1,0 +1,41 @@
+.canvas {
+  width: 23.5em;
+  display: flex;
+  flex-direction: column;
+  padding: 1.5em;
+  background: white;
+  border: 3px solid #262626;
+  gap: 0.75em;
+
+  .title {
+    font-weight: bold;
+    text-transform: uppercase;
+    flex-grow: 1;
+    padding-right: 0.5em;
+  }
+
+  .row {
+    display: flex;
+    align-items: start;
+
+    &:last-child button {
+      margin-top: 0.75em;
+    }
+  }
+
+  .icon {
+    height: 1em;
+    width: 1em;
+    flex-shrink: 0;
+    margin-top: 0.15em;
+
+    &.info {
+      margin-left: 0.5em;
+      margin-right: 0.5em;
+    }
+
+    &:not(.info) {
+      cursor: pointer;
+    }
+  }
+}

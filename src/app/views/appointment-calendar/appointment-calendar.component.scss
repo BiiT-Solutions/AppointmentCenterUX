@@ -159,6 +159,7 @@ $default-color: #262626;
 }
 
 .workshop {
+  position: relative;
   height: 2.5em;
   min-width: 15em;
   display: flex;
@@ -207,11 +208,43 @@ $default-color: #262626;
     z-index: 3;
   }
 
-  &.selected {
-    background: var(--event-primary);
+  .subscribed {
+    position: absolute;
+    display: flex;
+    right: 0.2rem;
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    line-height: 0.6rem;
+    align-items: center;
+    gap: 0.1rem;
+    transition: 0.5s ease-in-out;
+  }
 
-    a {
-      color: white;
+  .eye {
+    position: absolute;
+    width: 1.5rem;
+    bottom: 0.1rem;
+    right: 0.2rem;
+    height: 1.4rem;
+
+    ::ng-deep biit-icon path {
+      fill: var(--event-primary) !important;
+    }
+
+    &.show ::ng-deep biit-icon path {
+      fill: var(--event-tertiary) !important;
+    }
+
+    ::ng-deep &:hover, &:focus-visible, &:has(.checked) {
+      background: var(--event-primary);
+
+      &:not(:active) biit-icon path {
+        fill: var(--event-secondary) !important;
+      }
+
+      &:active biit-icon path {
+        fill: var(--event-tertiary) !important;
+      }
     }
   }
 }

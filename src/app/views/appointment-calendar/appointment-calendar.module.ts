@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { AppointmentCalendarComponent } from './appointment-calendar.component';
 import {AppointmentCalendarRoutingModule} from "./appointment-calendar-routing.module";
-import {BiitDatePickerModule, BiitInputTextModule} from "biit-ui/inputs";
+import {BiitDatePickerModule, BiitDropdownModule, BiitInputTextModule} from "biit-ui/inputs";
 import {BiitButtonModule, BiitIconButtonModule} from "biit-ui/button";
 import {FormsModule} from "@angular/forms";
 import {BiitCalendarModule} from "biit-ui/calendar";
@@ -22,6 +22,9 @@ import {BiitProgressBarModule} from "biit-ui/info";
 import {
   ArrayIncludesStringPipeModule
 } from "../../shared/pipes/array-includes-string-pipe/array-includes-string-pipe.module";
+import {DropdownInterfacePipeModule} from "../../shared/pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
+import {BiitIconModule} from "biit-ui/icon";
+import {WorkshopCardModule} from "../../shared/components/workshop-card/workshop-card.module";
 
 
 
@@ -29,29 +32,33 @@ import {
   declarations: [
     AppointmentCalendarComponent
   ],
-  imports: [
-    CommonModule,
-    AppointmentCalendarRoutingModule,
-    BiitInputTextModule,
-    BiitIconButtonModule,
-    BiitDatePickerModule,
-    FormsModule,
-    BiitCalendarModule,
-    BiitPopupModule,
-    AppointmentFormModule,
-    TranslocoModule,
-    TranslocoDatePipe,
-    TimeDurationPipeModule,
-    UserNameListPipeModule,
-    DragAndDropModule,
-    WorkshopFormModule,
-    ContextMenuModule,
-    BiitButtonModule,
-    EventCardModule,
-    HasPermissionPipeModule,
-    ColorThemePipeModule,
-    BiitProgressBarModule,
-    ArrayIncludesStringPipeModule
-  ]
+    imports: [
+        CommonModule,
+        AppointmentCalendarRoutingModule,
+        BiitInputTextModule,
+        BiitIconButtonModule,
+        BiitDatePickerModule,
+        FormsModule,
+        BiitCalendarModule,
+        BiitPopupModule,
+        AppointmentFormModule,
+        TranslocoModule,
+        TranslocoDatePipe,
+        TimeDurationPipeModule,
+        UserNameListPipeModule,
+        DragAndDropModule,
+        WorkshopFormModule,
+        ContextMenuModule,
+        BiitButtonModule,
+        EventCardModule,
+        HasPermissionPipeModule,
+        ColorThemePipeModule,
+        BiitProgressBarModule,
+        ArrayIncludesStringPipeModule,
+        BiitDropdownModule,
+        DropdownInterfacePipeModule,
+        BiitIconModule,
+        WorkshopCardModule
+    ]
 })
 export class AppointmentCalendarModule { }

@@ -2,8 +2,9 @@
   "400": "Oh! Parece que esta página y su servidor no están en sincronía!. Por favor, pruebe a refrescar la página y limpiar la cache.",
   "500": "Lo lamentamos, pero parece que existe algún problema con nuestros servicios. Inténtalo de nuevo más tarde.",
   "workshops": "Talleres",
-  "all_workshops": "Todos los Talleres",
-  "my_workshops": "Mis Talleres",
+  "ALL_WORKSHOPS": "Todos los Talleres",
+  "OTHER_WORKSHOPS": "Otros Talleres",
+  "MY_WORKSHOPS": "Mis Talleres",
   "create_appointment": "Crear Cita",
   "edit_appointment": "Editar Cita",
   "delete_appointment": "Eliminar Cita",
@@ -16,5 +17,7 @@
   "delete_workshop_success": "El taller se ha eliminado con éxito",
   "search": "Buscar",
   "delete": "Eliminar",
-  "cancel": "Cancelar"
+  "cancel": "Cancelar",
+  "subscribed": "Suscrito",
+  "today": "Hoy"
 }
