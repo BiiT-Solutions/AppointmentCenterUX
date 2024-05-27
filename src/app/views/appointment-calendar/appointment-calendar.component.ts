@@ -99,7 +99,7 @@ export class AppointmentCalendarComponent implements OnInit {
     } else {
       promise = combineLatest([
         this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : EMPTY.pipe(defaultIfEmpty(undefined))
+        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
       ]);
     }
 

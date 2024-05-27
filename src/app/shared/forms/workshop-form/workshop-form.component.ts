@@ -44,6 +44,7 @@ export class WorkshopFormComponent implements OnInit {
 
     if (!this.workshop.id) {
       this.workshop.organizationId = currentOrganization;
+      this.workshop.colorTheme = ColorTheme.RED;
     }
 
     if (this.workshop.organizationId == currentOrganization) {
