@@ -7,7 +7,7 @@ import {
   AppointmentTemplateService,
   SessionService
 } from "appointment-center-structure-lib";
-import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
+import {CalendarEventConversor} from "../../shared/utils/calendar-event-conversor";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
@@ -405,4 +405,5 @@ export class AppointmentCalendarComponent implements OnInit {
   protected readonly addWeeks = addWeeks;
   protected readonly subWeeks = subWeeks;
   protected readonly startOfToday = startOfToday;
+  protected readonly EventColor = EventColor;
 }

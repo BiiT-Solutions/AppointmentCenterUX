@@ -1,7 +1,7 @@
 import {Appointment} from "appointment-center-structure-lib";
 import {CalendarEvent, EventColor} from "biit-ui/calendar";
 import {NgModule} from "@angular/core";
-import {ColorThemePipeModule} from "../shared/pipes/color-theme-event/color-theme-pipe.module";
+import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
 
 @NgModule({
   imports: [

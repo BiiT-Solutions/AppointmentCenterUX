@@ -4,7 +4,7 @@ import {CalendarEvent} from "biit-ui/calendar";
 import {Appointment, AppointmentService, AppointmentTemplate, Status} from "appointment-center-structure-lib";
 import {Type} from "biit-ui/inputs";
 import {addMinutes} from "date-fns"
-import {CalendarEventConversor} from "../../../utils/calendar-event-conversor";
+import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
 import {HttpErrorResponse} from "@angular/common/http";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";

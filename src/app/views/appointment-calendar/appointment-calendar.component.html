@@ -19,7 +19,7 @@
              dragOverClass="drag-over">
           <div *ngFor="let workshop of filteredWorkshops"
                class="workshop"
-               [ngStyle]="eventStyles(workshop.colorTheme | colorTheme)"
+               [ngStyle]="workshop.colorTheme ? eventStyles(workshop.colorTheme | colorTheme) : eventStyles(EventColor.RED)"
                (click)="mousePosition = $mouseEvent($event); openWorkshopCard(workshop)"
                mwlDraggable
                [dropData]="{event: workshop}"
@@ -36,7 +36,7 @@
                  class="subscribed">
               <a>{{t('app.subscribed')}}</a>
               <biit-icon [name]="'thick'"
-                         [pathStyle]="{fill:(workshop.colorTheme | colorTheme).tertiary}"
+                         [pathStyle]="{fill:workshop.colorTheme ? (workshop.colorTheme | colorTheme).tertiary : eventStyles(EventColor.RED)}"
                          style="display: block; height: 0.6rem; width: 0.6rem"
               ></biit-icon>
             </div>
@@ -44,7 +44,7 @@
                     [icon]="selectedWorkshops.has(workshop) ? 'show' : 'hide'"
                     class="eye"
                     [class.show]="selectedWorkshops.has(workshop)"
-                    [ngStyle]="eventStyles(workshop.colorTheme | colorTheme)"
+                    [ngStyle]="workshop.colorTheme ? eventStyles(workshop.colorTheme | colorTheme) : eventStyles(EventColor.RED)"
                     (click)="workshopSelectionHandler(workshop); $event.stopPropagation()"
             ></button>
           </div>
