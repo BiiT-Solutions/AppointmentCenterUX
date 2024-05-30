@@ -24,7 +24,7 @@ export class HeaderInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    if (req.url.includes(Environment.APPOINTMENT_CENTER_SERVER)){
+    if (req.url.includes(Environment.APPOINTMENT_CENTER_PATH)){
       const request: HttpRequest<any> = req.clone({
         headers: req.headers.append(Constants.HEADERS.AUTHORIZATION, `Bearer ${appointmentCenterAuthToken}`)
       });
