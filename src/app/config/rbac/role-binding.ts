@@ -9,6 +9,9 @@ export class RoleBinding {
     Permission.APPOINTMENT.CREATE,
     Permission.APPOINTMENT.EDIT,
     Permission.APPOINTMENT.DELETE,
+    Permission.WORKSHOP.CREATE,
+    Permission.WORKSHOP.EDIT,
+    Permission.WORKSHOP.DELETE,
     Permission.CALENDAR.DRAG,
     Permission.CALENDAR.DROP,
     Permission.CALENDAR.RESIZE,
@@ -17,6 +20,9 @@ export class RoleBinding {
   private readonly APPOINTMENT_CENTER_MANAGER: Permission[] = [
     Permission.APPOINTMENT_CENTER.ROOT,
     Permission.APPOINTMENT_CENTER.MANAGER,
+    Permission.APPOINTMENT.CREATE,
+    Permission.APPOINTMENT.EDIT,
+    Permission.APPOINTMENT.DELETE,
     Permission.CALENDAR.DRAG,
     Permission.CALENDAR.DROP,
     Permission.CALENDAR.RESIZE

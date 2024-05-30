@@ -71,6 +71,7 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.speakers = this.template.speakers;
       this.appointment.cost = this.template.cost;
       this.appointment.colorTheme = this.template.colorTheme;
+      this.appointment.infographicTemplate = this.template.infographicTemplate;
     } else {
       this.appointment.startTime = this.event.start;
     }

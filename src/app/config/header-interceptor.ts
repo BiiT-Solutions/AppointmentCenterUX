@@ -24,14 +24,14 @@ export class HeaderInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    if (req.url.includes(Environment.APPOINTMENT_CENTER_PATH)){
+    if (req.url.includes(Environment.APPOINTMENT_CENTER_SERVER)){
       const request: HttpRequest<any> = req.clone({
         headers: req.headers.append(Constants.HEADERS.AUTHORIZATION, `Bearer ${appointmentCenterAuthToken}`)
       });
       return next.handle(request);
     }
 
-    if (req.url.includes(Environment.USER_MANAGER_PATH)){
+    if (req.url.includes(Environment.USER_MANAGER_SERVER)){
       const request: HttpRequest<any> = req.clone({
         headers: req.headers.append(Constants.HEADERS.AUTHORIZATION, `Bearer ${userManagerAuthToken}`)
       });
