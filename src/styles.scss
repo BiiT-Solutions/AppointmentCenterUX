@@ -1,4 +1,6 @@
 @import "../node_modules/angular-calendar/css/angular-calendar.css";
+@import '@angular/cdk/overlay-prebuilt.css';
+@import '../node_modules/@perfectmemory/ngx-contextmenu/src/assets/stylesheets/base.scss';
 
 html, body{
   height: 100%;
@@ -15,6 +17,10 @@ html, body{
 }
 
 input {
+  font-family: Montserrat, "Montserrat", sans-serif;
+}
+
+textarea {
   font-family: Montserrat, "Montserrat", sans-serif;
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "appointment-center",
-  "version": "0.0.0",
+  "version": "0.0.28",
   "scripts": {
     "ng": "ng",
     "start": "npm run prepare:translations && ng serve",
@@ -25,11 +25,13 @@
     "@angular/router": "v15-lts",
     "@ngneat/transloco": "^4.3.0",
     "appointment-center-structure-lib": "latest",
+    "user-manager-structure-lib": "latest",
     "biit-icons-collection": "latest",
     "biit-ui": "latest",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.12.0"
+    "zone.js": "~0.12.0",
+    "@perfectmemory/ngx-contextmenu": "^15.0.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "v15-lts",

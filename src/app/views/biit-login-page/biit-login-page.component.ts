@@ -6,7 +6,14 @@ import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-u
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {ActivatedRoute, Router} from "@angular/router";
 import {LoginRequest, User} from "authorization-services-lib";
-import {AuthService, SessionService} from 'appointment-center-structure-lib';
+import {AuthService as AppointmentCenterAuthService, SessionService as AppointmentCenterSessionService} from 'appointment-center-structure-lib';
+import {
+  AuthService as UserManagerAuthService,
+  SessionService as UserManagerSessionService,
+  OrganizationService
+} from 'user-manager-structure-lib';
+import {combineLatest} from "rxjs";
+import {PermissionService} from "../../services/permission.service";
 
 @Component({
   selector: 'biit-login-page',
@@ -24,8 +31,12 @@ export class BiitLoginPageComponent implements OnInit {
 
   protected readonly BiitProgressBarType = BiitProgressBarType;
   protected waiting: boolean = true;
-  constructor(private authService: AuthService,
-              private sessionService: SessionService,
+  constructor(private appointmentCenterAuthService: AppointmentCenterAuthService,
+              private appointmentCenterSessionService: AppointmentCenterSessionService,
+              private userManagerAuthService: UserManagerAuthService,
+              private userManagerSessionService: UserManagerSessionService,
+              private organizationService: OrganizationService,
+              private permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
               private activateRoute: ActivatedRoute,
               private router: Router,
@@ -34,7 +45,7 @@ export class BiitLoginPageComponent implements OnInit {
 
   ngOnInit(): void {
     this.managePathQueries();
-    if (!this.sessionService.isTokenExpired()) {
+    if (!this.appointmentCenterSessionService.isTokenExpired()) {
       this.router.navigate([Constants.PATHS.APPOINTMENTS]);
     } else {
       this.waiting = false;
@@ -43,9 +54,15 @@ export class BiitLoginPageComponent implements OnInit {
 
   login(login: BiitLogin): void {
     this.waiting = true;
-    this.authService.login(new LoginRequest(login.username, login.password)).subscribe({
-      next: (response: HttpResponse<User>) => {
-        const user: User = User.clone(response.body);
+
+    combineLatest(
+      [
+        this.appointmentCenterAuthService.login(new LoginRequest(login.username, login.password)),
+        this.userManagerAuthService.login(new LoginRequest(login.username, login.password))
+      ]
+    ).subscribe({
+      next: ([appointmentCenterResponse, userManagerResponse]) => {
+        const user: User = User.clone(appointmentCenterResponse.body);
         if (!this.canAccess(user)) {
           this.waiting = false;
           this.translocoService.selectTranslate('access_denied_permissions').subscribe(msg => {
@@ -53,12 +70,25 @@ export class BiitLoginPageComponent implements OnInit {
           });
           return;
         }
-        const token: string = response.headers.get(Constants.HEADERS.AUTHORIZATION_RESPONSE);
-        const expiration: number = +response.headers.get(Constants.HEADERS.EXPIRES);
-        this.sessionService.setToken(token, expiration, login.remember, true);
-        this.sessionService.setUser(user);
+        this.permissionService.setRole(user.applicationRoles);
+
+        const appointmentCenterToken: string = appointmentCenterResponse.headers.get(Constants.HEADERS.AUTHORIZATION_RESPONSE);
+        const appointmentCenterExpiration: number = +appointmentCenterResponse.headers.get(Constants.HEADERS.EXPIRES);
+        this.appointmentCenterSessionService.setToken(appointmentCenterToken, appointmentCenterExpiration, login.remember, true);
+        this.appointmentCenterSessionService.setUser(user);
+
+        const userManagerToken: string = userManagerResponse.headers.get(Constants.HEADERS.AUTHORIZATION_RESPONSE);
+        const userManagerExpiration: number = +userManagerResponse.headers.get(Constants.HEADERS.EXPIRES);
+        this.userManagerSessionService.setToken(userManagerToken, userManagerExpiration, login.remember, true);
+        this.userManagerSessionService.setUser(user);
+
+        this.organizationService.getAllByUser(user.id).subscribe(orgs => {
+          if (orgs[0] !== undefined) {
+            sessionStorage.setItem('organization', orgs[0].id);
+          }
+        });
+
         this.router.navigate([Constants.PATHS.APPOINTMENTS]);
-        this.waiting = false;
       },
       error: (response: HttpResponse<void>) => {
         const error: string = response.status.toString();
@@ -66,8 +96,9 @@ export class BiitLoginPageComponent implements OnInit {
         this.translocoService.selectTranslate(error, {},  {scope: 'components/login'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
         });
-        this.waiting = false;
       }
+    }).add(() => {
+      this.waiting = false;
     });
   }
 
@@ -85,7 +116,9 @@ export class BiitLoginPageComponent implements OnInit {
         queryParams[Constants.PATHS.QUERY.EXPIRED] = null;
       }
       if (params[Constants.PATHS.QUERY.LOGOUT] !== undefined) {
-        this.sessionService.clearToken();
+        this.appointmentCenterSessionService.clearToken();
+        this.userManagerSessionService.clearToken();
+        this.permissionService.clear();
         this.translocoService.selectTranslate(Constants.PATHS.QUERY.LOGOUT, {},  {scope: 'components/login'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
         });

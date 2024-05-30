@@ -1,0 +1,43 @@
+<div class="canvas" *transloco="let t">
+  <div class="row">
+    <biit-input-text [(ngModel)]="workshop.title"
+                     [placeholder]="t('form.title')"
+                     error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
+    ></biit-input-text>
+  </div>
+  <div class="row">
+    <biit-multiselect [ngModel]="workshop.speakers | multiselectInterface: speakers"
+                      (ngModelChange)="onMultiselectSelection($event)"
+                      [data]="speakers"
+                      [label]="'label'"
+                      [value]="'value'"
+                      [title]="t('form.speakers')"
+    ></biit-multiselect>
+    <biit-input-text [(ngModel)]="workshop.duration"
+                     [type]="Type.NUMBER"
+                     placeholder="{{t('form.duration')}}"
+    ></biit-input-text>
+  </div>
+  <div class="row">
+    <biit-textarea [(ngModel)]="workshop.description"
+                   placeholder="{{t('form.description')}}"
+    ></biit-textarea>
+  </div>
+  <div class="row">
+    <biit-input-text [(ngModel)]="workshop.cost"
+                     [type]="Type.NUMBER"
+                     [min]="0"
+                     placeholder="{{t('form.cost')}}"
+    ></biit-input-text>
+    <biit-dropdown [ngModel]="workshop.colorTheme | dropdownInterface: translatedColors"
+                   (ngModelChange)="workshop.colorTheme = $event.value"
+                   [data]="translatedColors"
+                   [label]="'label'"
+                   [value]="'value'"
+                   [title]="t('form.color_theme')"
+    ></biit-dropdown>
+  </div>
+  <button biit-button (click)="onSave()">
+    {{'form.save' | transloco}}
+  </button>
+</div>

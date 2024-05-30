@@ -1,0 +1,73 @@
+<ng-container *transloco="let t">
+  <div class="canvas" slot="{{'empty' | transloco}}">
+    <div class="row">
+      <biit-input-text [(ngModel)]="appointment.title"
+                       [placeholder]="t('form.title')"
+                       error="{{errors | mapGet: AppointmentFormValidationFields.TITLE_MANDATORY}}"
+      ></biit-input-text>
+    </div>
+    <div class="row">
+      <biit-datepicker [(ngModel)]="appointment.startTime"
+                       [placeholder]="t('form.start_date')"
+                       [timePicker]="true"
+                       [max]="appointment.endTime"
+                       error="{{errors | mapGet: AppointmentFormValidationFields.START_DATE_MANDATORY}}"
+      ></biit-datepicker>
+      <biit-datepicker [(ngModel)]="appointment.endTime"
+                       [placeholder]="t('form.end_date')"
+                       [timePicker]="true"
+                       [min]="appointment.startTime"
+                       error="{{errors | mapGet: AppointmentFormValidationFields.END_DATE_MANDATORY}}"
+      ></biit-datepicker>
+    </div>
+    <div class="row">
+      <biit-dropdown [ngModel]="appointment.status | dropdownInterface: translatedStatus"
+                     (ngModelChange)="appointment.status = $event.value"
+                     [data]="translatedStatus"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('form.status')"
+      ></biit-dropdown>
+      <biit-toggle [(ngModel)]="appointment.allDay">{{ t('form.all_day') }}</biit-toggle>
+    </div>
+    <div class="row">
+      <biit-multiselect [ngModel]="appointment.speakers | multiselectInterface: speakers"
+                        (ngModelChange)="onMultiselectSelection($event, 'speakers')"
+                        [data]="speakers"
+                        [label]="'label'"
+                        [value]="'value'"
+                        [title]="t('form.speakers')"
+      ></biit-multiselect>
+      <biit-multiselect [ngModel]="appointment.attendees | multiselectInterface: attendees"
+                        (ngModelChange)="onMultiselectSelection($event, 'attendees')"
+                        [data]="attendees"
+                        [label]="'name'"
+                        [value]="'value'"
+                        [title]="t('form.attendees')"
+                        [disabled]="!appointment.id"
+      ></biit-multiselect>
+    </div>
+    <div class="row">
+      <biit-textarea [(ngModel)]="appointment.description"
+                     [placeholder]="t('form.description')"
+      ></biit-textarea>
+    </div>
+    <div class="row">
+      <biit-input-text [(ngModel)]="appointment.cost"
+                       [type]="Type.NUMBER"
+                       [min]="0"
+                       [placeholder]="t('form.cost')"
+      ></biit-input-text>
+      <biit-dropdown [ngModel]="appointment.colorTheme | dropdownInterface: translatedColors"
+                     (ngModelChange)="appointment.colorTheme = $event.value"
+                     [data]="translatedColors"
+                     [label]="'label'"
+                     [value]="'value'"
+                     [title]="t('form.color_theme')"
+      ></biit-dropdown>
+    </div>
+    <button biit-button (click)="onSave()">
+      {{t('form.save')}}
+    </button>
+  </div>
+</ng-container>

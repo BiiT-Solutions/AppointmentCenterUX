@@ -1,0 +1,45 @@
+<ng-container *transloco="let t">
+  <div class="canvas">
+    <div class="row">
+      <a class="title">{{event.title}}</a>
+      <biit-icon name="cross_wide"
+                 class="icon"
+                 [pathStyle]="{fill:'#262626'}"
+                 (click)="onClosed.emit()"
+      ></biit-icon>
+    </div>
+    <div class="row">
+      <biit-icon name="speaker"
+                 class="icon info"
+                 [pathStyle]="{fill:'#f20d5e'}"
+      ></biit-icon>
+      <a>{{event.meta.speakers | userNameList: organizationUsers}}</a>
+    </div>
+    <div class="row">
+      <biit-icon name="timetable"
+                 class="icon info"
+                 [pathStyle]="{fill:'#f20d5e'}"
+      ></biit-icon>
+      <a style="white-space: pre-line">
+        {{event | eventCardDate}}
+      </a>
+    </div>
+    <div class="row">
+      <button biit-button tertiary
+              *ngIf="Permission.APPOINTMENT.EDIT | hasPermission"
+              (click)="onEdit.emit()">
+        {{t('form.edit')}}
+      </button>
+      <button biit-button primary
+              *ngIf="!(Permission.APPOINTMENT.EDIT | hasPermission) && !subscribed"
+              (click)="onSubscribe.emit()">
+        {{t('form.subscribe')}}
+      </button>
+      <button biit-button tertiary
+              *ngIf="!(Permission.APPOINTMENT.EDIT | hasPermission) && subscribed"
+              (click)="onUnsubscribe.emit()">
+        {{t('form.unsubscribe')}}
+      </button>
+    </div>
+  </div>
+</ng-container>
