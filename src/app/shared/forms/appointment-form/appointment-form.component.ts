@@ -127,7 +127,7 @@ export class AppointmentFormComponent implements OnInit {
       verdict = false;
       this.errors.set(AppointmentFormValidationFields.START_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.START_DATE_MANDATORY.toString()}`));
     }
-    if (!this.appointment.endTime) {
+    if (this.appointment.allDay && !this.appointment.endTime) {
       verdict = false;
       this.errors.set(AppointmentFormValidationFields.END_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.END_DATE_MANDATORY.toString()}`));
     }
