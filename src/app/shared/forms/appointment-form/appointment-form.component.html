@@ -39,10 +39,10 @@
                         [value]="'value'"
                         [title]="t('form.speakers')"
       ></biit-multiselect>
-      <biit-multiselect [ngModel]="appointment.attendees | multiselectInterface: attendees"
+      <biit-multiselect [ngModel]="appointment?.attendees | multiselectInterface: attendees"
                         (ngModelChange)="onMultiselectSelection($event, 'attendees')"
                         [data]="attendees"
-                        [label]="'name'"
+                        [label]="'label'"
                         [value]="'value'"
                         [title]="t('form.attendees')"
                         [disabled]="!appointment.id"
