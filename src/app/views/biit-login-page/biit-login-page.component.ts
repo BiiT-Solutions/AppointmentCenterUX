@@ -82,7 +82,7 @@ export class BiitLoginPageComponent implements OnInit {
         this.userManagerSessionService.setToken(userManagerToken, userManagerExpiration, login.remember, true);
         this.userManagerSessionService.setUser(user);
 
-        this.organizationService.getAllByUser(user.id).subscribe(orgs => {
+        this.organizationService.getAllByLoggedUser().subscribe(orgs => {
           if (orgs[0] !== undefined) {
             sessionStorage.setItem('organization', orgs[0].id);
           }
