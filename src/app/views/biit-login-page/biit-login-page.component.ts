@@ -10,7 +10,7 @@ import {AuthService as AppointmentCenterAuthService, SessionService as Appointme
 import {
   AuthService as UserManagerAuthService,
   SessionService as UserManagerSessionService,
-  OrganizationService
+  OrganizationService, UserService
 } from 'user-manager-structure-lib';
 import {combineLatest} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
@@ -37,6 +37,7 @@ export class BiitLoginPageComponent implements OnInit {
               private userManagerSessionService: UserManagerSessionService,
               private organizationService: OrganizationService,
               private permissionService: PermissionService,
+              private userService: UserService,
               private biitSnackbarService: BiitSnackbarService,
               private activateRoute: ActivatedRoute,
               private router: Router,
@@ -128,4 +129,18 @@ export class BiitLoginPageComponent implements OnInit {
     });
   }
 
+  protected onResetPassword(email: string) {
+    this.userService.resetPassword(email).subscribe({
+      next: () => {
+        this.translocoService.selectTranslate('success', {},  {scope: 'biit-ui/login'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
+        });
+      },
+      error: () => {
+        this.translocoService.selectTranslate('error', {},  {scope: 'biit-ui/login'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+        });
+      }
+    })
+  }
 }
