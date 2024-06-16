@@ -65,7 +65,7 @@
                      [label]="'label'"
                      [value]="'value'"
                      [title]="t('form.color_theme')"
-                     [disabled]="event.id || template"
+                     [disabled]="restrictedMode"
       ></biit-dropdown>
     </div>
     <button biit-button (click)="onSave()">

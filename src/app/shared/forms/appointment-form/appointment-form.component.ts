@@ -32,6 +32,7 @@ export class AppointmentFormComponent implements OnInit {
   protected translatedColors: {value:string, label:string}[] = [];
   protected speakers: {value:string, label:string}[] = [];
   protected attendees: {value:string, label:string}[] = [];
+  protected restrictedMode = false;
 
   protected readonly Type = Type;
   protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
@@ -46,6 +47,8 @@ export class AppointmentFormComponent implements OnInit {
     this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
 
     if (this.event.id) {
+      this.restrictedMode = true;
+
       this.appointmentService.getById(+this.event.id)
         .subscribe(appointment => this.appointment = appointment)
         .add(() => {
@@ -59,6 +62,8 @@ export class AppointmentFormComponent implements OnInit {
           }
         });
     } else if (this.template) {
+      this.restrictedMode = true;
+
       this.appointment.title = this.template.title;
       this.appointment.description = this.template.description;
       this.appointment.startTime = this.event.start;
