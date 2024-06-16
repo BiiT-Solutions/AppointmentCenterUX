@@ -2,6 +2,7 @@
   <div class="row">
     <biit-input-text [(ngModel)]="workshop.title"
                      [placeholder]="t('form.title')"
+                     [required]="true"
                      error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
     ></biit-input-text>
   </div>
@@ -15,6 +16,9 @@
     ></biit-multiselect>
     <biit-input-text [(ngModel)]="workshop.duration"
                      [type]="Type.NUMBER"
+                     [min]="0"
+                     [required]="true"
+                     error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
                      placeholder="{{t('form.duration')}}"
     ></biit-input-text>
   </div>

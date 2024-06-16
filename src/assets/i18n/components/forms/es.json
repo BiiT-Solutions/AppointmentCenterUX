@@ -23,6 +23,7 @@
   "TITLE_MANDATORY": "El título es obligatorio",
   "START_DATE_MANDATORY": "La fecha de inicio es obligatoria",
   "END_DATE_MANDATORY": "La fecha de final es obligatoria",
+  "DURATION_MANDATORY": "La duración es obligatoria",
   "RED": "Rojo",
   "GREEN": "Verde",
   "YELLOW": "Amarillo",

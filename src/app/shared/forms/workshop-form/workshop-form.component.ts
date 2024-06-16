@@ -98,7 +98,11 @@ export class WorkshopFormComponent implements OnInit {
     let verdict: boolean = true;
     if (!this.workshop.title) {
       verdict = false;
-      this.errors.set(WorkshopFormValidationFields.TITLE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.TITLE_MANDATORY.toString()}`));
+      this.errors.set(WorkshopFormValidationFields.TITLE_MANDATORY, this.transloco.translate(`form.${WorkshopFormValidationFields.TITLE_MANDATORY.toString()}`));
+    }
+    if (this.workshop.duration < 1) {
+      verdict = false;
+      this.errors.set(WorkshopFormValidationFields.DURATION_MANDATORY, this.transloco.translate(`form.${WorkshopFormValidationFields.DURATION_MANDATORY.toString()}`));
     }
     return verdict;
   }
