@@ -16,9 +16,9 @@
     ></biit-multiselect>
     <biit-input-text [(ngModel)]="workshop.duration"
                      [type]="Type.NUMBER"
-                     [min]="0"
+                     [min]="1"
                      [required]="true"
-                     error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
+                     error="{{errors | mapGet: WorkshopFormValidationFields.DURATION_MANDATORY}}"
                      placeholder="{{t('form.duration')}}"
     ></biit-input-text>
   </div>
