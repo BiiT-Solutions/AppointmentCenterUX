@@ -406,4 +406,6 @@ export class AppointmentCalendarComponent implements OnInit {
   protected readonly subWeeks = subWeeks;
   protected readonly startOfToday = startOfToday;
   protected readonly EventColor = EventColor;
+  protected readonly document = document;
+  protected readonly window = window;
 }

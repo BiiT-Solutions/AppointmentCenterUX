@@ -212,7 +212,7 @@
 
   <event-card *ngIf="cardEvent"
               class="event-card"
-              [style.top]="mousePosition?.y + 10 + 'px'"
+              [style.top]="(mousePosition?.y > window.innerHeight - 180 ? mousePosition?.y - 180 : mousePosition?.y) + 'px'"
               [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
               [event]="cardEvent"
               [organizationUsers]="organizationUsers"
@@ -226,7 +226,7 @@
   <workshop-card *ngIf="cardWorkshop"
               class="event-card"
               [style.top]="mousePosition?.y + 10 + 'px'"
-              [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
+              [style.left]="mousePosition?.x + 'px'"
               [workshop]="cardWorkshop"
               [speakersLabel]="cardWorkshop.speakers | userNameList: organizationUsers"
               [subscribedEvents]="cardWorkshopSubs"
