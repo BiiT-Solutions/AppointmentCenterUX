@@ -19,5 +19,7 @@
   "delete": "Eliminar",
   "cancel": "Cancelar",
   "subscribed": "Suscrito",
-  "today": "Hoy"
+  "today": "Hoy",
+  "success_subscribe": "Se ha suscrito al evento satisfactoriamente",
+  "success_unsubscribe": "Se ha desuscrito al evento satisfactoriamente"
 }

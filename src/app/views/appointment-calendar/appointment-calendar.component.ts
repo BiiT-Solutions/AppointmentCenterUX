@@ -299,6 +299,7 @@ export class AppointmentCalendarComponent implements OnInit {
     this.appointmentService.subscribeCurrentUser(appointmentId).subscribe({
       next: () => {
         this.loadEvents();
+        this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_subscribe'), NotificationType.SUCCESS, null, 5);
       }, error: (response: any) => {
         this.notifyLoadError(response);
       }
@@ -312,6 +313,7 @@ export class AppointmentCalendarComponent implements OnInit {
     this.appointmentService.unsubscribeCurrentUser(appointmentId).subscribe({
       next: () => {
         this.loadEvents();
+        this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_unsubscribe'), NotificationType.SUCCESS, null, 5);
       }, error: (response: any) => {
         this.notifyLoadError(response);
       }

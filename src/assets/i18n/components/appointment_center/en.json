@@ -19,5 +19,7 @@
   "delete": "Delete",
   "cancel": "Cancel",
   "subscribed": "Subscribed",
-  "today": "Today"
+  "today": "Today",
+  "success_subscribe": "Appointment has been subscribed successfully",
+  "success_unsubscribe": "Appointment has been unsubscribed successfully"
 }
