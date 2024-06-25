@@ -41,6 +41,7 @@ export class AppointmentCalendarComponent implements OnInit {
   protected organizationUsers: User[] = [];
   protected waiting: boolean = false;
   protected search: string = "";
+  protected currentSearch: string = "";
   protected mousePosition: MouseEvent;
   protected workshopModes = Object.keys(WorkshopMode);
   protected translatedWorkshopModes: {value:string, label:string}[] = [];
@@ -364,8 +365,8 @@ export class AppointmentCalendarComponent implements OnInit {
     }
   }
 
-  protected resetInputValue(event: Event, value: string) {
-    (event.target as HTMLInputElement).value = value;
+  protected resetInputValue() {
+    this.search = this.currentSearch;
   }
 
   protected workshopSelectionHandler(workshop: AppointmentTemplate) {

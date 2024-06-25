@@ -50,10 +50,9 @@
           </div>
         </div>
         <div class="bottom">
-          <biit-input-text [ngModel]="search"
-                           (onActionPerformed)="search = $event;
-                                                filterWorkshops();"
-                           (focusout)="resetInputValue($event, search)"
+          <biit-input-text [(ngModel)]="search"
+                           (onActionPerformed)="filterWorkshops();"
+                           (focusout)="resetInputValue()"
                            icon="search"
                            [placeholder]="t('app.search')"
           ></biit-input-text>
