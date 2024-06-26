@@ -359,6 +359,7 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   protected filterWorkshops() {
+    this.currentSearch = this.search;
     this.filteredWorkshops = this.workshops;
     if (this.search.length) {
       this.filteredWorkshops = this.filteredWorkshops.filter(workshop => workshop.title.toLowerCase().includes(this.search.toLowerCase()));
