@@ -40,7 +40,7 @@
                          style="display: block; height: 0.6rem; width: 0.6rem"
               ></biit-icon>
             </div>
-            <button biit-icon
+            <button biit-icon *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
                     [icon]="selectedWorkshops.has(workshop) ? 'show' : 'hide'"
                     class="eye"
                     [class.show]="selectedWorkshops.has(workshop)"

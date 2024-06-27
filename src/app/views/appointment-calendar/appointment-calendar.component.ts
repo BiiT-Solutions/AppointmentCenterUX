@@ -13,11 +13,11 @@ import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
 import {User} from "authorization-services-lib";
 import {UserService} from "user-manager-structure-lib";
-import {combineLatest, Observable, EMPTY, defaultIfEmpty} from "rxjs";
+import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
-import {addWeeks, subWeeks, startOfToday} from "date-fns";
+import {addWeeks, startOfToday, subWeeks} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
 
 @Component({
@@ -84,63 +84,66 @@ export class AppointmentCalendarComponent implements OnInit {
     });
   }
 
-  protected loadEvents(): void {
-    let promise;
+  protected loadEvents(): Promise<void> {
+    return new Promise((resolve) => {
+      let promise;
 
-    if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
-      promise = combineLatest([
-        this.appointmentService.getAll(),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : EMPTY.pipe(defaultIfEmpty(undefined))
-      ]);
-    } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-      promise = combineLatest([
-        this.appointmentService.getAll(),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : EMPTY.pipe(defaultIfEmpty(undefined))
-      ]);
-    } else {
-      promise = combineLatest([
-        this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
-      ]);
-    }
-
-    this.waiting = true;
-    promise.subscribe({
-      next: ([appointments, selected]) => {
-        const hash = new Map<number, Appointment>;
-
-        if (selected) {
-          if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
-            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-            (selected as Appointment[]).map(a => {
-              if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
-                if (a.colorTheme) {
-                  a.colorTheme = "EMPTY_" + a.colorTheme;
-                } else {
-                  a.colorTheme = "EMPTY_RED";
-                }
-              }
-            });
-          }
-          (selected as Appointment[]).map(a => hash.set(a.id, a));
-        }
-
-        appointments.map(a => hash.set(a.id, a));
-
-        this.events = [...hash.values()].map(e => {
-          const event = CalendarEventConversor.convertToCalendarEvent(e);
-          event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
-            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
-            !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
-          return event;
-        });
-      },
-      error: (response: any) => {
-        this.notifyLoadError(response);
+      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
+        promise = combineLatest([
+          this.appointmentService.getAll(),
+          EMPTY.pipe(defaultIfEmpty(undefined))
+        ]);
+      } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+        promise = combineLatest([
+          this.appointmentService.getAll(),
+          EMPTY.pipe(defaultIfEmpty(undefined))
+        ]);
+      } else {
+        promise = combineLatest([
+          this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
+          this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
+        ]);
       }
-    }).add(() => {
-      this.waiting = false;
-    });
+
+      this.waiting = true;
+      promise.subscribe({
+        next: ([appointments, selected]) => {
+          const hash = new Map<number, Appointment>;
+
+          if (selected) {
+            if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+              !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+              (selected as Appointment[]).map(a => {
+                if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
+                  if (a.colorTheme) {
+                    a.colorTheme = "EMPTY_" + a.colorTheme;
+                  } else {
+                    a.colorTheme = "EMPTY_RED";
+                  }
+                }
+              });
+            }
+            (selected as Appointment[]).map(a => hash.set(a.id, a));
+          }
+
+          appointments.map(a => hash.set(a.id, a));
+
+          this.events = [...hash.values()].map(e => {
+            const event = CalendarEventConversor.convertToCalendarEvent(e);
+            event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+              !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
+            !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
+            return event;
+          });
+        },
+        error: (response: any) => {
+          this.notifyLoadError(response);
+        }
+      }).add(() => {
+        this.waiting = false;
+        resolve();
+      });
+    })
   }
 
   private loadSpeakers() {
@@ -395,9 +398,29 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   onWorkshopNextDate(date?: Date) {
-    this.viewDate = date;
+    if (date) {
+      this.viewDate = date;
+    } else {
+      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) || this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER) || this.selectedWorkshops.has(this.workshops.find(w => w.id == this.cardWorkshop.id))) {
+        this.findNextDate();
+      } else {
+        this.selectedWorkshops.add(this.workshops.find(w => w.id == this.cardWorkshop.id));
+        this.loadEvents().then(() => {
+          this.findNextDate();
+        });
+      }
+    }
     this.cardWorkshop = undefined;
     this.cardWorkshopSubs = undefined;
+  }
+
+  private findNextDate() {
+    const nextEvent = this.events.find(e => e.meta.appointmentTemplateId == this.cardWorkshop.id && e.start.getTime() > Date.now())
+    if (nextEvent) {
+      this.viewDate = nextEvent.start;
+    } else {
+      this.biitSnackbarService.showNotification(this.translocoService.translate('app.err_no_next_date'), NotificationType.ERROR, null, 5);
+    }
   }
 
   log(event: any) {
