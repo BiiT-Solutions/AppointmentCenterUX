@@ -41,7 +41,7 @@
               ></biit-icon>
             </div>
             <button biit-icon *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
-                    [icon]="selectedWorkshops.has(workshop) ? 'show' : 'hide'"
+                    [icon]="!selectedWorkshops.size ? 'show' : selectedWorkshops.has(workshop) ? 'show' : 'hide'"
                     class="eye"
                     [class.show]="selectedWorkshops.has(workshop)"
                     [ngStyle]="workshop.colorTheme ? eventStyles(workshop.colorTheme | colorTheme) : eventStyles(EventColor.RED)"
