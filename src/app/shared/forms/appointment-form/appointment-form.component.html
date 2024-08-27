@@ -9,13 +9,13 @@
     <div class="row">
       <biit-datepicker [(ngModel)]="appointment.startTime"
                        [placeholder]="t('form.start_date')"
-                       [timePicker]="true"
+                       [timePicker]="!appointment.allDay"
                        [max]="appointment.endTime"
                        error="{{errors | mapGet: AppointmentFormValidationFields.START_DATE_MANDATORY}}"
       ></biit-datepicker>
       <biit-datepicker [(ngModel)]="appointment.endTime"
                        [placeholder]="t('form.end_date')"
-                       [timePicker]="true"
+                       [timePicker]="!appointment.allDay"
                        [min]="appointment.startTime"
                        [disabled]="appointment.allDay"
                        error="{{errors | mapGet: AppointmentFormValidationFields.END_DATE_MANDATORY}}"
