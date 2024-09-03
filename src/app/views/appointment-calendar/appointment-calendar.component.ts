@@ -72,7 +72,6 @@ export class AppointmentCalendarComponent implements OnInit {
               protected permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
               private translocoService: TranslocoService) {
-    this.loadEvents();
     this.loadWorkshops();
     this.loadSpeakers();
   }
@@ -143,7 +142,7 @@ export class AppointmentCalendarComponent implements OnInit {
         this.waiting = false;
         resolve();
       });
-    })
+    });
   }
 
   private loadSpeakers() {
@@ -171,29 +170,37 @@ export class AppointmentCalendarComponent implements OnInit {
       next: (templates: AppointmentTemplate[]) => {
         this.workshops = templates;
         this.filteredWorkshops = templates;
+        // All Workshops are selected by default
+        this.workshops.forEach(w => this.selectedWorkshops.add(w));
         this.search = "";
       }, error: (response: any) => {
         this.notifyLoadError(response);
       }
     }).add(() => {
       //checking user's subscribed workshops
+      let userCall: Observable<AppointmentTemplate[]>;
       if (!(this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) ||
         this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER))) {
-        this.templateService.getAllByAttendee(this.sessionService.getUser().uuid).subscribe({
-          next: ((templates: AppointmentTemplate[]) => {
-            this.workshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
-            this.filteredWorkshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
-          })
-        })
+        userCall = this.templateService.getAllByAttendee(this.sessionService.getUser().uuid);
+      } else {
+        userCall = EMPTY.pipe(defaultIfEmpty(undefined));
       }
-      this.waiting = false;
+      userCall.subscribe({
+        next: (templates: AppointmentTemplate[]) => {
+          this.workshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
+          this.filteredWorkshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
+        },
+        error: this.notifyLoadError
+      }).add(() => {
+        this.loadEvents();
+      });
     });
   }
 
   private notifyLoadError(response: any) {
     const error: string = response.status.toString();
     // Transloco does not load translation files. We need to load it manually;
-    this.translocoService.selectTranslate(error, {}, {scope: 'components/appointment_center'}).subscribe(msg => {
+    this.translocoService.selectTranslate(error, {}, {scope: 'biit-ui/utils'}).subscribe(msg => {
       this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
     });
   }
