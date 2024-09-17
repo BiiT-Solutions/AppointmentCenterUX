@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BiitLogin} from "biit-ui/models";
 import {Constants} from "../../shared/constants";
-import {HttpResponse} from "@angular/common/http";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -14,6 +13,7 @@ import {
 } from 'user-manager-structure-lib';
 import {combineLatest} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
+import {ErrorHandler} from "biit-ui/utils";
 
 @Component({
   selector: 'biit-login-page',
@@ -91,13 +91,7 @@ export class BiitLoginPageComponent implements OnInit {
 
         this.router.navigate([Constants.PATHS.APPOINTMENTS]);
       },
-      error: (response: HttpResponse<void>) => {
-        const error: string = response.status.toString();
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate(error, {},  {scope: 'biit-ui/utils'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-      }
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -136,11 +130,7 @@ export class BiitLoginPageComponent implements OnInit {
           this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
         });
       },
-      error: () => {
-        this.translocoService.selectTranslate('error', {},  {scope: 'biit-ui/login'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-      }
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     })
   }
 }

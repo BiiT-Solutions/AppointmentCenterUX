@@ -19,6 +19,7 @@ import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
 import {addWeeks, startOfToday, subWeeks} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
+import {ErrorHandler} from "biit-ui/utils";
 
 @Component({
   selector: 'appointment-calendar',
@@ -135,9 +136,7 @@ export class AppointmentCalendarComponent implements OnInit {
             return event;
           });
         },
-        error: (response: any) => {
-          this.notifyLoadError(response);
-        }
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       }).add(() => {
         this.waiting = false;
         resolve();
@@ -173,9 +172,8 @@ export class AppointmentCalendarComponent implements OnInit {
         // All Workshops are selected by default
         this.workshops.forEach(w => this.selectedWorkshops.add(w));
         this.search = "";
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       //checking user's subscribed workshops
       let userCall: Observable<AppointmentTemplate[]>;
@@ -190,18 +188,10 @@ export class AppointmentCalendarComponent implements OnInit {
           this.workshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
           this.filteredWorkshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
         },
-        error: this.notifyLoadError
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       }).add(() => {
         this.loadEvents();
       });
-    });
-  }
-
-  private notifyLoadError(response: any) {
-    const error: string = response.status.toString();
-    // Transloco does not load translation files. We need to load it manually;
-    this.translocoService.selectTranslate(error, {}, {scope: 'biit-ui/utils'}).subscribe(msg => {
-      this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
     });
   }
 
@@ -261,14 +251,17 @@ export class AppointmentCalendarComponent implements OnInit {
 
   private onUpdateAppointment(event: CalendarEventTimesChangedEvent<any>) {
     if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT)) {
-      this.appointmentService.getById(+event.event.id).subscribe(appointment => {
-        appointment.startTime = event.newStart;
-        appointment.endTime = event.newEnd;
-        this.appointmentService.update(appointment).subscribe(newAppointment => {
-          this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
-          this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
-          this.events = [...this.events];
-        });
+      this.appointmentService.getById(+event.event.id).subscribe({
+        next: appointment => {
+          appointment.startTime = event.newStart;
+          appointment.endTime = event.newEnd;
+          this.appointmentService.update(appointment).subscribe(newAppointment => {
+            this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
+            this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
+            this.events = [...this.events];
+          });
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       });
     } else {
       this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
@@ -286,15 +279,8 @@ export class AppointmentCalendarComponent implements OnInit {
             this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
           });
           this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
-          this.deleteEvent = undefined;
-        }, error: (response: any) => {
-          const error: string = response.status.toString();
-          // Transloco does not load translation files. We need to load it manually;
-          this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-          });
-          this.deleteEvent = undefined;
-        }
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       }).add(() => {
         this.deleteEvent = undefined;
       });
@@ -311,9 +297,8 @@ export class AppointmentCalendarComponent implements OnInit {
       next: () => {
         this.loadEvents();
         this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_subscribe'), NotificationType.SUCCESS, null, 5);
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -325,9 +310,8 @@ export class AppointmentCalendarComponent implements OnInit {
       next: () => {
         this.loadEvents();
         this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_unsubscribe'), NotificationType.SUCCESS, null, 5);
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -356,13 +340,8 @@ export class AppointmentCalendarComponent implements OnInit {
         });
         this.workshops = this.workshops.filter(w => w.id !== this.deleteWorkshop.id);
         this.filterWorkshops();
-      }, error: (response: any) => {
-        const error: string = response.status.toString();
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.deleteWorkshop = undefined;
     });
