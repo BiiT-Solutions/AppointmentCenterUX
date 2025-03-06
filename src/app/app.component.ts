@@ -33,7 +33,7 @@ export class AppComponent {
               private router: Router,
               private translocoService: TranslocoService) {
     this.setLanguage();
-    appointmentCenterStructureRootService.serverUrl = new URL(`${Environment.APPOINTMENT_CENTER_SERVER}`);
+    appointmentCenterStructureRootService.serverUrl = new URL(`${Environment.ROOT_URL}${Environment.APPOINTMENT_CENTER_PATH}`);
     userManagerRootService.serverUrl = new URL(`${Environment.USER_MANAGER_SERVER}`);
     biitSnackbarService.setPosition(BiitSnackbarVerticalPosition.TOP, BiitSnackbarHorizontalPosition.CENTER);
     biitIconService.registerIcons(completeIconSet);

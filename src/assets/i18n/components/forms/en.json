@@ -23,6 +23,7 @@
   "TITLE_MANDATORY": "Title is mandatory",
   "START_DATE_MANDATORY": "Start date is mandatory",
   "END_DATE_MANDATORY": "End date is mandatory",
+  "DURATION_MANDATORY": "Duration is mandatory",
   "RED": "Red",
   "GREEN": "Green",
   "YELLOW": "Yellow",

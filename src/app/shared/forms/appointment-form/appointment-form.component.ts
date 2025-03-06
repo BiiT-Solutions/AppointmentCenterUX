@@ -5,13 +5,13 @@ import {Appointment, AppointmentService, AppointmentTemplate, Status} from "appo
 import {Type} from "biit-ui/inputs";
 import {addMinutes} from "date-fns"
 import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
-import {HttpErrorResponse} from "@angular/common/http";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 import {combineLatest} from "rxjs";
 import {UserService} from "user-manager-structure-lib";
 import {User} from "authorization-services-lib";
 import {ColorTheme} from "../../enums/color-theme";
+import {ErrorHandler} from "biit-ui/utils";
 
 @Component({
   selector: 'appointment-form',
@@ -32,6 +32,7 @@ export class AppointmentFormComponent implements OnInit {
   protected translatedColors: {value:string, label:string}[] = [];
   protected speakers: {value:string, label:string}[] = [];
   protected attendees: {value:string, label:string}[] = [];
+  protected restrictedMode = false;
 
   protected readonly Type = Type;
   protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
@@ -46,19 +47,28 @@ export class AppointmentFormComponent implements OnInit {
     this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
 
     if (this.event.id) {
+      this.restrictedMode = true;
+
       this.appointmentService.getById(+this.event.id)
-        .subscribe(appointment => this.appointment = appointment)
+        .subscribe({
+          next: appointment => this.appointment = appointment,
+          error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
+        })
         .add(() => {
           if(this.appointment.attendees.length) {
             this.userService.getByUuids(this.appointment.attendees)
-              .subscribe(users =>
-                this.attendees = users.map(user => {
-                  return {value:user.uuid, label:`${user.name} ${user.lastname}`}
-                })
-              )
+              .subscribe({
+                next: users =>
+                  this.attendees = users.map(user => {
+                    return {value: user.uuid, label: `${user.name} ${user.lastname}`}
+                  }),
+                error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
+              })
           }
         });
     } else if (this.template) {
+      this.restrictedMode = true;
+
       this.appointment.title = this.template.title;
       this.appointment.description = this.template.description;
       this.appointment.startTime = this.event.start;
@@ -100,18 +110,14 @@ export class AppointmentFormComponent implements OnInit {
         next: (appointment: Appointment): void => {
           this.onSaved.emit(CalendarEventConversor.convertToCalendarEvent(appointment));
         },
-        error: (error: HttpErrorResponse): void => {
-          this.snackbarService.showNotification(this.transloco.translate('form.server_failed'), NotificationType.WARNING, null, 5);
-        }
+        error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     } else {
       this.appointmentService.create(this.appointment).subscribe({
         next: (appointment: Appointment): void => {
           this.onSaved.emit(CalendarEventConversor.convertToCalendarEvent(appointment));
         },
-        error: (error: HttpErrorResponse): void => {
-          this.snackbarService.showNotification(this.transloco.translate('form.server_failed'), NotificationType.WARNING, null, 5);
-        }
+        error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     }
   }
@@ -127,7 +133,7 @@ export class AppointmentFormComponent implements OnInit {
       verdict = false;
       this.errors.set(AppointmentFormValidationFields.START_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.START_DATE_MANDATORY.toString()}`));
     }
-    if (!this.appointment.endTime) {
+    if (!this.appointment.allDay && !this.appointment.endTime) {
       verdict = false;
       this.errors.set(AppointmentFormValidationFields.END_DATE_MANDATORY, this.transloco.translate(`form.${AppointmentFormValidationFields.END_DATE_MANDATORY.toString()}`));
     }

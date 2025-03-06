@@ -13,12 +13,13 @@ import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
 import {User} from "authorization-services-lib";
 import {UserService} from "user-manager-structure-lib";
-import {combineLatest, Observable, EMPTY, defaultIfEmpty} from "rxjs";
+import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
-import {addWeeks, subWeeks, startOfToday} from "date-fns";
+import {addWeeks, startOfToday, subWeeks} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
+import {ErrorHandler} from "biit-ui/utils";
 
 @Component({
   selector: 'appointment-calendar',
@@ -41,6 +42,7 @@ export class AppointmentCalendarComponent implements OnInit {
   protected organizationUsers: User[] = [];
   protected waiting: boolean = false;
   protected search: string = "";
+  protected currentSearch: string = "";
   protected mousePosition: MouseEvent;
   protected workshopModes = Object.keys(WorkshopMode);
   protected translatedWorkshopModes: {value:string, label:string}[] = [];
@@ -71,7 +73,6 @@ export class AppointmentCalendarComponent implements OnInit {
               protected permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
               private translocoService: TranslocoService) {
-    this.loadEvents();
     this.loadWorkshops();
     this.loadSpeakers();
   }
@@ -83,62 +84,63 @@ export class AppointmentCalendarComponent implements OnInit {
     });
   }
 
-  protected loadEvents(): void {
-    let promise;
+  protected loadEvents(): Promise<void> {
+    return new Promise((resolve) => {
+      let promise;
 
-    if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
-      promise = combineLatest([
-        this.appointmentService.getAll(),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : EMPTY.pipe(defaultIfEmpty(undefined))
-      ]);
-    } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-      promise = combineLatest([
-        this.appointmentService.getAll(),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : EMPTY.pipe(defaultIfEmpty(undefined))
-      ]);
-    } else {
-      promise = combineLatest([
-        this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
-        this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
-      ]);
-    }
-
-    this.waiting = true;
-    promise.subscribe({
-      next: ([appointments, selected]) => {
-        const hash = new Map<number, Appointment>;
-
-        if (selected) {
-          if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
-            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-            (selected as Appointment[]).map(a => {
-              if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
-                if (a.colorTheme) {
-                  a.colorTheme = "EMPTY_" + a.colorTheme;
-                } else {
-                  a.colorTheme = "EMPTY_RED";
-                }
-              }
-            });
-          }
-          (selected as Appointment[]).map(a => hash.set(a.id, a));
-        }
-
-        appointments.map(a => hash.set(a.id, a));
-
-        this.events = [...hash.values()].map(e => {
-          const event = CalendarEventConversor.convertToCalendarEvent(e);
-          event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
-            !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
-            !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
-          return event;
-        });
-      },
-      error: (response: any) => {
-        this.notifyLoadError(response);
+      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
+        promise = combineLatest([
+          this.appointmentService.getAll(),
+          EMPTY.pipe(defaultIfEmpty(undefined))
+        ]);
+      } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+        promise = combineLatest([
+          this.appointmentService.getAll(),
+          EMPTY.pipe(defaultIfEmpty(undefined))
+        ]);
+      } else {
+        promise = combineLatest([
+          this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
+          this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
+        ]);
       }
-    }).add(() => {
-      this.waiting = false;
+
+      this.waiting = true;
+      promise.subscribe({
+        next: ([appointments, selected]) => {
+          const hash = new Map<number, Appointment>;
+
+          if (selected) {
+            if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+              !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+              (selected as Appointment[]).map(a => {
+                if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
+                  if (a.colorTheme) {
+                    a.colorTheme = "EMPTY_" + a.colorTheme;
+                  } else {
+                    a.colorTheme = "EMPTY_RED";
+                  }
+                }
+              });
+            }
+            (selected as Appointment[]).map(a => hash.set(a.id, a));
+          }
+
+          appointments.map(a => hash.set(a.id, a));
+
+          this.events = [...hash.values()].map(e => {
+            const event = CalendarEventConversor.convertToCalendarEvent(e);
+            event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
+              !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
+            !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
+            return event;
+          });
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
+      }).add(() => {
+        this.waiting = false;
+        resolve();
+      });
     });
   }
 
@@ -167,30 +169,29 @@ export class AppointmentCalendarComponent implements OnInit {
       next: (templates: AppointmentTemplate[]) => {
         this.workshops = templates;
         this.filteredWorkshops = templates;
+        // All Workshops are selected by default
+        this.workshops.forEach(w => this.selectedWorkshops.add(w));
         this.search = "";
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       //checking user's subscribed workshops
+      let userCall: Observable<AppointmentTemplate[]>;
       if (!(this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) ||
         this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER))) {
-        this.templateService.getAllByAttendee(this.sessionService.getUser().uuid).subscribe({
-          next: ((templates: AppointmentTemplate[]) => {
-            this.workshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
-            this.filteredWorkshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
-          })
-        })
+        userCall = this.templateService.getAllByAttendee(this.sessionService.getUser().uuid);
+      } else {
+        userCall = EMPTY.pipe(defaultIfEmpty(undefined));
       }
-      this.waiting = false;
-    });
-  }
-
-  private notifyLoadError(response: any) {
-    const error: string = response.status.toString();
-    // Transloco does not load translation files. We need to load it manually;
-    this.translocoService.selectTranslate(error, {}, {scope: 'components/appointment_center'}).subscribe(msg => {
-      this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
+      userCall.subscribe({
+        next: (templates: AppointmentTemplate[]) => {
+          this.workshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
+          this.filteredWorkshops.map(w => (w as any).subscribed = templates.map(t => t.id).includes(w.id));
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
+      }).add(() => {
+        this.loadEvents();
+      });
     });
   }
 
@@ -250,14 +251,17 @@ export class AppointmentCalendarComponent implements OnInit {
 
   private onUpdateAppointment(event: CalendarEventTimesChangedEvent<any>) {
     if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT)) {
-      this.appointmentService.getById(+event.event.id).subscribe(appointment => {
-        appointment.startTime = event.newStart;
-        appointment.endTime = event.newEnd;
-        this.appointmentService.update(appointment).subscribe(newAppointment => {
-          this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
-          this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
-          this.events = [...this.events];
-        });
+      this.appointmentService.getById(+event.event.id).subscribe({
+        next: appointment => {
+          appointment.startTime = event.newStart;
+          appointment.endTime = event.newEnd;
+          this.appointmentService.update(appointment).subscribe(newAppointment => {
+            this.events.find(e => e.id == event.event.id).start = new Date(event.newStart);
+            this.events.find(e => e.id == event.event.id).end = new Date(event.newEnd);
+            this.events = [...this.events];
+          });
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       });
     } else {
       this.translocoService.selectTranslate('action_denied_permissions').subscribe(msg => {
@@ -275,15 +279,8 @@ export class AppointmentCalendarComponent implements OnInit {
             this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
           });
           this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
-          this.deleteEvent = undefined;
-        }, error: (response: any) => {
-          const error: string = response.status.toString();
-          // Transloco does not load translation files. We need to load it manually;
-          this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-            this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-          });
-          this.deleteEvent = undefined;
-        }
+        },
+        error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
       }).add(() => {
         this.deleteEvent = undefined;
       });
@@ -299,9 +296,9 @@ export class AppointmentCalendarComponent implements OnInit {
     this.appointmentService.subscribeCurrentUser(appointmentId).subscribe({
       next: () => {
         this.loadEvents();
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+        this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_subscribe'), NotificationType.SUCCESS, null, 5);
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -312,9 +309,9 @@ export class AppointmentCalendarComponent implements OnInit {
     this.appointmentService.unsubscribeCurrentUser(appointmentId).subscribe({
       next: () => {
         this.loadEvents();
-      }, error: (response: any) => {
-        this.notifyLoadError(response);
-      }
+        this.biitSnackbarService.showNotification(this.translocoService.translate('app.success_unsubscribe'), NotificationType.SUCCESS, null, 5);
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -343,27 +340,23 @@ export class AppointmentCalendarComponent implements OnInit {
         });
         this.workshops = this.workshops.filter(w => w.id !== this.deleteWorkshop.id);
         this.filterWorkshops();
-      }, error: (response: any) => {
-        const error: string = response.status.toString();
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate(error, {},  {scope: 'components/appointment_center'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-      }
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.deleteWorkshop = undefined;
     });
   }
 
   protected filterWorkshops() {
+    this.currentSearch = this.search;
     this.filteredWorkshops = this.workshops;
     if (this.search.length) {
       this.filteredWorkshops = this.filteredWorkshops.filter(workshop => workshop.title.toLowerCase().includes(this.search.toLowerCase()));
     }
   }
 
-  protected resetInputValue(event: Event, value: string) {
-    (event.target as HTMLInputElement).value = value;
+  protected resetInputValue() {
+    this.search = this.currentSearch;
   }
 
   protected workshopSelectionHandler(workshop: AppointmentTemplate) {
@@ -391,9 +384,29 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   onWorkshopNextDate(date?: Date) {
-    this.viewDate = date;
+    if (date) {
+      this.viewDate = date;
+    } else {
+      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) || this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER) || this.selectedWorkshops.has(this.workshops.find(w => w.id == this.cardWorkshop.id))) {
+        this.findNextDate();
+      } else {
+        this.selectedWorkshops.add(this.workshops.find(w => w.id == this.cardWorkshop.id));
+        this.loadEvents().then(() => {
+          this.findNextDate();
+        });
+      }
+    }
     this.cardWorkshop = undefined;
     this.cardWorkshopSubs = undefined;
+  }
+
+  private findNextDate() {
+    const nextEvent = this.events.find(e => e.meta.appointmentTemplateId == this.cardWorkshop.id && e.start.getTime() > Date.now())
+    if (nextEvent) {
+      this.viewDate = nextEvent.start;
+    } else {
+      this.biitSnackbarService.showNotification(this.translocoService.translate('app.err_no_next_date'), NotificationType.ERROR, null, 5);
+    }
   }
 
   log(event: any) {
@@ -406,4 +419,6 @@ export class AppointmentCalendarComponent implements OnInit {
   protected readonly subWeeks = subWeeks;
   protected readonly startOfToday = startOfToday;
   protected readonly EventColor = EventColor;
+  protected readonly document = document;
+  protected readonly window = window;
 }

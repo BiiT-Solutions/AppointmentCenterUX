@@ -19,5 +19,8 @@
   "delete": "Eliminar",
   "cancel": "Cancelar",
   "subscribed": "Suscrito",
-  "today": "Hoy"
+  "today": "Hoy",
+  "success_subscribe": "Se ha suscrito al evento satisfactoriamente",
+  "success_unsubscribe": "Se ha desuscrito al evento satisfactoriamente",
+  "err_no_next_date": "No hay próximos eventos programados para el taller seleccionado"
 }

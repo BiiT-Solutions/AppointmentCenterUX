@@ -1,7 +1,6 @@
 import {Component, OnInit} from '@angular/core';
 import {BiitLogin} from "biit-ui/models";
 import {Constants} from "../../shared/constants";
-import {HttpResponse} from "@angular/common/http";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {ActivatedRoute, Router} from "@angular/router";
@@ -10,10 +9,11 @@ import {AuthService as AppointmentCenterAuthService, SessionService as Appointme
 import {
   AuthService as UserManagerAuthService,
   SessionService as UserManagerSessionService,
-  OrganizationService
+  OrganizationService, UserService
 } from 'user-manager-structure-lib';
 import {combineLatest} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
+import {ErrorHandler} from "biit-ui/utils";
 
 @Component({
   selector: 'biit-login-page',
@@ -37,6 +37,7 @@ export class BiitLoginPageComponent implements OnInit {
               private userManagerSessionService: UserManagerSessionService,
               private organizationService: OrganizationService,
               private permissionService: PermissionService,
+              private userService: UserService,
               private biitSnackbarService: BiitSnackbarService,
               private activateRoute: ActivatedRoute,
               private router: Router,
@@ -65,7 +66,7 @@ export class BiitLoginPageComponent implements OnInit {
         const user: User = User.clone(appointmentCenterResponse.body);
         if (!this.canAccess(user)) {
           this.waiting = false;
-          this.translocoService.selectTranslate('access_denied_permissions').subscribe(msg => {
+          this.translocoService.selectTranslate('403', {}, {scope: 'biit-ui/utils'}).subscribe(msg => {
             this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 10);
           });
           return;
@@ -82,7 +83,7 @@ export class BiitLoginPageComponent implements OnInit {
         this.userManagerSessionService.setToken(userManagerToken, userManagerExpiration, login.remember, true);
         this.userManagerSessionService.setUser(user);
 
-        this.organizationService.getAllByUser(user.id).subscribe(orgs => {
+        this.organizationService.getAllByLoggedUser().subscribe(orgs => {
           if (orgs[0] !== undefined) {
             sessionStorage.setItem('organization', orgs[0].id);
           }
@@ -90,13 +91,7 @@ export class BiitLoginPageComponent implements OnInit {
 
         this.router.navigate([Constants.PATHS.APPOINTMENTS]);
       },
-      error: (response: HttpResponse<void>) => {
-        const error: string = response.status.toString();
-        // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate(error, {},  {scope: 'components/login'}).subscribe(msg => {
-          this.biitSnackbarService.showNotification(msg, NotificationType.ERROR, null, 5);
-        });
-      }
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
     }).add(() => {
       this.waiting = false;
     });
@@ -110,7 +105,7 @@ export class BiitLoginPageComponent implements OnInit {
     this.activateRoute.queryParams.subscribe(params => {
       const queryParams: {[key: string]: string} = {};
       if (params[Constants.PATHS.QUERY.EXPIRED] !== undefined) {
-        this.translocoService.selectTranslate(Constants.PATHS.QUERY.EXPIRED, {},  {scope: 'components/login'}).subscribe(msg => {
+        this.translocoService.selectTranslate(Constants.PATHS.QUERY.EXPIRED, {},  {scope: 'biit-ui/utils'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.INFO, null, 5);
         });
         queryParams[Constants.PATHS.QUERY.EXPIRED] = null;
@@ -119,7 +114,7 @@ export class BiitLoginPageComponent implements OnInit {
         this.appointmentCenterSessionService.clearToken();
         this.userManagerSessionService.clearToken();
         this.permissionService.clear();
-        this.translocoService.selectTranslate(Constants.PATHS.QUERY.LOGOUT, {},  {scope: 'components/login'}).subscribe(msg => {
+        this.translocoService.selectTranslate(Constants.PATHS.QUERY.LOGOUT, {},  {scope: 'biit-ui/utils'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
         });
         queryParams[Constants.PATHS.QUERY.LOGOUT] = null;
@@ -128,4 +123,14 @@ export class BiitLoginPageComponent implements OnInit {
     });
   }
 
+  protected onResetPassword(email: string) {
+    this.userService.resetPassword(email).subscribe({
+      next: () => {
+        this.translocoService.selectTranslate('success', {},  {scope: 'biit-ui/login'}).subscribe(msg => {
+          this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
+        });
+      },
+      error: error => ErrorHandler.notify(error, this.translocoService, this.biitSnackbarService)
+    })
+  }
 }

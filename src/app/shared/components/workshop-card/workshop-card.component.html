@@ -25,7 +25,9 @@
       </a>
     </div>
     <div class="row" *ngIf="!$any(workshop).subscribed">
-      <button biit-button tertiary>
+      <button biit-button tertiary
+              (click)="onNextDate.emit(undefined)"
+      >
         {{t('form.next_event')}}
       </button>
     </div>

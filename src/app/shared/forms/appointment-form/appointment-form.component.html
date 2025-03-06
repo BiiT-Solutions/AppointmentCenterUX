@@ -9,14 +9,15 @@
     <div class="row">
       <biit-datepicker [(ngModel)]="appointment.startTime"
                        [placeholder]="t('form.start_date')"
-                       [timePicker]="true"
+                       [timePicker]="!appointment.allDay"
                        [max]="appointment.endTime"
                        error="{{errors | mapGet: AppointmentFormValidationFields.START_DATE_MANDATORY}}"
       ></biit-datepicker>
       <biit-datepicker [(ngModel)]="appointment.endTime"
                        [placeholder]="t('form.end_date')"
-                       [timePicker]="true"
+                       [timePicker]="!appointment.allDay"
                        [min]="appointment.startTime"
+                       [disabled]="appointment.allDay"
                        error="{{errors | mapGet: AppointmentFormValidationFields.END_DATE_MANDATORY}}"
       ></biit-datepicker>
     </div>
@@ -27,6 +28,7 @@
                      [label]="'label'"
                      [value]="'value'"
                      [title]="t('form.status')"
+                     disabled
       ></biit-dropdown>
       <biit-toggle [(ngModel)]="appointment.allDay">{{ t('form.all_day') }}</biit-toggle>
     </div>
@@ -38,10 +40,10 @@
                         [value]="'value'"
                         [title]="t('form.speakers')"
       ></biit-multiselect>
-      <biit-multiselect [ngModel]="appointment.attendees | multiselectInterface: attendees"
+      <biit-multiselect [ngModel]="appointment?.attendees | multiselectInterface: attendees"
                         (ngModelChange)="onMultiselectSelection($event, 'attendees')"
                         [data]="attendees"
-                        [label]="'name'"
+                        [label]="'label'"
                         [value]="'value'"
                         [title]="t('form.attendees')"
                         [disabled]="!appointment.id"
@@ -58,13 +60,6 @@
                        [min]="0"
                        [placeholder]="t('form.cost')"
       ></biit-input-text>
-      <biit-dropdown [ngModel]="appointment.colorTheme | dropdownInterface: translatedColors"
-                     (ngModelChange)="appointment.colorTheme = $event.value"
-                     [data]="translatedColors"
-                     [label]="'label'"
-                     [value]="'value'"
-                     [title]="t('form.color_theme')"
-      ></biit-dropdown>
     </div>
     <button biit-button (click)="onSave()">
       {{t('form.save')}}

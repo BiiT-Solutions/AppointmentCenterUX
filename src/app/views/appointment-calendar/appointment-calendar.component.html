@@ -40,7 +40,7 @@
                          style="display: block; height: 0.6rem; width: 0.6rem"
               ></biit-icon>
             </div>
-            <button biit-icon
+            <button biit-icon *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission)"
                     [icon]="selectedWorkshops.has(workshop) ? 'show' : 'hide'"
                     class="eye"
                     [class.show]="selectedWorkshops.has(workshop)"
@@ -50,10 +50,9 @@
           </div>
         </div>
         <div class="bottom">
-          <biit-input-text [ngModel]="search"
-                           (onActionPerformed)="search = $event;
-                                                filterWorkshops();"
-                           (focusout)="resetInputValue($event, search)"
+          <biit-input-text [(ngModel)]="search"
+                           (onActionPerformed)="filterWorkshops();"
+                           (focusout)="resetInputValue()"
                            icon="search"
                            [placeholder]="t('app.search')"
           ></biit-input-text>
@@ -212,7 +211,7 @@
 
   <event-card *ngIf="cardEvent"
               class="event-card"
-              [style.top]="mousePosition?.y + 10 + 'px'"
+              [style.top]="(mousePosition?.y > window.innerHeight - 180 ? mousePosition?.y - 180 : mousePosition?.y) + 'px'"
               [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
               [event]="cardEvent"
               [organizationUsers]="organizationUsers"
@@ -226,7 +225,7 @@
   <workshop-card *ngIf="cardWorkshop"
               class="event-card"
               [style.top]="mousePosition?.y + 10 + 'px'"
-              [style.left]="(mousePosition?.x - 11.75*16) + 'px'"
+              [style.left]="mousePosition?.x + 'px'"
               [workshop]="cardWorkshop"
               [speakersLabel]="cardWorkshop.speakers | userNameList: organizationUsers"
               [subscribedEvents]="cardWorkshopSubs"
