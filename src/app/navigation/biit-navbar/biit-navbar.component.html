@@ -16,7 +16,12 @@
 <context-menu #contextMenu dir="rtl">
   <ng-template contextMenuItem
                *transloco="let t"
+               (execute)="router.navigate([Constants.PATHS.SCHEDULE])">
+    {{ t('t.schedule') }}
+  </ng-template>
+  <ng-template contextMenuItem
+               *transloco="let t"
                (execute)="router.navigateByUrl('/login?logout')">
-    {{t('t.logout')}}
+    {{ t('t.logout') }}
   </ng-template>
 </context-menu>

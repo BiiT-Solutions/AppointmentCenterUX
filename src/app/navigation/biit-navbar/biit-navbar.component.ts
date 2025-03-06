@@ -4,6 +4,7 @@ import {provideTranslocoScope} from '@ngneat/transloco';
 import {User} from 'authorization-services-lib';
 import {SessionService} from "appointment-center-structure-lib";
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
+import {Constants} from "../../shared/constants";
 
 @Component({
   selector: 'biit-navbar',
@@ -13,6 +14,8 @@ import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-conte
 })
 
 export class BiitNavbarComponent implements AfterViewInit {
+  protected readonly Constants = Constants;
+
   @ViewChild('contextMenu') contextMenu: ContextMenuComponent<void>;
   @ViewChild('navUser', {read: ElementRef}) navUser: ElementRef;
   user: User;

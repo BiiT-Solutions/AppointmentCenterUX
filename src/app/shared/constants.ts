@@ -5,9 +5,7 @@ export class Constants {
   }
   public static readonly PATHS = class {
     public static readonly APPOINTMENTS: string = '/appointments';
-    public static readonly ROLES: string = '/roles';
-    public static readonly APPLICATIONS: string = '/applications';
-    public static readonly SERVICES: string = '/services';
+    public static readonly SCHEDULE: string = '/schedule';
 
     public static readonly QUERY = class {
       public static readonly EXPIRED: string = 'expired';

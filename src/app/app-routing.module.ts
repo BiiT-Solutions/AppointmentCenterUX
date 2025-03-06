@@ -19,6 +19,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'schedule',
+    loadChildren: () => import('./views/schedule-calendar/schedule-calendar-routing.module').then(m => m.ScheduleCalendarRoutingModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: '**',
     loadChildren: () => login
   }
