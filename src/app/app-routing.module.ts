@@ -1,5 +1,5 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes } from '@angular/router';
+import {NgModule} from '@angular/core';
+import {RouterModule, Routes} from '@angular/router';
 import {AuthGuard} from "./services/auth-guard.service";
 
 const login = import('./views/biit-login-page/biit-login-page.module').then(m => m.BiitLoginPageModule);
@@ -20,7 +20,7 @@ const routes: Routes = [
   },
   {
     path: 'schedule',
-    loadChildren: () => import('./views/schedule-calendar/schedule-calendar-routing.module').then(m => m.ScheduleCalendarRoutingModule),
+    loadChildren: () => import('./views/schedule-calendar/schedule-calendar.module').then(m => m.ScheduleCalendarModule),
     canActivate: [AuthGuard]
   },
   {
@@ -33,4 +33,5 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {
+}

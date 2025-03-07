@@ -7,7 +7,7 @@ import {
   AppointmentTemplateService,
   SessionService
 } from "appointment-center-structure-lib";
-import {CalendarEventConversor} from "../../shared/utils/calendar-event-conversor";
+import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
@@ -34,6 +34,14 @@ import {ErrorHandler} from "biit-ui/utils";
   ]
 })
 export class AppointmentCalendarComponent implements OnInit {
+
+  protected readonly BiitProgressBarType = BiitProgressBarType;
+  protected readonly addWeeks = addWeeks;
+  protected readonly subWeeks = subWeeks;
+  protected readonly startOfToday = startOfToday;
+  protected readonly EventColor = EventColor;
+  protected readonly window = window;
+
   protected viewDate: Date = new Date();
   protected events: CalendarEvent[] = [];
   protected workshops: AppointmentTemplate[] = [];
@@ -129,7 +137,7 @@ export class AppointmentCalendarComponent implements OnInit {
           appointments.map(a => hash.set(a.id, a));
 
           this.events = [...hash.values()].map(e => {
-            const event = CalendarEventConversor.convertToCalendarEvent(e);
+            const event = CalendarEventConverter.convertToCalendarEvent(e);
             event.cssClass = (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
               !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) &&
             !event.meta.attendees.includes(this.sessionService.getUser().uuid) ? 'card-unsubscribed' : '';
@@ -413,12 +421,5 @@ export class AppointmentCalendarComponent implements OnInit {
     console.log("DEVELOPMENT LOG: ", event);
   }
 
-  protected readonly BiitProgressBarType = BiitProgressBarType;
-  protected readonly sessionStorage = sessionStorage;
-  protected readonly addWeeks = addWeeks;
-  protected readonly subWeeks = subWeeks;
-  protected readonly startOfToday = startOfToday;
-  protected readonly EventColor = EventColor;
-  protected readonly document = document;
-  protected readonly window = window;
+
 }

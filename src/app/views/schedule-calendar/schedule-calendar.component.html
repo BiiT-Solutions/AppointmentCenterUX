@@ -1,1 +1,13 @@
-<p>schedule-calendar works!</p>
+<ng-container>
+  <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
+  <div class="canvas">
+    <div class="main">
+        <biit-calendar [events]="events"
+                       [calendarMode]="CalendarMode.WEEK"
+                       [configuration]="calendarConfiguration"
+                       [calendarUtility]="calendarUtility"
+                       (onCreatedEvent)="onEventChange($event)"
+        ></biit-calendar>
+    </div>
+  </div>
+</ng-container>

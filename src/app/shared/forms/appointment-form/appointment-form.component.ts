@@ -4,7 +4,7 @@ import {CalendarEvent} from "biit-ui/calendar";
 import {Appointment, AppointmentService, AppointmentTemplate, Status} from "appointment-center-structure-lib";
 import {Type} from "biit-ui/inputs";
 import {addMinutes} from "date-fns"
-import {CalendarEventConversor} from "../../utils/calendar-event-conversor";
+import {CalendarEventConverter} from "../../utils/calendar-event-converter.module";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 import {combineLatest} from "rxjs";
@@ -108,14 +108,14 @@ export class AppointmentFormComponent implements OnInit {
     if (this.event.id) {
       this.appointmentService.update(this.appointment).subscribe({
         next: (appointment: Appointment): void => {
-          this.onSaved.emit(CalendarEventConversor.convertToCalendarEvent(appointment));
+          this.onSaved.emit(CalendarEventConverter.convertToCalendarEvent(appointment));
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     } else {
       this.appointmentService.create(this.appointment).subscribe({
         next: (appointment: Appointment): void => {
-          this.onSaved.emit(CalendarEventConversor.convertToCalendarEvent(appointment));
+          this.onSaved.emit(CalendarEventConverter.convertToCalendarEvent(appointment));
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })

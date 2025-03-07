@@ -1,0 +1,43 @@
+$default-color: #262626;
+
+.canvas {
+  height: 100%;
+  width: 100%;
+  padding: 3em;
+  display: flex;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  min-width: 0;
+  min-height: 0;
+  padding: 1em;
+  gap: 1em;
+  background: white;
+  border: 3px solid $default-color;
+
+  .top {
+    height: 2.125em;
+    display: flex;
+    justify-content: space-between;
+
+    .left {
+      display: flex;
+      align-items: center;
+
+      a {
+        font-size: 1.5em;
+        font-weight: 700;
+        text-transform: uppercase;
+        padding-left: 0.75em;
+        padding-right: 0.75em;
+      }
+    }
+
+    .right {
+      display: flex;
+    }
+  }
+}
