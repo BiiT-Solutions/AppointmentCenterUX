@@ -23,5 +23,11 @@
   "success_subscribe": "Appointment has been subscribed successfully",
   "success_unsubscribe": "Appointment has been unsubscribed successfully",
   "err_no_next_date": "There are no near appointments scheduled for the selected workshop",
-  "monday": "Cuchulain"
+  "monday": "Monday",
+  "tuesday": "Tuesday",
+  "wednesday": "Wednesday",
+  "thursday": "Thursday",
+  "friday": "Friday",
+  "saturday": "Saturday",
+  "sunday": "Sunday"
 }
