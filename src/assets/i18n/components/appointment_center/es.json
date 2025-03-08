@@ -29,5 +29,7 @@
   "thursday": "Jueves",
   "friday": "Viernes",
   "saturday": "S&aacute;bado",
-  "sunday": "Domingo"
+  "sunday": "Domingo",
+  "error-loading-schedule": "Error cargando su horario. Pruebe de nuevo más tarde.",
+  "error-updating-schedule": "Error actualizando su horario. Pruebe de nuevo más tarde."
 }

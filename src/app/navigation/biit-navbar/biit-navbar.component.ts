@@ -1,10 +1,12 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
-import {provideTranslocoScope} from '@ngneat/transloco';
+import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
 import {User} from 'authorization-services-lib';
 import {SessionService} from "appointment-center-structure-lib";
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
 import {Constants} from "../../shared/constants";
+import {AuthGuard} from "../../services/auth-guard.service";
+import {Permission} from "../../config/rbac/permission";
 
 @Component({
   selector: 'biit-navbar',
@@ -21,6 +23,7 @@ export class BiitNavbarComponent implements AfterViewInit {
   user: User;
   constructor(protected router: Router,
               private contextMenuService: ContextMenuService<void>,
+              private translocoService: TranslocoService,
               protected sessionService: SessionService) {
   }
 
@@ -28,6 +31,27 @@ export class BiitNavbarComponent implements AfterViewInit {
 
   ngAfterViewInit() {
     this.user = this.sessionService.getUser();
+    this.routes = [
+      {
+        path: Constants.PATHS.APPOINTMENTS,
+        canActivate: [AuthGuard],
+        title: 'appointments',
+      },
+      {
+        path: Constants.PATHS.SCHEDULE,
+        canActivate: [AuthGuard],
+        title: 'schedule',
+
+      }
+    ]
+    this.routes.forEach(route => {
+      this.translocoService.selectTranslate(route.title as string, {},  {scope: 'components/navigation'}).subscribe(value => route.title = value);
+
+      route.children?.forEach(child => {
+        this.translocoService.selectTranslate(child.title as string, {},  {scope: 'components/navigation'}).subscribe(value => child.title = value);
+      })
+    });
+
   }
 
   log(event: any) {

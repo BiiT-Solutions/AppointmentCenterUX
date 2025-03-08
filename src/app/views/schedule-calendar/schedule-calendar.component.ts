@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BiitProgressBarType, BiitSnackbarService} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {CalendarConfiguration, CalendarEvent, CalendarMode} from "biit-ui/calendar";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {
@@ -47,8 +47,18 @@ export class ScheduleCalendarComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.scheduleService.getMySchedule().subscribe((_schedule: Schedule): void => {
-      this.refreshCalendar(_schedule);
+    this.waiting = true;
+    this.scheduleService.getMySchedule().subscribe( {
+      next: (schedule: Schedule): void => {
+        this.waiting = false;
+        this.refreshCalendar(schedule);
+      },
+      error: (error: any): void => {
+        this.waiting = false;
+        this.translocoService.selectTranslate('app.error-loading-schedule').subscribe( translation => {
+            this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+        })
+      }
     })
   }
 
@@ -72,9 +82,21 @@ export class ScheduleCalendarComponent implements OnInit {
 
       const scheduleRanges: ScheduleRange[] = [];
       scheduleRanges.push(scheduleRange);
-      this.scheduleService.addRangesToMySchedule(scheduleRanges).subscribe((_schedule: Schedule): void => {
-        this.refreshCalendar(_schedule);
-      })
+      this.waiting = true;
+      this.scheduleService.addRangesToMySchedule(scheduleRanges).subscribe(
+        {
+          next: (schedule: Schedule): void => {
+            this.waiting = false;
+            this.refreshCalendar(schedule);
+          },
+          error: (error: any): void => {
+            this.waiting = false;
+            this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+            })
+          }
+        }
+      );
     }
   }
 }

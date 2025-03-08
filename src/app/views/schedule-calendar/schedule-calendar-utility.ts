@@ -21,7 +21,7 @@ export class ScheduleCalendarUtility implements CalendarUtility {
     if (!date) {
       return "-";
     }
-    return this.dateToDayOfWeek(date) + " " + date.toLocaleDateString(undefined, {day: "numeric", month: "short", year: "numeric"});
+    return this.dateToDayOfWeek(date);
   }
 
   private dateToDayOfWeek(date: Date): string {
