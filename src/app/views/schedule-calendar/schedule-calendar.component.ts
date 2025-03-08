@@ -63,14 +63,12 @@ export class ScheduleCalendarComponent implements OnInit {
   }
 
 
-  onEventChange($event: CalendarEvent) {
-    if ($event) {
+  onEventChange(calendarEvent: CalendarEvent) {
+    if (calendarEvent) {
       const scheduleRange = new ScheduleRange();
-      scheduleRange.dayOfWeek = DayOfWeek.getByNumber($event.start.getDay());
-      scheduleRange.startTime.hours = $event.start.getHours();
-      scheduleRange.startTime.minutes = $event.start.getMinutes();
-      scheduleRange.endTime.hours = $event.end.getHours();
-      scheduleRange.endTime.minutes = $event.end.getMinutes();
+      scheduleRange.dayOfWeek = DayOfWeek.getByNumber(calendarEvent.start.getDay());
+      scheduleRange.startTime = `${calendarEvent.start.getHours().toString().padStart(2, '0')}:${calendarEvent.start.getMinutes().toString().padStart(2, '0')}`;
+      scheduleRange.endTime = `${calendarEvent.end.getHours().toString().padStart(2, '0')}:${calendarEvent.end.getMinutes().toString().padStart(2, '0')}`;
 
       const scheduleRanges: ScheduleRange[] = [];
       scheduleRanges.push(scheduleRange);
