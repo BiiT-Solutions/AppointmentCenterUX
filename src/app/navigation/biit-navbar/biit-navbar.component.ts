@@ -36,12 +36,6 @@ export class BiitNavbarComponent implements AfterViewInit {
         path: Constants.PATHS.APPOINTMENTS,
         canActivate: [AuthGuard],
         title: 'appointments',
-      },
-      {
-        path: Constants.PATHS.SCHEDULE,
-        canActivate: [AuthGuard],
-        title: 'schedule',
-
       }
     ]
     this.routes.forEach(route => {
