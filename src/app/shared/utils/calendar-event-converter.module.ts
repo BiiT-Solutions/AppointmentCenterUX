@@ -3,6 +3,7 @@ import {CalendarEvent, EventColor} from "biit-ui/calendar";
 import {NgModule} from "@angular/core";
 import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
 import {ScheduleRange} from "appointment-center-structure-lib/lib/models/schedule-range";
+import { startOfWeek } from 'date-fns'
 
 @NgModule({
   imports: [
@@ -11,26 +12,39 @@ import {ScheduleRange} from "appointment-center-structure-lib/lib/models/schedul
 })
 export class CalendarEventConverter {
   public static convertToCalendarEvent(appointment: Appointment): CalendarEvent {
-    // @ts-ignore
-    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, EventColor[appointment.colorTheme], undefined, true, true, appointment);
+    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, (EventColor as any)[appointment.colorTheme], undefined, true, true, appointment);
   }
-
 
   public static convertRangeToCalendarEvent(scheduleRange: ScheduleRange): CalendarEvent {
-    const today: Date = new Date(DayOfWeek.getNumber(scheduleRange.dayOfWeek));
-    return new CalendarEvent(scheduleRange.id, "",
-      new Date(today.getFullYear(), today.getMonth(), today.getDay(), scheduleRange.startTime.hours, scheduleRange.endTime.minutes),
-      new Date(today.getFullYear(), today.getMonth(), today.getDay(), scheduleRange.endTime.hours, scheduleRange.endTime.minutes),
-      false, EventColor.RED, undefined, false, true);
+    const dateOnWeek: Date = CalendarEventConverter.getDateByDayOfWeek(scheduleRange.dayOfWeek);
+    let startTime: string[] = scheduleRange.startTime.split(':');
+    let endTime: string[] = scheduleRange.endTime.split(':');
+    const startEvent: Date = new Date(dateOnWeek);
+    startEvent.setHours(+startTime[0] || 0, +startTime[1] || 0);
+    const endEvent: Date = new Date(dateOnWeek);
+    endEvent.setHours(+endTime[0] || 23, +endTime[1] || 59);
+    return  new CalendarEvent(scheduleRange.id, "",
+      startEvent , endEvent, false, EventColor.RED, undefined, false, true);
   }
 
-
-  private getDayOfCurrentWeek(d: number): Date {
-    const date = new Date(d);
-    const day: number = date.getDay(); // Sunday - Saturday : 0 - 6
-    //  Day of month - day of week (-6 if Sunday), otherwise +1
-    const diff: number = date.getDate() - day + (day === 0 ? -6 : 1);
-    date.setDate(diff);
-    return date;
+  private static getDateByDayOfWeek(dayOfWeek: DayOfWeek): Date {
+    const startingWeekDay = CalendarEventConverter.getFirstDayOfWeek()
+    let currentWeekDay: number = new Date().getDay() - startingWeekDay;
+    // This happens when the current day is Sunday
+    if (currentWeekDay < 0) {
+      currentWeekDay = 6;
+    }
+    // DayOfWeek starts already on Monday
+    let dayOfWeekNumber: number = DayOfWeek.getNumber(dayOfWeek);
+    if (dayOfWeekNumber > 6) {
+      dayOfWeekNumber = 0;
+    }
+    const difference: number = dayOfWeekNumber - currentWeekDay;
+    return new Date(new Date().setDate(new Date().getDate() + difference));
   }
+
+  private static getFirstDayOfWeek(): number {
+    return startOfWeek(new Date()).getDay();
+  }
+
 }

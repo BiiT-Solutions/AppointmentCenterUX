@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {BiitProgressBarType, BiitSnackbarService} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {CalendarConfiguration, CalendarEvent, CalendarMode} from "biit-ui/calendar";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {
@@ -47,8 +47,18 @@ export class ScheduleCalendarComponent implements OnInit {
 
 
   ngOnInit(): void {
-    this.scheduleService.getMySchedule().subscribe((_schedule: Schedule): void => {
-      this.refreshCalendar(_schedule);
+    this.waiting = true;
+    this.scheduleService.getMySchedule().subscribe( {
+      next: (schedule: Schedule): void => {
+        this.waiting = false;
+        this.refreshCalendar(schedule);
+      },
+      error: (error: any): void => {
+        this.waiting = false;
+        this.translocoService.selectTranslate('app.error-loading-schedule').subscribe( translation => {
+            this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+        })
+      }
     })
   }
 
@@ -63,20 +73,30 @@ export class ScheduleCalendarComponent implements OnInit {
   }
 
 
-  onEventChange($event: CalendarEvent) {
-    if ($event) {
+  onEventChange(calendarEvent: CalendarEvent) {
+    if (calendarEvent) {
       const scheduleRange = new ScheduleRange();
-      scheduleRange.dayOfWeek = DayOfWeek.getByNumber($event.start.getDay());
-      scheduleRange.startTime.hours = $event.start.getHours();
-      scheduleRange.startTime.minutes = $event.start.getMinutes();
-      scheduleRange.endTime.hours = $event.end.getHours();
-      scheduleRange.endTime.minutes = $event.end.getMinutes();
+      scheduleRange.dayOfWeek = DayOfWeek.getByNumber(calendarEvent.start.getDay());
+      scheduleRange.startTime = `${calendarEvent.start.getHours().toString().padStart(2, '0')}:${calendarEvent.start.getMinutes().toString().padStart(2, '0')}`;
+      scheduleRange.endTime = `${calendarEvent.end.getHours().toString().padStart(2, '0')}:${calendarEvent.end.getMinutes().toString().padStart(2, '0')}`;
 
       const scheduleRanges: ScheduleRange[] = [];
       scheduleRanges.push(scheduleRange);
-      this.scheduleService.addRangesToMySchedule(scheduleRanges).subscribe((_schedule: Schedule): void => {
-        this.refreshCalendar(_schedule);
-      })
+      this.waiting = true;
+      this.scheduleService.addRangesToMySchedule(scheduleRanges).subscribe(
+        {
+          next: (schedule: Schedule): void => {
+            this.waiting = false;
+            this.refreshCalendar(schedule);
+          },
+          error: (error: any): void => {
+            this.waiting = false;
+            this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+              this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+            })
+          }
+        }
+      );
     }
   }
 }

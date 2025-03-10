@@ -1,2 +1,5 @@
 {
+  "schedule": "Schema",
+  "appointments": "Afspraken",
+  "logout": "Uitloggen"
 }

@@ -22,5 +22,14 @@
   "today": "Hoy",
   "success_subscribe": "Se ha suscrito al evento satisfactoriamente",
   "success_unsubscribe": "Se ha desuscrito al evento satisfactoriamente",
-  "err_no_next_date": "No hay próximos eventos programados para el taller seleccionado"
+  "err_no_next_date": "No hay próximos eventos programados para el taller seleccionado",
+  "monday": "Lunes",
+  "tuesday": "Martes",
+  "wednesday": "Mi&eacute;rcoles",
+  "thursday": "Jueves",
+  "friday": "Viernes",
+  "saturday": "S&aacute;bado",
+  "sunday": "Domingo",
+  "error-loading-schedule": "Error cargando su horario. Pruebe de nuevo más tarde.",
+  "error-updating-schedule": "Error actualizando su horario. Pruebe de nuevo más tarde."
 }
