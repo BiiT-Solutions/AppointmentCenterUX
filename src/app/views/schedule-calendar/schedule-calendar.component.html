@@ -1,4 +1,4 @@
-<ng-container>
+<ng-container *transloco="let t">
   <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
   <div class="canvas">
     <div class="main">
@@ -7,7 +7,16 @@
                        [configuration]="calendarConfiguration"
                        [calendarUtility]="calendarUtility"
                        (onCreatedEvent)="onEventChange($event)"
+                       [eventContextMenu]="eventMenu"
         ></biit-calendar>
     </div>
   </div>
+  <context-menu #eventMenu>
+    <ng-template contextMenuItem
+                 *ngIf="Permission.APPOINTMENT.DELETE | hasPermission"
+                 (execute)="onDeleteEvent($event.value)">
+      {{ t('app.delete_appointment') }}
+    </ng-template>
+  </context-menu>
+
 </ng-container>

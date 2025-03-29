@@ -8,20 +8,24 @@ import {BiitProgressBarModule} from "biit-ui/info";
 import {TranslocoModule} from "@ngneat/transloco";
 import {DragAndDropModule} from "angular-draggable-droppable";
 import {ColorThemePipeModule} from "../../shared/pipes/color-theme-event/color-theme-pipe.module";
+import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
+import {HasPermissionPipeModule} from "../../shared/pipes/has-permission-pipe/has-permission-pipe.module";
 
 
 @NgModule({
   declarations: [
     ScheduleCalendarComponent
   ],
-  imports: [
-    CommonModule,
-    ScheduleCalendarRoutingModule,
-    BiitCalendarModule,
-    BiitProgressBarModule,
-    TranslocoModule,
-    DragAndDropModule,
-    ColorThemePipeModule,
-  ]
+    imports: [
+        CommonModule,
+        ScheduleCalendarRoutingModule,
+        BiitCalendarModule,
+        BiitProgressBarModule,
+        TranslocoModule,
+        DragAndDropModule,
+        ColorThemePipeModule,
+        ContextMenuModule,
+        HasPermissionPipeModule,
+    ]
 })
 export class ScheduleCalendarModule { }

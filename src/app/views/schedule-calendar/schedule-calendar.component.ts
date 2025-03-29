@@ -12,6 +12,7 @@ import {
 import {PermissionService} from "../../services/permission.service";
 import {ScheduleCalendarUtility} from "./schedule-calendar-utility";
 import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
+import {Permission} from "../../config/rbac/permission";
 
 @Component({
   selector: 'schedule-calendar',
@@ -99,4 +100,23 @@ export class ScheduleCalendarComponent implements OnInit {
       );
     }
   }
+  onDeleteEvent(calendarEvent: CalendarEvent) {
+    const scheduleRange = new ScheduleRange();
+    scheduleRange.dayOfWeek = DayOfWeek.getByNumber(calendarEvent.start.getDay());
+    scheduleRange.startTime = `${calendarEvent.start.getHours().toString().padStart(2, '0')}:${calendarEvent.start.getMinutes().toString().padStart(2, '0')}`;
+    scheduleRange.endTime = `${calendarEvent.end.getHours().toString().padStart(2, '0')}:${calendarEvent.end.getMinutes().toString().padStart(2, '0')}`;
+    this.scheduleService.deleteRangesFromMySchedule([scheduleRange]).subscribe({
+      next: (schedule: Schedule): void => {
+        this.waiting = false;
+        this.refreshCalendar(schedule);
+      },
+      error: (error: any): void => {
+        this.waiting = false;
+        this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+          this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+        })
+      }
+    })
+  }
+  protected readonly Permission = Permission;
 }
