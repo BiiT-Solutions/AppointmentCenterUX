@@ -1,18 +1,18 @@
-import {Component, OnInit} from '@angular/core';
+import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation} from '@angular/core';
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {CalendarConfiguration, CalendarEvent, CalendarMode} from "biit-ui/calendar";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {
-  AppointmentService,
   DayOfWeek,
   Schedule,
   ScheduleRange,
   ScheduleService
 } from "appointment-center-structure-lib";
-import {PermissionService} from "../../services/permission.service";
 import {ScheduleCalendarUtility} from "./schedule-calendar-utility";
 import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
 import {Permission} from "../../config/rbac/permission";
+import {CalendarEventTimesChangedEvent} from "angular-calendar";
+import {TemplateService} from "../../services/template.service";
 
 @Component({
   selector: 'schedule-calendar',
@@ -26,7 +26,7 @@ import {Permission} from "../../config/rbac/permission";
     }
   ]
 })
-export class ScheduleCalendarComponent implements OnInit {
+export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   protected readonly CalendarMode = CalendarMode;
   protected readonly BiitProgressBarType = BiitProgressBarType;
@@ -38,14 +38,14 @@ export class ScheduleCalendarComponent implements OnInit {
 
   protected events: CalendarEvent[] = [];
 
-  constructor(private appointmentService: AppointmentService,
-              protected permissionService: PermissionService,
-              private biitSnackbarService: BiitSnackbarService,
+  @ViewChild('template', {static: true}) template: TemplateRef<any>;
+
+  constructor (private biitSnackbarService: BiitSnackbarService,
+              private templateService: TemplateService,
               private translocoService: TranslocoService,
               private scheduleService: ScheduleService) {
     this.calendarUtility = new ScheduleCalendarUtility(translocoService);
   }
-
 
   ngOnInit(): void {
     this.waiting = true;
@@ -63,6 +63,15 @@ export class ScheduleCalendarComponent implements OnInit {
     })
   }
 
+  // Injects the template into the template service (BiitComponentMenu)
+  ngAfterViewInit() {
+    this.templateService.changeTemplate(this.template);
+  }
+
+  // Removes the template from the template service (BiitComponentMenu)
+  ngOnDestroy() {
+    this.templateService.changeTemplate(undefined);
+  }
 
   refreshCalendar(schedule: Schedule) {
     this.events = [];
@@ -74,7 +83,7 @@ export class ScheduleCalendarComponent implements OnInit {
   }
 
 
-  onEventChange(calendarEvent: CalendarEvent) {
+  onEventCreated(calendarEvent: CalendarEvent) {
     if (calendarEvent) {
       const scheduleRange = new ScheduleRange();
       scheduleRange.dayOfWeek = DayOfWeek.getByNumber(calendarEvent.start.getDay());
@@ -119,4 +128,31 @@ export class ScheduleCalendarComponent implements OnInit {
     })
   }
   protected readonly Permission = Permission;
+
+  protected clearSchedules() {
+    this.waiting = true;
+    this.scheduleService.setMySchedule([]).subscribe(
+      {
+        next: (schedule: Schedule): void => {
+          this.waiting = false;
+          this.refreshCalendar(schedule);
+        },
+        error: (error: any): void => {
+          this.waiting = false;
+          this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+            this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+          })
+        }
+      }
+    )
+  }
+  protected onEventDrop(event: CalendarEventTimesChangedEvent): void {
+    const scheduleRange = new ScheduleRange();
+    scheduleRange.dayOfWeek = DayOfWeek.getByNumber((new Date(event.newStart)).getDay());
+    scheduleRange.startTime = new Date(event.newStart).getHours().toString().padStart(2, '0') + ':' + new Date(event.newStart).getMinutes().toString().padStart(2, '0');
+    scheduleRange.endTime = new Date(event.newEnd).getHours().toString().padStart(2, '0') + ':' + new Date(event.newEnd).getMinutes().toString().padStart(2, '0');
+    scheduleRange.id = +event.event.id;
+    // TODO: sent event once update and existing schedule endpoint is created.
+    console.log('Drop', event);
+  }
 }

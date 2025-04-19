@@ -41,3 +41,9 @@ $default-color: #262626;
     }
   }
 }
+
+::ng-deep .fill-icon-size > div > .icon-button-svg {
+    width: 2rem;
+    height: 2rem;
+}
+

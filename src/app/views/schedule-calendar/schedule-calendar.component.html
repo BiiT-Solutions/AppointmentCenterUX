@@ -6,7 +6,8 @@
                        [calendarMode]="CalendarMode.WEEK"
                        [configuration]="calendarConfiguration"
                        [calendarUtility]="calendarUtility"
-                       (onCreatedEvent)="onEventChange($event)"
+                       (onCreatedEvent)="onEventCreated($event)"
+                       (onEventDrop)="onEventDrop($event)"
                        [eventContextMenu]="eventMenu"
         ></biit-calendar>
     </div>
@@ -18,5 +19,16 @@
       {{ t('app.delete_appointment') }}
     </ng-template>
   </context-menu>
-
 </ng-container>
+
+<ng-template #template>
+  <div class="buttons-row">
+    <button biit-icon
+            [disabled]="events.length === 0"
+            (click)="events.length && clearSchedules()"
+            tooltip="{{ 'app.clear' | transloco }}"
+            class="fill-icon-size"
+            icon="clear"
+    ></button>
+  </div>
+</ng-template>
