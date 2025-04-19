@@ -10,7 +10,8 @@ import {DragAndDropModule} from "angular-draggable-droppable";
 import {ColorThemePipeModule} from "../../shared/pipes/color-theme-event/color-theme-pipe.module";
 import {ContextMenuModule} from "@perfectmemory/ngx-contextmenu";
 import {HasPermissionPipeModule} from "../../shared/pipes/has-permission-pipe/has-permission-pipe.module";
-import {BiitIconButtonModule} from "biit-ui/button";
+import {BiitButtonModule, BiitIconButtonModule} from "biit-ui/button";
+import {BiitPopupModule} from "biit-ui/popup";
 
 
 @NgModule({
@@ -29,6 +30,8 @@ import {BiitIconButtonModule} from "biit-ui/button";
     HasPermissionPipeModule,
     BiitIconButtonModule,
     BiitTooltipModule,
+    BiitPopupModule,
+    BiitButtonModule,
   ]
 })
 export class ScheduleCalendarModule { }

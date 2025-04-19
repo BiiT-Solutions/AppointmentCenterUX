@@ -42,6 +42,20 @@ $default-color: #262626;
   }
 }
 
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+  padding: 1em;
+  width: 100%;
+  & > :last-child {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    align-self: end;
+  }
+}
+
 ::ng-deep .fill-icon-size > div > .icon-button-svg {
     width: 2rem;
     height: 2rem;

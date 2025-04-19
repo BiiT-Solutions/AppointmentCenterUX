@@ -25,10 +25,35 @@
   <div class="buttons-row">
     <button biit-icon
             [disabled]="events.length === 0"
-            (click)="events.length && clearSchedules()"
+            (click)="showCleanConfirmation = true"
             tooltip="{{ 'app.clear' | transloco }}"
             class="fill-icon-size"
             icon="clear"
     ></button>
   </div>
 </ng-template>
+
+<biit-popup *ngIf="showCleanConfirmation"
+            title="{{ 'app.clear-all-schedules' | transloco }}"
+>
+  <div class="popup-content">
+    <div>
+      {{ "app.clear-all-info" | transloco }}
+    </div>
+    <div style="font-weight: 600">
+      {{ "app.clear-all-question" | transloco }}
+    </div>
+    <div>
+      <button
+        biit-button primary
+        (click)="showCleanConfirmation = false"
+      >{{'app.cancel' | transloco}}</button>
+      <button
+        biit-button secondary
+        (click)="clearSchedules(); showCleanConfirmation = false"
+      >
+        {{'app.confirm' | transloco}}
+      </button>
+    </div>
+  </div>
+</biit-popup>

@@ -37,6 +37,7 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
   protected calendarUtility: ScheduleCalendarUtility;
 
   protected events: CalendarEvent[] = [];
+  protected showCleanConfirmation: boolean = false;
 
   @ViewChild('template', {static: true}) template: TemplateRef<any>;
 
