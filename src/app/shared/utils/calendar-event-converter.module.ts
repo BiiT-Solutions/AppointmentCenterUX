@@ -4,6 +4,7 @@ import {NgModule} from "@angular/core";
 import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
 import {ScheduleRange} from "appointment-center-structure-lib/lib/models/schedule-range";
 import { startOfWeek } from 'date-fns'
+import {isNumber} from "@ngneat/transloco";
 
 @NgModule({
   imports: [
@@ -20,9 +21,9 @@ export class CalendarEventConverter {
     let startTime: string[] = scheduleRange.startTime.split(':');
     let endTime: string[] = scheduleRange.endTime.split(':');
     const startEvent: Date = new Date(dateOnWeek);
-    startEvent.setHours(+startTime[0] || 0, +startTime[1] || 0);
+    startEvent.setHours( isNumber(+startTime[0]) ? +startTime[0] : 0, isNumber(+startTime[1]) ? +startTime[1] : 0);
     const endEvent: Date = new Date(dateOnWeek);
-    endEvent.setHours(+endTime[0] || 23, +endTime[1] || 59);
+    endEvent.setHours(isNumber(+endTime[0]) ? +endTime[0] : 23, isNumber(+endTime[1]) ? +endTime[1] : 59);
     return  new CalendarEvent(scheduleRange.id, "",
       startEvent , endEvent, false, EventColor.RED, undefined, false, true);
   }
