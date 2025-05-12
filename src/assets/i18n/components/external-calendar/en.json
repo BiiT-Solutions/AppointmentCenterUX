@@ -1,0 +1,7 @@
+{
+  "introduction": "If you already have a schedule on Google Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
+  "google": "Google",
+  "microsoft": "Microsoft",
+  "connect": "Connect",
+  "disconnect": "Disconnect"
+}

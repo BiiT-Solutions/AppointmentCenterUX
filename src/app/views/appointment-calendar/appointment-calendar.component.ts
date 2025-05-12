@@ -28,7 +28,7 @@ import {ErrorHandler} from "biit-ui/utils";
   providers: [
     {
       provide: TRANSLOCO_SCOPE,
-      multi:true,
+      multi: true,
       useValue: {scope: 'components/appointment_center', alias: 'app'}
     }
   ]
@@ -53,7 +53,7 @@ export class AppointmentCalendarComponent implements OnInit {
   protected currentSearch: string = "";
   protected mousePosition: MouseEvent;
   protected workshopModes = Object.keys(WorkshopMode);
-  protected translatedWorkshopModes: {value:string, label:string}[] = [];
+  protected translatedWorkshopModes: { value: string, label: string }[] = [];
   protected workshopDragValidation = (params: ValidateDragParams) => {
     return this.permissionService.hasPermission(Permission.APPOINTMENT.CREATE)
   };
@@ -66,6 +66,7 @@ export class AppointmentCalendarComponent implements OnInit {
   protected deleteEvent: CalendarEvent;
   protected targetWorkshop: AppointmentTemplate;
   protected deleteWorkshop: AppointmentTemplate;
+  protected synchronizeCalendar: boolean = false;
 
   protected workshopMode: WorkshopMode = WorkshopMode.ALL_WORKSHOPS;
   protected readonly CalendarMode = CalendarMode;
@@ -86,9 +87,15 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   ngOnInit() {
-    const workshopModeTranslations = this.workshopModes.map(workshopMode=> this.translocoService.selectTranslate(`${workshopMode}`,{}, {scope: 'components/appointment_center', alias: 'app'}));
-    combineLatest(workshopModeTranslations).subscribe((translations)=> {
-      translations.forEach((label, index) => this.translatedWorkshopModes.push({value: this.workshopModes[index], label: label}));
+    const workshopModeTranslations = this.workshopModes.map(workshopMode => this.translocoService.selectTranslate(`${workshopMode}`, {}, {
+      scope: 'components/appointment_center',
+      alias: 'app'
+    }));
+    combineLatest(workshopModeTranslations).subscribe((translations) => {
+      translations.forEach((label, index) => this.translatedWorkshopModes.push({
+        value: this.workshopModes[index],
+        label: label
+      }));
     });
   }
 
@@ -160,7 +167,7 @@ export class AppointmentCalendarComponent implements OnInit {
     let call: Observable<AppointmentTemplate[]>;
 
     if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) ||
-        this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
+      this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
       call = this.templateService.getAll();
     } else {
       if (this.workshopMode == WorkshopMode.ALL_WORKSHOPS) {
@@ -207,7 +214,7 @@ export class AppointmentCalendarComponent implements OnInit {
     switch (event.type) {
       case CalendarEventTimesChangedEventType.Drag:
         if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT) &&
-            this.permissionService.hasPermission(Permission.CALENDAR.DRAG)) {
+          this.permissionService.hasPermission(Permission.CALENDAR.DRAG)) {
           if (event.newStart.toString() !== event.event.start.toString()) {
             this.onUpdateAppointment(event);
           }
@@ -221,7 +228,7 @@ export class AppointmentCalendarComponent implements OnInit {
         break;
       case CalendarEventTimesChangedEventType.Drop:
         if (this.permissionService.hasPermission(Permission.APPOINTMENT.CREATE) &&
-            this.permissionService.hasPermission(Permission.CALENDAR.DROP)) {
+          this.permissionService.hasPermission(Permission.CALENDAR.DROP)) {
           this.targetEventTemplate = (event.event as any) as AppointmentTemplate;
           this.onAddAppointment(event.newStart);
         } else {
@@ -232,7 +239,7 @@ export class AppointmentCalendarComponent implements OnInit {
         break;
       case CalendarEventTimesChangedEventType.Resize:
         if (this.permissionService.hasPermission(Permission.APPOINTMENT.EDIT) &&
-            this.permissionService.hasPermission(Permission.CALENDAR.RESIZE)) {
+          this.permissionService.hasPermission(Permission.CALENDAR.RESIZE)) {
           if (event.newStart.toString() !== event.event.start.toString() || event.newEnd.toString() !== event.event.end.toString()) {
             this.onUpdateAppointment(event);
           }
@@ -283,7 +290,7 @@ export class AppointmentCalendarComponent implements OnInit {
       this.appointmentService.deleteById(+this.deleteEvent.id).subscribe({
         next: () => {
           // Transloco does not load translation files. We need to load it manually;
-          this.translocoService.selectTranslate('delete_appointment_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+          this.translocoService.selectTranslate('delete_appointment_success', {}, {scope: 'components/appointment_center'}).subscribe(msg => {
             this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
           });
           this.events = this.events.filter(e => e.id !== this.deleteEvent.id);
@@ -330,7 +337,7 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   protected onUpdateWorkshop(workshop: AppointmentTemplate) {
-    const prevIndex = this.workshops.findIndex(w=> w.id == workshop.id);
+    const prevIndex = this.workshops.findIndex(w => w.id == workshop.id);
     if (prevIndex >= 0) {
       this.workshops[prevIndex] = workshop;
     } else {
@@ -343,7 +350,7 @@ export class AppointmentCalendarComponent implements OnInit {
     this.templateService.deleteById(+this.deleteWorkshop.id).subscribe({
       next: () => {
         // Transloco does not load translation files. We need to load it manually;
-        this.translocoService.selectTranslate('delete_workshop_success', {},  {scope: 'components/appointment_center'}).subscribe(msg => {
+        this.translocoService.selectTranslate('delete_workshop_success', {}, {scope: 'components/appointment_center'}).subscribe(msg => {
           this.biitSnackbarService.showNotification(msg, NotificationType.SUCCESS, null, 5);
         });
         this.workshops = this.workshops.filter(w => w.id !== this.deleteWorkshop.id);
@@ -417,9 +424,7 @@ export class AppointmentCalendarComponent implements OnInit {
     }
   }
 
-  log(event: any) {
-    console.log("DEVELOPMENT LOG: ", event);
+  onSynchronize3rdParty() {
+    this.synchronizeCalendar = !this.synchronizeCalendar;
   }
-
-
 }
