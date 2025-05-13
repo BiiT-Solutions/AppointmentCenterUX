@@ -6,7 +6,7 @@
           {{ t('form.introduction') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
-          <button id="googleLoginButton" class="buttons" biit-button primary (click)="triggerGoogleSignIn()">
+          <button id="googleLoginButton" class="buttons" biit-button primary (click)="triggerGoogleOathRequest()">
             {{ t('form.connect') }}
           </button>
           <button class="buttons" biit-button secondary (click)="disconnectFromGoogle()">

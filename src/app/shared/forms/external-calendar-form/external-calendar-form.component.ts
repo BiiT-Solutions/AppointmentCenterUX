@@ -38,21 +38,22 @@ export class ExternalCalendarFormComponent implements OnInit {
           this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
           this.googleCredentialsService.exchangeGoogleAuthCodeByToken(code, state).subscribe();
         } else {
-          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.INFO, null, 5);
+          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
         }
       });
   }
 
 
-  triggerGoogleSignIn(): void {
+  triggerGoogleOathRequest(): void {
     // this.googleSigninService.signIn();
     this.googleSigninService.requestGoogleAuthCode();
   }
 
 
   disconnectFromGoogle() {
-    this.googleSigninService.signOut();
-    this.user = null;
+    //this.googleSigninService.signOut();
+    //this.user = null;
+    this.googleCredentialsService.removeGoogleAuthCodeByToken().subscribe();
   }
 
 
