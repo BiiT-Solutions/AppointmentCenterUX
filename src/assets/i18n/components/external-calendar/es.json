@@ -1,5 +1,6 @@
 {
   "introduction": "Si ya tienes una agenda basada en Google Calendar y deseas sincronizarla con esta aplicación, por favor presiona el botón de conectar. En cualquier momento puedes desconectarte y dejar de usarla presionando el botón de desconectar.",
   "connect": "Conectar",
-  "disconnect": "Desconectar"
+  "disconnect": "Desconectar",
+  "signInWithGoogleSuccess": "Se ha conectado con éxito a tu cuenta de Google '{{user}}'."
 }

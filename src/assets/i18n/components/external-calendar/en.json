@@ -3,5 +3,6 @@
   "google": "Google",
   "microsoft": "Microsoft",
   "connect": "Connect",
-  "disconnect": "Disconnect"
+  "disconnect": "Disconnect",
+  "signInWithGoogleSuccess": "You have successfully connected to your Google account '{{user}}'."
 }
