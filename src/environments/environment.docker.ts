@@ -3,4 +3,5 @@ export class Environment {
   public static readonly APPOINTMENT_CENTER_PATH: string = '/appointment-center-backend';
   public static readonly USER_MANAGER_SERVER: string = 'DOCKER:USER_MANAGER_URL';
   public static readonly GOOGLE_API_CLIENT_ID: string = 'DOCKER:GOOGLE_API_CLIENT_ID';
+  public static readonly GOOGLE_API_STATE: string = 'DOCKER:GOOGLE_API_STATE';
 }

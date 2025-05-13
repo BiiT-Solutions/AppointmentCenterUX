@@ -1,5 +1,4 @@
 import {Injectable} from "@angular/core";
-import {Subject} from "rxjs";
 import {Environment} from "../../environments/environment";
 
 declare const google: any;
@@ -13,22 +12,24 @@ export class GoogleSigninService {
     'https://www.googleapis.com/auth/calendar.events'];
   discoveryDocs: string[] = ["https://www.googleapis.com/discovery/v1/apis/calendar/v3/rest"];
 
-  private signinCompleteSource = new Subject<any>();
-  private signinCompleteCallback: (value: string) => void;
+  private client: any;
+
+  private signinCompleteCallback: (userData: string) => void;
+  private oauthCompleteCallback: (code: string, state: string) => void;
 
 
-  initializeSignIn(_signinCompleteCallback = (username: string): void => {
+  initializeSignIn(_signinCompleteCallback = (response: any): void => {
   }): void {
     this.signinCompleteCallback = _signinCompleteCallback;
     google.accounts.id.initialize({
       client_id: Environment.GOOGLE_API_CLIENT_ID,
-      callback: this.handleCredentialResponse.bind(this),
+      callback: this.handleSignInResponse.bind(this),
       fetch_basic_profile: true,
       scope: this.scopes.join(' '),
-      discoveryDocs: this.discoveryDocs
+      discoveryDocs: this.discoveryDocs,
+      state: Environment.GOOGLE_API_STATE,
     });
   }
-
 
   signIn(): void {
     console.debug('Triggering google signing');
@@ -49,13 +50,45 @@ export class GoogleSigninService {
     google.accounts.id.disableAutoSelect();
   }
 
-  handleCredentialResponse(response: any): void {
-    // console.log(this.decodeJWTToken(response.credential));
-    this.signinCompleteCallback(this.decodeJWTToken(response.credential).name);
+  handleSignInResponse(response: any): void {
+    this.signinCompleteCallback(this.decodeJWTToken(response.credential));
   }
 
   decodeJWTToken(token: string) {
     return JSON.parse(atob(token.split(".")[1]))
+  }
+
+
+  persistLogin(user: any): void {
+    localStorage.setItem('loggedInUser', JSON.stringify(user));
+  }
+
+  removeLogin(): void {
+    localStorage.removeItem('loggedInUser');
+  }
+
+
+  initializeOauthClient(_oauthCompleteCallback = (code: string, state: string): void => {
+  }): void {
+    this.oauthCompleteCallback = _oauthCompleteCallback;
+    this.client = google.accounts.oauth2.initCodeClient({
+      client_id: Environment.GOOGLE_API_CLIENT_ID,
+      callback: this.handleRequestCodeResponse.bind(this),
+      fetch_basic_profile: true,
+      scope: this.scopes.join(' '),
+      discoveryDocs: this.discoveryDocs,
+      state: Environment.GOOGLE_API_STATE,
+    });
+  }
+
+  requestGoogleAuthCode() {
+    if (this.client) {
+      this.client.requestCode();
+    }
+  }
+
+  handleRequestCodeResponse(response: any): void {
+    this.oauthCompleteCallback(response.code, response.state);
   }
 
 }

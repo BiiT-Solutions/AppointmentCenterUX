@@ -4,5 +4,7 @@
   "microsoft": "Microsoft",
   "connect": "Connect",
   "disconnect": "Disconnect",
-  "signInWithGoogleSuccess": "You have successfully connected to your Google account '{{user}}'."
+  "signInWithGoogleSuccess": "You have successfully connected to your Google account '{{user}}'.",
+  "calendarPermissionsRetrievedSuccess": "Calendar access permissions have been successfully obtained.",
+  "calendarPermissionsFailed": "Access permissions to the calendar could not be obtained."
 }
