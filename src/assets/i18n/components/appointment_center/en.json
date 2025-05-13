@@ -31,5 +31,6 @@
   "saturday": "Saturday",
   "sunday": "Sunday",
   "error-loading-schedule": "Error loading schedule. Please try again later.",
-  "error-updating-schedule": "Error updating schedule. Please try again later."
+  "error-updating-schedule": "Error updating schedule. Please try again later.",
+  "synchronize_with_external_calendar": "Synchronize with 3rd party calendar"
 }

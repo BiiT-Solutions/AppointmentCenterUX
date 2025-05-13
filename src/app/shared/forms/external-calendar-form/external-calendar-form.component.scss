@@ -1,0 +1,56 @@
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+.form-canvas {
+  height: inherit;
+  width: inherit;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+
+  biit-tab-group {
+    flex: 1;
+    height: calc(100% - 4rem);
+
+    ::ng-deep .tab-group {
+      height: 100%;
+    }
+  }
+
+  .buttons {
+    display: flex;
+    gap: 1.5rem;
+    justify-content: center;
+  }
+
+  .row-double {
+    display: flex;
+    justify-content: center;
+    gap: 2.5rem;
+
+    * {
+      width: 40%;
+    }
+  }
+
+  .row-single {
+    display: flex;
+    justify-content: center;
+
+    * {
+      width: calc(40%);
+      margin-right: calc(2.5rem + 40%);
+    }
+  }
+
+  .row-full {
+    display: flex;
+    justify-content: center;
+
+    * {
+      width: calc(80% + 2.5rem);
+    }
+  }
+}
