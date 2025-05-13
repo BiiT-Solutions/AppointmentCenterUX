@@ -1,11 +1,11 @@
 import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {GoogleSigninService} from "../../../services/google.signin.service";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
-import {GoogleCredentialsService} from "../../../services/google.credentials.service";
 import {Environment} from "../../../../environments/environment";
+import {GoogleCredentialsService, GoogleSigninService} from "appointment-center-structure-lib";
 
 declare const google: any;
+
 
 @Component({
   selector: 'external-calendar-form',
@@ -27,19 +27,20 @@ export class ExternalCalendarFormComponent implements OnInit {
 
 
   ngOnInit(): void {
-    // this.googleSigninService.initializeSignIn((userData: any) => {
+    // this.googleSigninService.initializeSignIn( Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID, (userData: any) => {
     //   this.snackbarService.showNotification(this.transloco.translate('form.signInWithGoogleSuccess', {user: userData.name}), NotificationType.INFO, null, 5);
     //   //Get the google session token.
     //   this.onSigninComplete(userData);
     // });
-    this.googleSigninService.initializeOauthClient((code: string, state: string) => {
-      if (state === Environment.GOOGLE_API_STATE) {
-        this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
-        this.googleCredentialsService.exchangeGoogleAuthCodeByToken(code).subscribe();
-      } else {
-        this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.INFO, null, 5);
-      }
-    });
+    this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
+      (code: string, state: string) => {
+        if (state === Environment.GOOGLE_API_STATE) {
+          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
+          this.googleCredentialsService.exchangeGoogleAuthCodeByToken(code, state).subscribe();
+        } else {
+          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.INFO, null, 5);
+        }
+      });
   }
 
 
