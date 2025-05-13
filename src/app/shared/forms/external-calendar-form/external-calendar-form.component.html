@@ -1,0 +1,21 @@
+<ng-container *transloco="let t">
+  <div class="form-canvas">
+    <biit-tab-group>
+      <biit-tab [name]="t('form.google')">
+        <div class="row">
+          {{ t('form.introduction') }}
+        </div>
+        <div class="row-double" style="margin-top: 3rem">
+          <button id="googleLoginButton" class="buttons" biit-button primary (click)="triggerGoogleSignIn()">
+            {{ t('form.connect') }}
+          </button>
+          <button class="buttons" biit-button secondary (click)="disconnectFromGoogle()">
+            {{ t('form.disconnect') }}
+          </button>
+        </div>
+      </biit-tab>
+      <biit-tab [name]="t('form.microsoft')">
+      </biit-tab>
+    </biit-tab-group>
+  </div>
+</ng-container>

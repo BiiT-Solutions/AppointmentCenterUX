@@ -25,6 +25,7 @@ import {
 import {DropdownInterfacePipeModule} from "../../shared/pipes/dropdown-interface-pipe/dropdown-interface-pipe.module";
 import {BiitIconModule} from "biit-ui/icon";
 import {WorkshopCardModule} from "../../shared/components/workshop-card/workshop-card.module";
+import {ExternalCalendarFormModule} from "../../shared/forms/external-calendar-form/external-calendar-form.module";
 
 
 
@@ -58,7 +59,8 @@ import {WorkshopCardModule} from "../../shared/components/workshop-card/workshop
         BiitDropdownModule,
         DropdownInterfacePipeModule,
         BiitIconModule,
-        WorkshopCardModule
+        WorkshopCardModule,
+        ExternalCalendarFormModule
     ]
 })
 export class AppointmentCalendarModule { }

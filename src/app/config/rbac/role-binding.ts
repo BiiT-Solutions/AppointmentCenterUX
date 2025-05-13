@@ -15,6 +15,7 @@ export class RoleBinding {
     Permission.CALENDAR.DRAG,
     Permission.CALENDAR.DROP,
     Permission.CALENDAR.RESIZE,
+    Permission.APPOINTMENT.SYNCHRONIZE,
   ];
 
   private readonly APPOINTMENT_CENTER_MANAGER: Permission[] = [
@@ -25,12 +26,14 @@ export class RoleBinding {
     Permission.APPOINTMENT.DELETE,
     Permission.CALENDAR.DRAG,
     Permission.CALENDAR.DROP,
-    Permission.CALENDAR.RESIZE
+    Permission.CALENDAR.RESIZE,
+    Permission.APPOINTMENT.SYNCHRONIZE
   ];
 
   private readonly APPOINTMENT_CENTER_USER: Permission[] = [
     Permission.APPOINTMENT_CENTER.ROOT,
-    Permission.APPOINTMENT_CENTER.USER
+    Permission.APPOINTMENT_CENTER.USER,
+    Permission.APPOINTMENT.SYNCHRONIZE,
   ];
 
   private roles : AppRole[];

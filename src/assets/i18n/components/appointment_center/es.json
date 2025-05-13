@@ -31,5 +31,6 @@
   "saturday": "S&aacute;bado",
   "sunday": "Domingo",
   "error-loading-schedule": "Error cargando su horario. Pruebe de nuevo más tarde.",
-  "error-updating-schedule": "Error actualizando su horario. Pruebe de nuevo más tarde."
+  "error-updating-schedule": "Error actualizando su horario. Pruebe de nuevo más tarde.",
+  "synchronize_with_external_calendar": "Sincronizar con un calendario externo"
 }

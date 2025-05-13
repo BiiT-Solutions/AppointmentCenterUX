@@ -1,0 +1,10 @@
+{
+  "introduction": "If you already have a schedule on Google Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
+  "google": "Google",
+  "microsoft": "Microsoft",
+  "connect": "Connect",
+  "disconnect": "Disconnect",
+  "signInWithGoogleSuccess": "You have successfully connected to your Google account '{{user}}'.",
+  "calendarPermissionsRetrievedSuccess": "Calendar access permissions have been successfully obtained.",
+  "calendarPermissionsFailed": "Access permissions to the calendar could not be obtained."
+}
