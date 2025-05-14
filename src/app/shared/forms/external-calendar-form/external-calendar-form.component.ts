@@ -36,7 +36,7 @@ export class ExternalCalendarFormComponent implements OnInit {
       (code: string, state: string) => {
         if (state === Environment.GOOGLE_API_STATE) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
-          this.googleCredentialsService.exchangeGoogleAuthCodeByToken(code, state).subscribe();
+          this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
         } else {
           this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
         }
