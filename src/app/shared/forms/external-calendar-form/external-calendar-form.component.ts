@@ -34,12 +34,12 @@ export class ExternalCalendarFormComponent implements OnInit {
     // });
     this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
       (code: string, state: string) => {
-        if (state === Environment.GOOGLE_API_STATE) {
+        //if (state === Environment.GOOGLE_API_STATE) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
           this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
-        } else {
-          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
-        }
+        //} else {
+        //  this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
+        //}
       });
   }
 
