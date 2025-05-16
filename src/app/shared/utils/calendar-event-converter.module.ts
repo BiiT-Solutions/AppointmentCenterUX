@@ -3,7 +3,7 @@ import {CalendarEvent, EventColor} from "biit-ui/calendar";
 import {NgModule} from "@angular/core";
 import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
 import {ScheduleRange} from "appointment-center-structure-lib/lib/models/schedule-range";
-import { startOfWeek } from 'date-fns'
+import {startOfWeek} from 'date-fns'
 
 @NgModule({
   imports: [
@@ -12,7 +12,8 @@ import { startOfWeek } from 'date-fns'
 })
 export class CalendarEventConverter {
   public static convertToCalendarEvent(appointment: Appointment): CalendarEvent {
-    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.allDay, (EventColor as any)[appointment.colorTheme], undefined, true, true, appointment);
+    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.calendarProvider != undefined,
+      appointment.allDay, (EventColor as any)[appointment.colorTheme], undefined, true, true, appointment);
   }
 
   public static convertRangeToCalendarEvent(scheduleRange: ScheduleRange): CalendarEvent {
@@ -23,8 +24,8 @@ export class CalendarEventConverter {
     startEvent.setHours(+startTime[0] || 0, +startTime[1] || 0);
     const endEvent: Date = new Date(dateOnWeek);
     endEvent.setHours(+endTime[0] || 23, +endTime[1] || 59);
-    return  new CalendarEvent(scheduleRange.id, "",
-      startEvent , endEvent, false, EventColor.RED, undefined, false, true);
+    return new CalendarEvent(scheduleRange.id, "",
+      startEvent, endEvent, false, false, EventColor.RED, undefined, false, true);
   }
 
   private static getDateByDayOfWeek(dayOfWeek: DayOfWeek): Date {

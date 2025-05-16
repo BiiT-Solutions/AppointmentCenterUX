@@ -5,7 +5,8 @@ import {
   AppointmentService,
   AppointmentTemplate,
   AppointmentTemplateService,
-  SessionService
+  SessionService,
+  ExternalAppointmentsService
 } from "appointment-center-structure-lib";
 import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
 import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
@@ -81,7 +82,8 @@ export class AppointmentCalendarComponent implements OnInit {
               protected sessionService: SessionService,
               protected permissionService: PermissionService,
               private biitSnackbarService: BiitSnackbarService,
-              private translocoService: TranslocoService) {
+              private translocoService: TranslocoService,
+              private externalAppointmentsService: ExternalAppointmentsService) {
     this.loadWorkshops();
     this.loadSpeakers();
   }
@@ -106,17 +108,20 @@ export class AppointmentCalendarComponent implements OnInit {
       if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
         promise = combineLatest([
           this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined))
+          EMPTY.pipe(defaultIfEmpty(undefined)),
+          //EMPTY.pipe(defaultIfEmpty(undefined))
         ]);
       } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
         promise = combineLatest([
           this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined))
+          EMPTY.pipe(defaultIfEmpty(undefined)),
+          //EMPTY.pipe(defaultIfEmpty(undefined))
         ]);
       } else {
         promise = combineLatest([
           this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
-          this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization'))
+          this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization')),
+          //this.externalAppointmentsService.getsAppointmentsFromExternalProvider()
         ]);
       }
 
@@ -141,7 +146,8 @@ export class AppointmentCalendarComponent implements OnInit {
             (selected as Appointment[]).map(a => hash.set(a.id, a));
           }
 
-          appointments.map(a => hash.set(a.id, a));
+          //appointments.add(externalAppointments);
+          appointments.forEach(a => hash.set(a.id, a));
 
           this.events = [...hash.values()].map(e => {
             const event = CalendarEventConverter.convertToCalendarEvent(e);
@@ -426,5 +432,9 @@ export class AppointmentCalendarComponent implements OnInit {
 
   onSynchronize3rdParty() {
     this.synchronizeCalendar = !this.synchronizeCalendar;
+  }
+
+  refresh3rdPartyEvents(): void {
+    //this.loadEvents();
   }
 }

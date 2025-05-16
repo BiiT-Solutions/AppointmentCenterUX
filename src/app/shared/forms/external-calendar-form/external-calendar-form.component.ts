@@ -1,11 +1,12 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {Environment} from "../../../../environments/environment";
-import {GoogleCredentialsService, GoogleSigninService} from "appointment-center-structure-lib";
-
-declare const google: any;
-
+import {
+  ExternalCredentialsService,
+  GoogleCredentialsService,
+  GoogleSigninService
+} from "appointment-center-structure-lib";
 
 @Component({
   selector: 'external-calendar-form',
@@ -15,52 +16,52 @@ declare const google: any;
 })
 export class ExternalCalendarFormComponent implements OnInit {
 
+  readonly googleProvider: string = "GOOGLE";
+
   @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
 
-  private user: any;
+  credentialsExists: boolean = undefined;
 
-  constructor(private googleSigninService: GoogleSigninService,
+  constructor(private ref: ElementRef, private googleSigninService: GoogleSigninService,
               private googleCredentialsService: GoogleCredentialsService,
+              private externalCredentialsService: ExternalCredentialsService,
               private snackbarService: BiitSnackbarService,
               private transloco: TranslocoService) {
   }
 
 
   ngOnInit(): void {
-    // this.googleSigninService.initializeSignIn( Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID, (userData: any) => {
-    //   this.snackbarService.showNotification(this.transloco.translate('form.signInWithGoogleSuccess', {user: userData.name}), NotificationType.INFO, null, 5);
-    //   //Get the google session token.
-    //   this.onSigninComplete(userData);
-    // });
     this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
       (code: string, state: string) => {
-        //if (state === Environment.GOOGLE_API_STATE) {
+        if (state === Environment.GOOGLE_API_STATE) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsRetrievedSuccess'), NotificationType.INFO, null, 5);
           this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
-        //} else {
-        //  this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
-        //}
+          this.credentialsExists = true;
+        } else {
+          console.error("Invalid state");
+          this.snackbarService.showNotification(this.transloco.translate('form.calendarPermissionsFailed'), NotificationType.ERROR, null, 5);
+        }
       });
+    this.externalCredentialsService.checkIfCurrentUserHasCredentials(this.googleProvider).subscribe((_value: boolean): any => this.credentialsExists = _value);
+  }
+
+
+  @HostListener('document:window', ['$event'])
+  clickout(event: MouseEvent | PointerEvent) {
+    if (!this.ref.nativeElement.contains(event.target)) {
+      this.onClosed.emit();
+    }
   }
 
 
   triggerGoogleOathRequest(): void {
-    // this.googleSigninService.signIn();
     this.googleSigninService.requestGoogleAuthCode();
   }
 
 
   disconnectFromGoogle() {
-    //this.googleSigninService.signOut();
-    //this.user = null;
-    this.googleCredentialsService.removeGoogleAuthCodeByToken().subscribe();
+    this.externalCredentialsService.removeToken(this.googleProvider).subscribe();
+    this.credentialsExists = false;
   }
-
-
-  private onSigninComplete = (userProfileData: any) => {
-    this.user = userProfileData;
-    this.googleSigninService.persistLogin(userProfileData);
-  }
-
 
 }
