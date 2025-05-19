@@ -74,9 +74,7 @@ export class MsAuthComponent implements  OnInit {
           this.http.get('https://graph.microsoft.com/v1.0/me', {
             headers: { Authorization: `Bearer ${credential.access_token}` }
           }).subscribe(user => {
-            const msUser: MsUser = MsUser.clone(user as MsUser)
-            externalCredentials.userId = msUser.id;
-            this.externalCredentialsServices.createCredentials(externalCredentials).subscribe({
+            this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
               next: () => {
                 this.status = 'Credentials registered successfully';
                 setTimeout(() => {
