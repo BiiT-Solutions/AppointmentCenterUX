@@ -1,6 +1,6 @@
 {
   "name": "appointment-center",
-  "version": "0.0.217",
+  "version": "0.0.222",
   "scripts": {
     "ng": "ng",
     "start": "npm run prepare:translations && ng serve",
@@ -24,23 +24,23 @@
     "@angular/platform-browser-dynamic": "v15-lts",
     "@angular/router": "v15-lts",
     "@ngneat/transloco": "^4.3.0",
+    "@perfectmemory/ngx-contextmenu": "^15.0.0",
     "appointment-center-structure-lib": "latest",
-    "user-manager-structure-lib": "latest",
     "biit-icons-collection": "latest",
     "biit-ui": "latest",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "zone.js": "~0.12.0",
-    "@perfectmemory/ngx-contextmenu": "^15.0.0"
+    "user-manager-structure-lib": "latest",
+    "zone.js": "~0.12.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "v15-lts",
     "@angular/cli": "v15-lts",
     "@angular/compiler-cli": "v15-lts",
     "@types/jasmine": "~4.3.0",
-    "jasmine-core": "~4.5.0",
     "cpx2": "^6.0.1",
     "del-cli": "^5.0.0",
+    "jasmine-core": "~4.5.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.1.0",
     "karma-coverage": "~2.2.0",

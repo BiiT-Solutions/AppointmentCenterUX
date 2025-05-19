@@ -9,9 +9,11 @@ import {AppRole} from "authorization-services-lib/lib/models/app-role";
 export class PermissionService {
   private permissions: RoleBinding;
   constructor() { }
+
   public setRole(roles: AppRole[]): void{
     this.permissions = new RoleBinding(roles);
   }
+
   public hasPermission(permission: Permission): boolean{
     if (!this.permissions) {
       return false;
