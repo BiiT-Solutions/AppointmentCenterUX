@@ -68,8 +68,7 @@ export class MsAuthComponent implements  OnInit {
           const externalCredentials: ExternalCalendarCreadentials = new ExternalCalendarCreadentials();
           externalCredentials.provider = CalendarProvider.MICROSOFT;
           externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
-          externalCredentials.credentialData = credential;
-          externalCredentials.userCredentials = credential.access_token;
+          externalCredentials.userCredentials = JSON.stringify(credential);
           externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
           this.http.get('https://graph.microsoft.com/v1.0/me', {
             headers: { Authorization: `Bearer ${credential.access_token}` }
