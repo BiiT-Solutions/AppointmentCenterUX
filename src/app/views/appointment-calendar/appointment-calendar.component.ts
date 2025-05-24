@@ -18,7 +18,7 @@ import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
-import {addWeeks, startOfToday, subWeeks} from "date-fns";
+import {addWeeks, startOfToday, subWeeks, subMilliseconds, startOfDay} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
 import {ErrorHandler} from "biit-ui/utils";
 
@@ -102,28 +102,22 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   protected loadEvents(): Promise<void> {
-    return new Promise((resolve) => {
-      let promise;
+    if (!this.viewDate) {
+      this.biitSnackbarService.showNotification(this.translocoService.translate('no_date_provided'), NotificationType.ERROR, null, 10);
+      return Promise.reject(null);
+    }
+    const from: Date = startOfDay(this.viewDate);
+    const to: Date = subMilliseconds(addWeeks(from ,1), 1);
 
-      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
-        promise = combineLatest([
-          this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined)),
-          //EMPTY.pipe(defaultIfEmpty(undefined))
-        ]);
-      } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-        promise = combineLatest([
-          this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined)),
-          //EMPTY.pipe(defaultIfEmpty(undefined))
-        ]);
-      } else {
-        promise = combineLatest([
+    // Todo: An endpoint to get all appointment for a range of dates is required.
+
+    return new Promise((resolve) => {
+      const promise = combineLatest([
           this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
           this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization')),
           //this.externalAppointmentsService.getsAppointmentsFromExternalProvider()
         ]);
-      }
+
 
       this.waiting = true;
       promise.subscribe({
@@ -428,6 +422,26 @@ export class AppointmentCalendarComponent implements OnInit {
     } else {
       this.biitSnackbarService.showNotification(this.translocoService.translate('app.err_no_next_date'), NotificationType.ERROR, null, 5);
     }
+  }
+
+  protected moveBackward(): void {
+    this.viewDate = subWeeks(this.viewDate, 1)
+    this.refreshEvents();
+  }
+
+  protected moveForward(): void {
+    this.viewDate = addWeeks(this.viewDate, 1)
+    this.refreshEvents();
+  }
+
+  protected moveToToday(): void {
+    this.viewDate = startOfToday()
+    this.refreshEvents();
+  }
+
+  private refreshEvents(): void {
+    this.waiting = true;
+    this.loadEvents().finally(() => this.waiting = false);
   }
 
   onSynchronize3rdParty() {
