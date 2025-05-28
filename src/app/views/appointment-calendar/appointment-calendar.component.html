@@ -94,14 +94,14 @@
           <div style="display: flex; gap: 0.5rem">
             <button biit-icon
                     [icon]="'right_arrow'"
-                    (click)="viewDate = subWeeks(viewDate, 1)"
+                    (click)="moveBackward()"
                     style="rotate: 180deg"></button>
             <button biit-button tertiary
-                    (click)="viewDate = startOfToday()"
+                    (click)="moveToToday()"
                     style="font-size: 1.1em">{{ t('app.today') }}</button>
             <button biit-icon
                     [icon]="'right_arrow'"
-                    (click)="viewDate = addWeeks(viewDate, 1)"></button>
+                    (click)="moveForward()"></button>
           </div>
         </div>
       </div>
