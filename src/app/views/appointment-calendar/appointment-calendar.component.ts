@@ -113,7 +113,7 @@ export class AppointmentCalendarComponent implements OnInit {
 
     return new Promise((resolve) => {
       const promise = combineLatest([
-          this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
+          this.appointmentService.findMe(null, null, from, to),
           this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization')),
           //this.externalAppointmentsService.getsAppointmentsFromExternalProvider()
         ]);
@@ -121,13 +121,13 @@ export class AppointmentCalendarComponent implements OnInit {
 
       this.waiting = true;
       promise.subscribe({
-        next: ([appointments, selected]) => {
+        next: ([appointments, workshopSelected]) => {
           const hash = new Map<number, Appointment>;
 
-          if (selected) {
+          if (workshopSelected) {
             if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
               !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-              (selected as Appointment[]).map(a => {
+              (workshopSelected as Appointment[]).map(a => {
                 if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
                   if (a.colorTheme) {
                     a.colorTheme = "EMPTY_" + a.colorTheme;
@@ -137,7 +137,7 @@ export class AppointmentCalendarComponent implements OnInit {
                 }
               });
             }
-            (selected as Appointment[]).map(a => hash.set(a.id, a));
+            (workshopSelected as Appointment[]).map(a => hash.set(a.id, a));
           }
 
           //appointments.add(externalAppointments);
