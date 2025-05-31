@@ -101,7 +101,7 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   private async openMsPopup(): Promise<void> {
     return new Promise<void>((resolve) => {
-      const popup = window.open("/microsoft", "Microsoft OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
+      const popup = window.open("./../../microsoft", "Microsoft OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
       const timer = setInterval(() => {
         if (!popup || popup.closed) {
           clearInterval(timer);
