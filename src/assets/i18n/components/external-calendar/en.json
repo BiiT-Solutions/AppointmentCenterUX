@@ -1,11 +1,13 @@
 {
   "introduction": "If you already have a schedule on Google Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
-  "introductionMS": "Microsoft Outlook Calendar is not yet available. We are working on it.",
+  "introductionMS": "If you already have a schedule on Microsoft Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
+  "introductionMS-already-connected": "Your account is already linked to your Microsoft account. If you prefer to stop the synchronization for this account, please click the 'Disconnect' button.",
   "google": "Google",
   "microsoft": "Microsoft",
   "connect": "Connect",
   "disconnect": "Disconnect",
   "signInWithGoogleSuccess": "You have successfully connected to your Google account '{{user}}'.",
-  "calendarPermissionsRetrievedSuccess": "Calendar access permissions have been successfully obtained.",
-  "calendarPermissionsFailed": "Access permissions to the calendar could not be obtained."
+  "calendar-permissions-retrieved-success": "Calendar access permissions have been successfully obtained.",
+  "calendar-permissions-failed": "Access permissions to the calendar could not be obtained.",
+  "calendar-permissions-removed": "Access permissions were removed successfully."
 }
