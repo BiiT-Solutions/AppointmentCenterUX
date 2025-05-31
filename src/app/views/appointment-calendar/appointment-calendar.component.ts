@@ -18,7 +18,7 @@ import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
-import {addWeeks, startOfToday, subWeeks, subMilliseconds, startOfDay} from "date-fns";
+import {addWeeks, startOfToday, subWeeks, startOfDay, startOfWeek, endOfWeek} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
 import {ErrorHandler} from "biit-ui/utils";
 
@@ -106,8 +106,8 @@ export class AppointmentCalendarComponent implements OnInit {
       this.biitSnackbarService.showNotification(this.translocoService.translate('no_date_provided'), NotificationType.ERROR, null, 10);
       return Promise.reject(null);
     }
-    const from: Date = startOfDay(this.viewDate);
-    const to: Date = subMilliseconds(addWeeks(from ,1), 1);
+    const from: Date = startOfWeek(this.viewDate);
+    const to: Date = endOfWeek(this.viewDate);
 
     // Todo: An endpoint to get all appointment for a range of dates is required.
 
