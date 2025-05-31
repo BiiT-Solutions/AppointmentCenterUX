@@ -7,5 +7,6 @@ export class Environment {
   public static readonly GOOGLE_API_STATE: string = 'DOCKER:GOOGLE_API_STATE';
   public static readonly MS_API_CLIENT_ID: string = 'DOCKER:MS_API_CLIENT_ID';
   public static readonly MS_API_REDIRECT: string = 'DOCKER:MS_API_REDIRECT';
-  public static readonly MS_API_SCOPES: string[] = [/*DOCKER:MS_API_SCOPES*/];
+  public static readonly MS_API_SCOPES: string[] = ['User.Read', 'Calendars.ReadWrite', 'offline_access'];
+  //public static readonly MS_API_SCOPES: string[] = [/*DOCKER:MS_API_SCOPES*/];
 }
