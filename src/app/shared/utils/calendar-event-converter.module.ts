@@ -1,4 +1,4 @@
-import {Appointment, DayOfWeek} from "appointment-center-structure-lib";
+import {Appointment, CalendarProvider, DayOfWeek} from "appointment-center-structure-lib";
 import {CalendarEvent, EventColor} from "biit-ui/calendar";
 import {NgModule} from "@angular/core";
 import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
@@ -12,8 +12,22 @@ import {startOfWeek} from 'date-fns'
 })
 export class CalendarEventConverter {
   public static convertToCalendarEvent(appointment: Appointment): CalendarEvent {
-    return new CalendarEvent(appointment.id, appointment.title, appointment.startTime, appointment.endTime, appointment.calendarProvider != undefined,
-      appointment.allDay, (EventColor as any)[appointment.colorTheme], undefined, true, true, appointment);
+    const event: CalendarEvent = new CalendarEvent(appointment.id, appointment.title, appointment.startTime,
+      appointment.endTime, !appointment.calendarProvider,
+      appointment.allDay, (EventColor as any)[appointment.colorTheme], undefined, true, !appointment.calendarProvider, appointment);
+    if (appointment.calendarProvider) {
+      switch (appointment.calendarProvider) {
+        case CalendarProvider.MICROSOFT:
+          event.color = EventColor.BLUE;
+          break;
+        case CalendarProvider.GOOGLE:
+          event.color = EventColor.YELLOW;
+          break;
+        case CalendarProvider.APPLE:
+          event.color = EventColor.RED;
+      }
+    }
+    return event;
   }
 
   public static convertRangeToCalendarEvent(scheduleRange: ScheduleRange): CalendarEvent {

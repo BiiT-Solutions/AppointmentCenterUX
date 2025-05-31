@@ -141,7 +141,6 @@ export class AppointmentCalendarComponent implements OnInit {
           }
 
           if (externalAppointments) {
-            console.log('ExternalAppointments', externalAppointments);
             externalAppointments.map(Appointment.clone).forEach(appointment => {
               hash.set(appointment.externalReference, Appointment.clone(appointment))
             });
