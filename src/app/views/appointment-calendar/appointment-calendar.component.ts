@@ -109,8 +109,6 @@ export class AppointmentCalendarComponent implements OnInit {
     const from: Date = startOfWeek(this.viewDate);
     const to: Date = endOfWeek(this.viewDate);
 
-    // Todo: An endpoint to get all appointment for a range of dates is required.
-
     return new Promise((resolve) => {
       const promise = combineLatest([
           this.appointmentService.findMe(null, null, from, to),
