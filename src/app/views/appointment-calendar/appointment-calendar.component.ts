@@ -164,6 +164,10 @@ export class AppointmentCalendarComponent implements OnInit {
     });
   }
 
+  protected isReadOnly(value: any): boolean {
+    return value && value instanceof CalendarEvent && value.readonly
+  }
+
   private loadSpeakers() {
     this.userService.getByUserGroupName('speakers').subscribe(users => this.organizationUsers = users);
   }
