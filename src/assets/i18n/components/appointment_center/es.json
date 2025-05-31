@@ -36,5 +36,6 @@
   "clear": "Limpiar",
   "clear-all-schedules": "Limpiar todos los horarios",
   "clear-all-info": "Esta acción eliminará todo el horario no disponible.",
-  "clear-all-question": " ¿Está seguro de que desea continuar?"
+  "clear-all-question": " ¿Está seguro de que desea continuar?",
+  "synchronize_with_external_calendar": "Sincronizar con un calendario externo"
 }

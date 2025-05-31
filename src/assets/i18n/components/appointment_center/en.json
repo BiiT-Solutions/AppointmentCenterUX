@@ -36,5 +36,6 @@
   "clear": "Clear",
   "clear-all-schedules": "Clear all schedules",
   "clear-all-info": "This action will clear all unavailable schedule.",
-  "clear-all-question": "Are you sure you want to continue?"
+  "clear-all-question": "Are you sure you want to continue?",
+  "synchronize_with_external_calendar": "Synchronize with 3rd party calendar"
 }

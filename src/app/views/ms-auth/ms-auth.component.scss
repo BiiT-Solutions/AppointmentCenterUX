@@ -1,0 +1,33 @@
+.fullscreen{
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999;
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.icon{
+  margin-top: -5rem;
+  margin-bottom: 5rem;
+   & > biit-icon {
+     height: 20vh;
+     display: block;
+   }
+}
+
+.info-section {
+  height: 100%;
+  vertical-align: center;
+  align-content: center;
+}
+
+.info-text{
+  font-size: 1rem;
+  text-align: center;
+  font-weight: 600;
+}

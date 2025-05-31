@@ -14,6 +14,12 @@ const routes: Routes = [
     loadChildren: () => login
   },
   {
+    data: { no_decoration: true },
+    path: 'microsoft',
+    loadChildren: () => import('./views/ms-auth/ms-auth.module').then(m => m.MsAuthModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'appointments',
     loadChildren: () => import('./views/appointment-calendar/appointment-calendar.module').then(m => m.AppointmentCalendarModule),
     canActivate: [AuthGuard]

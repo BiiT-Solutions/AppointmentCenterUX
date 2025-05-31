@@ -84,19 +84,24 @@
                   *ngIf="Permission.APPOINTMENT.CREATE | hasPermission"
                   (click)="onAddAppointment()"
           ></button>
+          <button biit-icon
+                  icon="linkage"
+                  *ngIf="Permission.APPOINTMENT.SYNCHRONIZE | hasPermission"
+                  (click)="onSynchronize3rdParty()"
+          ></button>
         </div>
         <div class="right">
           <div style="display: flex; gap: 0.5rem">
             <button biit-icon
                     [icon]="'right_arrow'"
-                    (click)="viewDate = subWeeks(viewDate, 1)"
+                    (click)="moveBackward()"
                     style="rotate: 180deg"></button>
             <button biit-button tertiary
-                    (click)="viewDate = startOfToday()"
+                    (click)="moveToToday()"
                     style="font-size: 1.1em">{{ t('app.today') }}</button>
             <button biit-icon
                     [icon]="'right_arrow'"
-                    (click)="viewDate = addWeeks(viewDate, 1)"></button>
+                    (click)="moveForward()"></button>
           </div>
         </div>
       </div>
@@ -136,6 +141,18 @@
                    style="width: 100%"
     ></workshop-form>
   </biit-popup>
+
+
+  <biit-popup sixty-view closable
+              *ngIf="synchronizeCalendar && ([Permission.APPOINTMENT.SYNCHRONIZE] | hasPermission)"
+              (onClosed)="synchronizeCalendar = false; refresh3rdPartyEvents()"
+              title="{{t('app.synchronize_with_external_calendar')}}"
+  >
+    <external-calendar-form
+                      style="width: 100%"
+    ></external-calendar-form>
+  </biit-popup>
+
 
   <biit-popup closable no-header
               *ngIf="deleteEvent && (Permission.APPOINTMENT.DELETE | hasPermission)"
@@ -186,11 +203,13 @@
   <context-menu #eventMenu>
     <ng-template contextMenuItem
                  *ngIf="Permission.APPOINTMENT.EDIT | hasPermission"
+                 [disabled]="isReadOnly"
                  (execute)="targetEvent = $event.value">
       {{ t('app.edit_appointment') }}
     </ng-template>
     <ng-template contextMenuItem
                  *ngIf="Permission.APPOINTMENT.DELETE | hasPermission"
+                 [disabled]="isReadOnly"
                  (execute)="deleteEvent = $event.value">
       {{ t('app.delete_appointment') }}
     </ng-template>

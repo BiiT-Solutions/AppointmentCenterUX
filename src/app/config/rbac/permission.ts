@@ -10,6 +10,7 @@ export class Permission {
     public static readonly CREATE: string = 'ALLOW_APPOINTMENT_CREATE';
     public static readonly EDIT: string = 'ALLOW_APPOINTMENT_EDIT';
     public static readonly DELETE: string = 'ALLOW_APPOINTMENT_DELETE';
+    public static readonly SYNCHRONIZE: string = 'ALLOW_APPOINTMENT_SYNCHRONIZE';
   }
 
   public static readonly WORKSHOP = class {
