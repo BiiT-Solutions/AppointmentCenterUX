@@ -454,6 +454,6 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   refresh3rdPartyEvents(): void {
-    //this.loadEvents();
+    this.refreshEvents();
   }
 }
