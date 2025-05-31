@@ -115,14 +115,14 @@ export class AppointmentCalendarComponent implements OnInit {
       const promise = combineLatest([
           this.appointmentService.findMe(null, null, from, to),
           this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization')),
-          //this.externalAppointmentsService.getsAppointmentsFromExternalProvider()
+          this.externalAppointmentsService.getsAppointmentsFromExternalProvider(from, to)
         ]);
 
 
       this.waiting = true;
       promise.subscribe({
-        next: ([appointments, workshopSelected]) => {
-          const hash = new Map<number, Appointment>;
+        next: ([appointments, workshopSelected, externalAppointments]) => {
+          const hash = new Map<any, Appointment>;
 
           if (workshopSelected) {
             if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
@@ -137,11 +137,17 @@ export class AppointmentCalendarComponent implements OnInit {
                 }
               });
             }
-            (workshopSelected as Appointment[]).map(a => hash.set(a.id, a));
+            (workshopSelected as Appointment[]).map(a => hash.set(a.id, Appointment.clone(a)));
           }
 
-          //appointments.add(externalAppointments);
-          appointments.forEach(a => hash.set(a.id, a));
+          if (externalAppointments) {
+            console.log('ExternalAppointments', externalAppointments);
+            externalAppointments.map(Appointment.clone).forEach(appointment => {
+              hash.set(appointment.externalReference, Appointment.clone(appointment))
+            });
+          }
+
+          appointments.forEach(a => hash.set(a.id, Appointment.clone(a)));
 
           this.events = [...hash.values()].map(e => {
             const event = CalendarEventConverter.convertToCalendarEvent(e);
