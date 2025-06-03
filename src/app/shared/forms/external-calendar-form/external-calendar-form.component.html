@@ -6,11 +6,11 @@
           {{ t('form.introduction') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
-          <button id="googleLoginButton" [disabled]="credentialsExists" class="buttons" biit-button primary
+          <button id="googleLoginButton" [disabled]="googleCredentialsExists" class="buttons" biit-button primary
                   (click)="triggerGoogleOathRequest()">
             {{ t('form.connect') }}
           </button>
-          <button class="buttons" [disabled]="credentialsExists!=undefined && !credentialsExists" biit-button secondary
+          <button class="buttons" [disabled]="googleCredentialsExists!=undefined && !googleCredentialsExists" biit-button secondary
                   (click)="disconnectFromGoogle()">
             {{ t('form.disconnect') }}
           </button>

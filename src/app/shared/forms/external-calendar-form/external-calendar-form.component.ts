@@ -22,7 +22,7 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
 
-  credentialsExists: boolean = undefined;
+  googleCredentialsExists: boolean = false;
   msCredentialsExists: boolean = false;
 
   constructor(private ref: ElementRef, private googleSigninService: GoogleSigninService,
@@ -35,18 +35,8 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.msCredentialsExists = await this.checkCredentials(CalendarProvider.MICROSOFT);
-    this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
-      (code: string, state: string) => {
-        if (state === Environment.GOOGLE_API_STATE) {
-          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
-          this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
-          this.credentialsExists = true;
-        } else {
-          console.error("Invalid state");
-          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
-        }
-      });
-    this.externalCredentialsService.checkIfCurrentUserHasCredentials(this.googleProvider).subscribe((_value: boolean): any => this.credentialsExists = _value);
+    this.googleCredentialsExists = await this.checkCredentials(CalendarProvider.GOOGLE);
+    this.initializeGoogleClient();
   }
 
 
@@ -62,10 +52,24 @@ export class ExternalCalendarFormComponent implements OnInit {
     this.googleSigninService.requestGoogleAuthCode();
   }
 
+  initializeGoogleClient(): void {
+    this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
+      (code: string, state: string) => {
+        if (state === Environment.GOOGLE_API_STATE) {
+          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
+          this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
+          this.googleCredentialsExists = true;
+        } else {
+          console.error("Invalid state");
+          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
+        }
+      });
+  }
+
 
   disconnectFromGoogle() {
     this.externalCredentialsService.removeToken(this.googleProvider).subscribe();
-    this.credentialsExists = false;
+    this.googleCredentialsExists = false;
   }
 
   protected triggerMsOauthRequest(): void {
@@ -102,7 +106,7 @@ export class ExternalCalendarFormComponent implements OnInit {
   private async openMsPopup(): Promise<void> {
     return new Promise<void>((resolve) => {
       let root = '';
-      if(Environment.CONTEXT) {
+      if (Environment.CONTEXT) {
         root = '/';
       }
       const popup = window.open(`${root}${Environment.CONTEXT}/microsoft`, "Microsoft OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
