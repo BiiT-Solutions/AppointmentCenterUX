@@ -18,6 +18,7 @@
   "search": "Search",
   "delete": "Delete",
   "cancel": "Cancel",
+  "confirm": "Confirm",
   "subscribed": "Subscribed",
   "today": "Today",
   "success_subscribe": "Appointment has been subscribed successfully",
@@ -32,5 +33,9 @@
   "sunday": "Sunday",
   "error-loading-schedule": "Error loading schedule. Please try again later.",
   "error-updating-schedule": "Error updating schedule. Please try again later.",
+  "clear": "Clear",
+  "clear-all-schedules": "Clear all schedules",
+  "clear-all-info": "This action will clear all unavailable schedule.",
+  "clear-all-question": "Are you sure you want to continue?",
   "synchronize_with_external_calendar": "Synchronize with 3rd party calendar"
 }

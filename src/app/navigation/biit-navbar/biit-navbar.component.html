@@ -4,6 +4,7 @@
     ></biit-nav-menu>
   </div>
   <div class="right">
+    <biit-component-menu />
     <biit-nav-user *ngIf="user"
                    [title]="user?.name + ' ' + user?.lastname"
                    [subtitle]="'Appointment Center'"

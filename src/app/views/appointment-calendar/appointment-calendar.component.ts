@@ -18,7 +18,7 @@ import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
-import {addWeeks, startOfToday, subWeeks} from "date-fns";
+import {addWeeks, startOfToday, subWeeks, startOfDay, startOfWeek, endOfWeek} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
 import {ErrorHandler} from "biit-ui/utils";
 
@@ -102,38 +102,30 @@ export class AppointmentCalendarComponent implements OnInit {
   }
 
   protected loadEvents(): Promise<void> {
-    return new Promise((resolve) => {
-      let promise;
+    if (!this.viewDate) {
+      this.biitSnackbarService.showNotification(this.translocoService.translate('no_date_provided'), NotificationType.ERROR, null, 10);
+      return Promise.reject(null);
+    }
+    const from: Date = startOfWeek(this.viewDate);
+    const to: Date = endOfWeek(this.viewDate);
 
-      if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN)) {
-        promise = combineLatest([
-          this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined)),
-          //EMPTY.pipe(defaultIfEmpty(undefined))
-        ]);
-      } else if (this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-        promise = combineLatest([
-          this.appointmentService.getAll(),
-          EMPTY.pipe(defaultIfEmpty(undefined)),
-          //EMPTY.pipe(defaultIfEmpty(undefined))
-        ]);
-      } else {
-        promise = combineLatest([
-          this.appointmentService.getByAttendee(this.sessionService.getUser().uuid),
+    return new Promise((resolve) => {
+      const promise = combineLatest([
+          this.appointmentService.findMe(null, null, from, to),
           this.selectedWorkshops.size ? this.appointmentService.getByTemplateIds([...this.selectedWorkshops].map(w => w.id)) : this.appointmentService.getAllByOrganization(sessionStorage.getItem('organization')),
-          //this.externalAppointmentsService.getsAppointmentsFromExternalProvider()
+          this.externalAppointmentsService.getsAppointmentsFromExternalProvider(from, to)
         ]);
-      }
+
 
       this.waiting = true;
       promise.subscribe({
-        next: ([appointments, selected]) => {
-          const hash = new Map<number, Appointment>;
+        next: ([appointments, workshopSelected, externalAppointments]) => {
+          const hash = new Map<any, Appointment>;
 
-          if (selected) {
+          if (workshopSelected) {
             if (!this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.ADMIN) &&
               !this.permissionService.hasPermission(Permission.APPOINTMENT_CENTER.MANAGER)) {
-              (selected as Appointment[]).map(a => {
+              (workshopSelected as Appointment[]).map(a => {
                 if (!a.attendees.includes(this.sessionService.getUser().uuid)) {
                   if (a.colorTheme) {
                     a.colorTheme = "EMPTY_" + a.colorTheme;
@@ -143,11 +135,16 @@ export class AppointmentCalendarComponent implements OnInit {
                 }
               });
             }
-            (selected as Appointment[]).map(a => hash.set(a.id, a));
+            (workshopSelected as Appointment[]).map(a => hash.set(a.id, Appointment.clone(a)));
           }
 
-          //appointments.add(externalAppointments);
-          appointments.forEach(a => hash.set(a.id, a));
+          if (externalAppointments) {
+            externalAppointments.map(Appointment.clone).forEach(appointment => {
+              hash.set(appointment.externalReference, Appointment.clone(appointment))
+            });
+          }
+
+          appointments.forEach(a => hash.set(a.id, Appointment.clone(a)));
 
           this.events = [...hash.values()].map(e => {
             const event = CalendarEventConverter.convertToCalendarEvent(e);
@@ -163,6 +160,10 @@ export class AppointmentCalendarComponent implements OnInit {
         resolve();
       });
     });
+  }
+
+  protected isReadOnly(value: any): boolean {
+    return value && value instanceof CalendarEvent && value.readonly
   }
 
   private loadSpeakers() {
@@ -430,11 +431,31 @@ export class AppointmentCalendarComponent implements OnInit {
     }
   }
 
+  protected moveBackward(): void {
+    this.viewDate = subWeeks(this.viewDate, 1)
+    this.refreshEvents();
+  }
+
+  protected moveForward(): void {
+    this.viewDate = addWeeks(this.viewDate, 1)
+    this.refreshEvents();
+  }
+
+  protected moveToToday(): void {
+    this.viewDate = startOfToday()
+    this.refreshEvents();
+  }
+
+  private refreshEvents(): void {
+    this.waiting = true;
+    this.loadEvents().finally(() => this.waiting = false);
+  }
+
   onSynchronize3rdParty() {
     this.synchronizeCalendar = !this.synchronizeCalendar;
   }
 
   refresh3rdPartyEvents(): void {
-    //this.loadEvents();
+    this.refreshEvents();
   }
 }

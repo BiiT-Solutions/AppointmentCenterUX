@@ -1,5 +1,6 @@
 {
   "empty" : "empty",
   "access_denied_permissions": "You don't have permissions to access this resource. If you think this is a mistake, please contact with support team.",
-  "action_denied_permissions": "You don't have permissions to perform this action. If you think this is a mistake, please contact with support team."
+  "action_denied_permissions": "You don't have permissions to perform this action. If you think this is a mistake, please contact with support team.",
+  "no_date_provided": "A date is needed in order to acquire your next events"
 }

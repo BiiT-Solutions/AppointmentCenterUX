@@ -1,4 +1,4 @@
-<ng-container>
+<ng-container *transloco="let t">
   <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
   <div class="canvas">
     <div class="main">
@@ -6,8 +6,54 @@
                        [calendarMode]="CalendarMode.WEEK"
                        [configuration]="calendarConfiguration"
                        [calendarUtility]="calendarUtility"
-                       (onCreatedEvent)="onEventChange($event)"
+                       (onCreatedEvent)="onEventCreated($event)"
+                       (onEventDrop)="onEventDrop($event)"
+                       [eventContextMenu]="eventMenu"
         ></biit-calendar>
     </div>
   </div>
+  <context-menu #eventMenu>
+    <ng-template contextMenuItem
+                 *ngIf="Permission.APPOINTMENT.DELETE | hasPermission"
+                 (execute)="onDeleteEvent($event.value)">
+      {{ t('app.delete_appointment') }}
+    </ng-template>
+  </context-menu>
 </ng-container>
+
+<ng-template #template>
+  <div class="buttons-row">
+    <button biit-icon
+            [disabled]="events.length === 0"
+            (click)="showCleanConfirmation = true"
+            tooltip="{{ 'app.clear' | transloco }}"
+            class="fill-icon-size"
+            icon="clear"
+    ></button>
+  </div>
+</ng-template>
+
+<biit-popup *ngIf="showCleanConfirmation"
+            title="{{ 'app.clear-all-schedules' | transloco }}"
+>
+  <div class="popup-content">
+    <div>
+      {{ "app.clear-all-info" | transloco }}
+    </div>
+    <div style="font-weight: 600">
+      {{ "app.clear-all-question" | transloco }}
+    </div>
+    <div>
+      <button
+        biit-button primary
+        (click)="showCleanConfirmation = false"
+      >{{'app.cancel' | transloco}}</button>
+      <button
+        biit-button secondary
+        (click)="clearSchedules(); showCleanConfirmation = false"
+      >
+        {{'app.confirm' | transloco}}
+      </button>
+    </div>
+  </div>
+</biit-popup>

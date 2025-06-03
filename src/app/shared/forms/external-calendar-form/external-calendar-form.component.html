@@ -17,8 +17,11 @@
         </div>
       </biit-tab>
       <biit-tab [name]="t('form.microsoft')">
-        <div class="row">
+        <div class="row" *ngIf="msCredentialsExists==undefined || !msCredentialsExists">
           {{ t('form.introductionMS') }}
+        </div>
+        <div class="row" *ngIf="msCredentialsExists!=undefined && msCredentialsExists">
+          {{ t('form.introductionMS-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="MsLoginButton" [disabled]="msCredentialsExists" class="buttons" biit-button primary

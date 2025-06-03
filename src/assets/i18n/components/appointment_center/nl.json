@@ -1,2 +1,8 @@
 {
+  "cancel": "Annuleer",
+  "confirm": "Bevestig",
+  "clear": "Wissen",
+  "clear-all-schedules": "Wis alle skedules",
+  "clear-all-info": "Deze actie wist alle onbeschikbare skedules.",
+  "clear-all-question": "Weet je zeker dat je verder wilt gaan?",
 }
