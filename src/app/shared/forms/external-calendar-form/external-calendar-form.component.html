@@ -2,8 +2,11 @@
   <div class="form-canvas">
     <biit-tab-group>
       <biit-tab [name]="t('form.google')">
-        <div class="row">
-          {{ t('form.introduction') }}
+        <div class="row" *ngIf="googleCredentialsExists==undefined || !googleCredentialsExists">
+          {{ t('form.introductionGoogle') }}
+        </div>
+        <div class="row" *ngIf="googleCredentialsExists!=undefined && googleCredentialsExists">
+          {{ t('form.introductionGoogle-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="googleLoginButton" [disabled]="googleCredentialsExists" class="buttons" biit-button primary
