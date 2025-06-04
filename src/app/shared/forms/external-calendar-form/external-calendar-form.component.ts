@@ -55,7 +55,7 @@ export class ExternalCalendarFormComponent implements OnInit {
   initializeGoogleClient(): void {
     this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
       (code: string, state: string) => {
-        if (state === Environment.GOOGLE_API_STATE) {
+        if (state === Environment.GOOGLE_API_STATE || state === undefined) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
           this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
           this.googleCredentialsExists = true;
