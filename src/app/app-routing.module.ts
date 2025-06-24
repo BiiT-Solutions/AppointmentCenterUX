@@ -20,6 +20,12 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    data: {no_decoration: true},
+    path: 'google',
+    loadChildren: () => import('./views/google-auth/google-auth.module').then(m => m.GoogleAuthModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'appointments',
     loadChildren: () => import('./views/appointment-calendar/appointment-calendar.module').then(m => m.AppointmentCalendarModule),
     canActivate: [AuthGuard]

@@ -1,25 +1,28 @@
 import {Component, OnInit} from '@angular/core';
-import {Environment} from "../../../environments/environment";
-import {ActivatedRoute} from "@angular/router";
-import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {biitIcon} from "biit-icons-collection";
-import {ExternalCredentialsService, ExternalCalendarCreadentials, CalendarProvider} from "appointment-center-structure-lib";
-import {MsCredentials} from "./ms-credentials";
+import {ActivatedRoute} from "@angular/router";
+import {
+  CalendarProvider,
+  ExternalCalendarCreadentials,
+  ExternalCredentialsService
+} from "appointment-center-structure-lib";
+import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
+import {Environment} from "../../../environments/environment";
+import {MsCredentials} from "../ms-auth/ms-credentials";
 import {addMinutes} from "date-fns";
-import {MsUser} from "./ms-user";
 
 @Component({
-  selector: 'app-ms-auth',
-  templateUrl: './ms-auth.component.html',
-  styleUrls: ['./ms-auth.component.scss']
+  selector: 'app-google-auth',
+  templateUrl: './google-auth.component.html',
+  styleUrls: ['./google-auth.component.scss']
 })
-export class MsAuthComponent implements OnInit {
+export class GoogleAuthComponent implements  OnInit {
 
-  private readonly PKCE_CODE_VERIFIER: string = 'ms.pkce_code_verifier';
-  private readonly STATE: string = 'ms.state';
+  private readonly PKCE_CODE_VERIFIER: string = 'gg.pkce_code_verifier';
+  private readonly STATE: string = 'gg.state';
 
   protected keyIcon: biitIcon;
-  protected status: string = '';
+  protected status: string = 'Testing Google authentication, please wait...';
 
   constructor(
     private route: ActivatedRoute,
@@ -38,54 +41,49 @@ export class MsAuthComponent implements OnInit {
           window.close();
           return;
         }
-       this.getToken(code, codeVerifier);
+        this.getToken(code, codeVerifier);
       } else {
         this.keyIcon = 'key_' + (Math.floor(Math.random() * 20) + 1).toString().padStart(2, '0') as biitIcon;
-        this.status = 'Connecting to Microsoft, please wait...'
+        this.status = 'Connecting to Google Services, please wait...'
         setTimeout(() => {
           this.sendRequest();
-        }, 1000);
+        }, 2000);
       }
     });
-
   }
-
   private getToken(code: string, codeVerifier: string): void {
     const body = new HttpParams()
-      .set('client_id', Environment.MS_API_CLIENT_ID)
+      .set('client_id', Environment.GOOGLE_API_CLIENT_ID)
       .set('grant_type', 'authorization_code')
       .set('code', code)
-      .set('redirect_uri', Environment.MS_API_REDIRECT)
+      .set('redirect_uri', Environment.GOOGLE_API_REDIRECT)
+      .set('client_secret', Environment.GOOGLE_API_CLIENT_SECRET)
       .set('code_verifier', codeVerifier);
 
     const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
 
-    this.http.post('https://login.microsoftonline.com/common/oauth2/v2.0/token', body, { headers })
+    this.http.post('https://oauth2.googleapis.com/token', body, { headers })
       .subscribe({
         next: (response) => {
           debugger
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
           const externalCredentials: ExternalCalendarCreadentials = new ExternalCalendarCreadentials();
-          externalCredentials.provider = CalendarProvider.MICROSOFT;
-          externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
+          externalCredentials.provider = CalendarProvider.GOOGLE;
+          externalCredentials.calendarProvider = CalendarProvider.GOOGLE;
           externalCredentials.userCredentials = JSON.stringify(credential);
           externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
-          this.http.get('https://graph.microsoft.com/v1.0/me', {
-            headers: { Authorization: `Bearer ${credential.access_token}` }
-          }).subscribe(user => {
-            this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
-              next: () => {
-                this.status = 'Credentials registered successfully';
-                setTimeout(() => {
-                  window.close();
-                }, 1000);
-              },
-              error: (error) => {
-                console.error('Error creating credentials:', error);
-                this.status = 'Error registering credentials';
-              }
-            })
-          });
+          this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
+            next: () => {
+              this.status = 'Credentials registered successfully';
+              setTimeout(() => {
+                window.close();
+              }, 1000);
+            },
+            error: (error) => {
+              console.error('Error creating credentials:', error);
+              this.status = 'Error registering credentials';
+            }
+          })
         },
         error: (error) => {
           console.error('Error getting token:', error);
@@ -93,7 +91,6 @@ export class MsAuthComponent implements OnInit {
         }
       });
   }
-
   private async sendRequest(): Promise<void> {
     const codeVerifier: string = this.generateCodeVerifier();
     sessionStorage.setItem(this.PKCE_CODE_VERIFIER, codeVerifier);
@@ -102,16 +99,18 @@ export class MsAuthComponent implements OnInit {
     const codeChallenge: string = await this.generateCodeChallenge(codeVerifier);
 
     const params = new URLSearchParams({
-      client_id: Environment.MS_API_CLIENT_ID,
+      client_id: Environment.GOOGLE_API_CLIENT_ID,
       response_type: 'code',
-      redirect_uri: Environment.MS_API_REDIRECT,
+      access_type: 'offline',
+      prompt: 'consent',
+      redirect_uri: Environment.GOOGLE_API_REDIRECT,
       response_mode: 'query',
-      scope: Environment.MS_API_SCOPES.join(' '),
+      scope: Environment.GOOGLE_API_SCOPES.join(' '),
       state: state,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256'
     });
-    window.location.href = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`;
+    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
   }
 
   async generateCodeChallenge(verifier: string): Promise<string> {
