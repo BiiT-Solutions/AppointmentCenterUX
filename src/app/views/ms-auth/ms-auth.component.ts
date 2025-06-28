@@ -3,10 +3,14 @@ import {Environment} from "../../../environments/environment";
 import {ActivatedRoute} from "@angular/router";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {biitIcon} from "biit-icons-collection";
-import {ExternalCredentialsService, ExternalCalendarCreadentials, CalendarProvider} from "appointment-center-structure-lib";
+import {
+  ExternalCredentialsService,
+  ExternalCalendarCreadentials,
+  CalendarProvider,
+  SessionService
+} from "appointment-center-structure-lib";
 import {MsCredentials} from "./ms-credentials";
 import {addMinutes} from "date-fns";
-import {MsUser} from "./ms-user";
 
 @Component({
   selector: 'app-ms-auth',
@@ -24,6 +28,7 @@ export class MsAuthComponent implements OnInit {
   constructor(
     private route: ActivatedRoute,
     private externalCredentialsServices: ExternalCredentialsService,
+    private sessionServices: SessionService,
     private http: HttpClient) {
   }
 
@@ -70,6 +75,7 @@ export class MsAuthComponent implements OnInit {
           externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
           externalCredentials.userCredentials = JSON.stringify(credential);
           externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
+          externalCredentials.userId = this.sessionServices.getUser().uuid;
           this.http.get('https://graph.microsoft.com/v1.0/me', {
             headers: { Authorization: `Bearer ${credential.access_token}` }
           }).subscribe(user => {

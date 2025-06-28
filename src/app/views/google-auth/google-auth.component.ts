@@ -4,12 +4,14 @@ import {ActivatedRoute} from "@angular/router";
 import {
   CalendarProvider,
   ExternalCalendarCreadentials,
-  ExternalCredentialsService
+  ExternalCredentialsService, SessionService
 } from "appointment-center-structure-lib";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Environment} from "../../../environments/environment";
 import {MsCredentials} from "../ms-auth/ms-credentials";
 import {addMinutes} from "date-fns";
+import {CredentialData} from "./CredentialData";
+import {UserService} from "user-manager-structure-lib";
 
 @Component({
   selector: 'app-google-auth',
@@ -27,6 +29,7 @@ export class GoogleAuthComponent implements  OnInit {
   constructor(
     private route: ActivatedRoute,
     private externalCredentialsServices: ExternalCredentialsService,
+    private sessionService: SessionService,
     private http: HttpClient) {
   }
 
@@ -65,12 +68,17 @@ export class GoogleAuthComponent implements  OnInit {
     this.http.post('https://oauth2.googleapis.com/token', body, { headers })
       .subscribe({
         next: (response) => {
-          debugger
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
           const externalCredentials: ExternalCalendarCreadentials = new ExternalCalendarCreadentials();
           externalCredentials.provider = CalendarProvider.GOOGLE;
           externalCredentials.calendarProvider = CalendarProvider.GOOGLE;
-          externalCredentials.userCredentials = JSON.stringify(credential);
+          externalCredentials.userId = this.sessionService.getUser().uuid;
+          const credentialData: CredentialData = new CredentialData();
+          credentialData.accessToken = credential.access_token;
+          credentialData.refreshToken = credential.refresh_token;
+          credentialData.expirationTimeMilliseconds = Date.now() + (credential.expires_in * 1000);
+          credentialData.refreshTokenExpirationTimeMilliseconds = Date.now() + (credential.expires_in * 1000);
+          externalCredentials.userCredentials = JSON.stringify(credentialData);
           externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
           this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
             next: () => {

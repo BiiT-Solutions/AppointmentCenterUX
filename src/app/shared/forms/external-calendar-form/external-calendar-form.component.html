@@ -7,7 +7,7 @@
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="googleLoginButton" [disabled]="credentialsExists" class="buttons" biit-button primary
-                  (click)="triggerGoogleOathRequest()">
+                  (click)="triggerOauthRequest(CalendarProvider.GOOGLE)">
             {{ t('form.connect') }}
           </button>
           <button class="buttons" [disabled]="credentialsExists!=undefined && !credentialsExists" biit-button secondary
@@ -25,7 +25,7 @@
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="MsLoginButton" [disabled]="msCredentialsExists" class="buttons" biit-button primary
-                  (click)="triggerMsOauthRequest()">
+                  (click)="triggerOauthRequest(CalendarProvider.MICROSOFT)">
             {{ t('form.connect') }}
           </button>
           <button class="buttons" [disabled]="msCredentialsExists!=undefined && !msCredentialsExists" biit-button secondary
