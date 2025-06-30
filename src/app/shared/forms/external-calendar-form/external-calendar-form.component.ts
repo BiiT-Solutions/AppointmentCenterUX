@@ -64,19 +64,36 @@ export class ExternalCalendarFormComponent implements OnInit {
           this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
         }
       });
+    this.externalCredentialsService.checkIfCurrentUserHasCredentials(this.googleProvider).subscribe((_value: boolean): any => this.credentialsExists = _value);
   }
 
+
+  @HostListener('document:window', ['$event'])
+  clickout(event: MouseEvent | PointerEvent) {
+    if (!this.ref.nativeElement.contains(event.target)) {
+      this.onClosed.emit();
+    }
+  }
 
   disconnectFromGoogle() {
     this.externalCredentialsService.removeToken(this.googleProvider).subscribe();
     this.googleCredentialsExists = false;
   }
 
-  protected triggerMsOauthRequest(): void {
-    this.openMsPopup().then(() => {
+  protected triggerOauthRequest(provider: CalendarProvider): void {
+    this.openPopup(provider).then(() => {
       console.log("Popup closed");
-      this.checkCredentials(CalendarProvider.MICROSOFT).then(value => {
-        this.msCredentialsExists = value;
+
+      this.checkCredentials(provider).then(value => {
+        switch (provider){
+          case CalendarProvider.MICROSOFT:
+            this.msCredentialsExists = value;
+            break;
+          case CalendarProvider.GOOGLE:
+            this.credentialsExists = value;
+            break;
+        }
+
         if (value) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
         } else {
@@ -85,7 +102,14 @@ export class ExternalCalendarFormComponent implements OnInit {
       }).catch(reason => {
         console.error("Error checking credentials", reason);
         this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
-        this.msCredentialsExists = false;
+        switch (provider){
+          case CalendarProvider.MICROSOFT:
+            this.msCredentialsExists = false;
+            break;
+          case CalendarProvider.GOOGLE:
+            this.credentialsExists = false;
+            break;
+        }
       })
     });
   }
@@ -103,13 +127,24 @@ export class ExternalCalendarFormComponent implements OnInit {
     })
   }
 
-  private async openMsPopup(): Promise<void> {
+  private async openPopup(provider: CalendarProvider): Promise<void> {
     return new Promise<void>((resolve) => {
       let root = '';
       if (Environment.CONTEXT) {
         root = '/';
       }
-      const popup = window.open(`${root}${Environment.CONTEXT}/microsoft`, "Microsoft OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
+      let popup: Window | null = null;
+      switch (provider) {
+        case CalendarProvider.MICROSOFT:
+          popup = window.open(`${root}${Environment.CONTEXT}/microsoft`, "Microsoft OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
+          break;
+        case CalendarProvider.GOOGLE:
+          popup = window.open(`${root}${Environment.CONTEXT}/google`, "Google OAuth", "width=500,height=700,menubar=no,toolbar=no,location=no,status=no,resizable=no,scrollbars=no");
+          break;
+        default:
+          console.error("Unsupported calendar provider for OAuth popup");
+          return;
+      }
       const timer = setInterval(() => {
         if (!popup || popup.closed) {
           clearInterval(timer);
@@ -123,5 +158,6 @@ export class ExternalCalendarFormComponent implements OnInit {
     return firstValueFrom(this.externalCredentialsService.checkIfCurrentUserHasCredentials(provider));
   }
 
+  protected readonly CalendarProvider = CalendarProvider;
 }
 
