@@ -9,8 +9,8 @@
           {{ t('form.introductionGoogle-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
-          <button id="googleLoginButton" [disabled]="googleCredentialsExists" class="buttons" biit-button primary
-                  (click)="triggerGoogleOathRequest()">
+          <button id="googleLoginButton" [disabled]="credentialsExists" class="buttons" biit-button primary
+                  (click)="triggerOauthRequest(CalendarProvider.GOOGLE)">
             {{ t('form.connect') }}
           </button>
           <button class="buttons" [disabled]="googleCredentialsExists!=undefined && !googleCredentialsExists" biit-button secondary
@@ -28,7 +28,7 @@
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="MsLoginButton" [disabled]="msCredentialsExists" class="buttons" biit-button primary
-                  (click)="triggerMsOauthRequest()">
+                  (click)="triggerOauthRequest(CalendarProvider.MICROSOFT)">
             {{ t('form.connect') }}
           </button>
           <button class="buttons" [disabled]="msCredentialsExists!=undefined && !msCredentialsExists" biit-button secondary
