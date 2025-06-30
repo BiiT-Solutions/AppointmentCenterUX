@@ -22,7 +22,7 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   @Output() onClosed: EventEmitter<void> = new EventEmitter<void>();
 
-  credentialsExists: boolean = undefined;
+  googleCredentialsExists: boolean = false;
   msCredentialsExists: boolean = false;
 
   constructor(private ref: ElementRef, private googleSigninService: GoogleSigninService,
@@ -35,12 +35,30 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   async ngOnInit(): Promise<void> {
     this.msCredentialsExists = await this.checkCredentials(CalendarProvider.MICROSOFT);
+    this.googleCredentialsExists = await this.checkCredentials(CalendarProvider.GOOGLE);
+    this.initializeGoogleClient();
+  }
+
+
+  @HostListener('document:window', ['$event'])
+  clickout(event: MouseEvent | PointerEvent) {
+    if (!this.ref.nativeElement.contains(event.target)) {
+      this.onClosed.emit();
+    }
+  }
+
+
+  triggerGoogleOathRequest(): void {
+    this.googleSigninService.requestGoogleAuthCode();
+  }
+
+  initializeGoogleClient(): void {
     this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
       (code: string, state: string) => {
-        if (state === Environment.GOOGLE_API_STATE) {
+        if (state === Environment.GOOGLE_API_STATE || state === undefined) {
           this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
           this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
-          this.credentialsExists = true;
+          this.googleCredentialsExists = true;
         } else {
           console.error("Invalid state");
           this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
@@ -59,7 +77,7 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   disconnectFromGoogle() {
     this.externalCredentialsService.removeToken(this.googleProvider).subscribe();
-    this.credentialsExists = false;
+    this.googleCredentialsExists = false;
   }
 
   protected triggerOauthRequest(provider: CalendarProvider): void {
@@ -112,7 +130,7 @@ export class ExternalCalendarFormComponent implements OnInit {
   private async openPopup(provider: CalendarProvider): Promise<void> {
     return new Promise<void>((resolve) => {
       let root = '';
-      if(Environment.CONTEXT) {
+      if (Environment.CONTEXT) {
         root = '/';
       }
       let popup: Window | null = null;

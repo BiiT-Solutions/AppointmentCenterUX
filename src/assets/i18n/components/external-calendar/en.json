@@ -1,5 +1,6 @@
 {
-  "introduction": "If you already have a schedule on Google Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
+  "introductionGoogle": "If you already have a schedule on Google Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
+  "introductionGoogle-already-connected": "Your account is already linked to your Google account. If you prefer to stop the synchronization for this account, please click the 'Disconnect' button.",
   "introductionMS": "If you already have a schedule on Microsoft Calendar and want to synchronize it with this application, please click the 'connect' button. You can disconnect and stop using the synchronization at any time by clicking the 'disconnect' button.",
   "introductionMS-already-connected": "Your account is already linked to your Microsoft account. If you prefer to stop the synchronization for this account, please click the 'Disconnect' button.",
   "google": "Google",

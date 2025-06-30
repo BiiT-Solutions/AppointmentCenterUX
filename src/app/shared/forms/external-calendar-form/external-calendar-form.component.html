@@ -2,15 +2,18 @@
   <div class="form-canvas">
     <biit-tab-group>
       <biit-tab [name]="t('form.google')">
-        <div class="row">
-          {{ t('form.introduction') }}
+        <div class="row" *ngIf="googleCredentialsExists==undefined || !googleCredentialsExists">
+          {{ t('form.introductionGoogle') }}
+        </div>
+        <div class="row" *ngIf="googleCredentialsExists!=undefined && googleCredentialsExists">
+          {{ t('form.introductionGoogle-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
           <button id="googleLoginButton" [disabled]="credentialsExists" class="buttons" biit-button primary
                   (click)="triggerOauthRequest(CalendarProvider.GOOGLE)">
             {{ t('form.connect') }}
           </button>
-          <button class="buttons" [disabled]="credentialsExists!=undefined && !credentialsExists" biit-button secondary
+          <button class="buttons" [disabled]="googleCredentialsExists!=undefined && !googleCredentialsExists" biit-button secondary
                   (click)="disconnectFromGoogle()">
             {{ t('form.disconnect') }}
           </button>
