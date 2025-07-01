@@ -24,6 +24,7 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   googleCredentialsExists: boolean = false;
   msCredentialsExists: boolean = false;
+  credentialsExists: boolean = false;
 
   constructor(private ref: ElementRef, private googleSigninService: GoogleSigninService,
               private googleCredentialsService: GoogleCredentialsService,
@@ -65,14 +66,6 @@ export class ExternalCalendarFormComponent implements OnInit {
         }
       });
     this.externalCredentialsService.checkIfCurrentUserHasCredentials(this.googleProvider).subscribe((_value: boolean): any => this.credentialsExists = _value);
-  }
-
-
-  @HostListener('document:window', ['$event'])
-  clickout(event: MouseEvent | PointerEvent) {
-    if (!this.ref.nativeElement.contains(event.target)) {
-      this.onClosed.emit();
-    }
   }
 
   disconnectFromGoogle() {
