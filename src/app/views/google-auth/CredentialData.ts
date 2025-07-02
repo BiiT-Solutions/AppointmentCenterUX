@@ -4,5 +4,5 @@ export class CredentialData {
   refreshToken: string;
   expirationTimeMilliseconds: number;
   refreshTokenExpirationTimeMilliseconds: number;
-  createdAt: Date = new Date();
+  createdAt: String = (new Date()).toISOString();
 }

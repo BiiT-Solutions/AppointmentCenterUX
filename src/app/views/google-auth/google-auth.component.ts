@@ -76,8 +76,8 @@ export class GoogleAuthComponent implements  OnInit {
           const credentialData: CredentialData = new CredentialData();
           credentialData.accessToken = credential.access_token;
           credentialData.refreshToken = credential.refresh_token;
-          credentialData.expirationTimeMilliseconds = Date.now() + (credential.expires_in * 1000);
-          credentialData.refreshTokenExpirationTimeMilliseconds = Date.now() + (credential.expires_in * 1000);
+          credentialData.expirationTimeMilliseconds = credential.expires_in * 1000;
+          credentialData.refreshTokenExpirationTimeMilliseconds = Math.floor(30 * 24 * 60 * 60 * 1000); // 30 days
           externalCredentials.userCredentials = JSON.stringify(credentialData);
           externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
           this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
