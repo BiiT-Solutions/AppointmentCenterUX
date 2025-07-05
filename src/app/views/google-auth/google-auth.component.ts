@@ -18,7 +18,7 @@ import {CredentialData} from "./CredentialData";
   templateUrl: './google-auth.component.html',
   styleUrls: ['./google-auth.component.scss']
 })
-export class GoogleAuthComponent implements  OnInit {
+export class GoogleAuthComponent implements OnInit {
 
   private readonly PKCE_CODE_VERIFIER: string = 'gg.pkce_code_verifier';
   private readonly STATE: string = 'gg.state';
@@ -54,6 +54,7 @@ export class GoogleAuthComponent implements  OnInit {
       }
     });
   }
+
   private getToken(code: string, codeVerifier: string): void {
     const body = new HttpParams()
       .set('client_id', Environment.GOOGLE_API_CLIENT_ID)
@@ -63,9 +64,9 @@ export class GoogleAuthComponent implements  OnInit {
       .set('client_secret', Environment.GOOGLE_API_CLIENT_SECRET)
       .set('code_verifier', codeVerifier);
 
-    const headers = new HttpHeaders({ 'Content-Type': 'application/x-www-form-urlencoded' });
+    const headers = new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'});
 
-    this.http.post('https://oauth2.googleapis.com/token', body, { headers })
+    this.http.post('https://oauth2.googleapis.com/token', body, {headers})
       .subscribe({
         next: (response) => {
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
@@ -100,6 +101,7 @@ export class GoogleAuthComponent implements  OnInit {
         }
       });
   }
+
   private async sendRequest(): Promise<void> {
     const codeVerifier: string = this.generateCodeVerifier();
     sessionStorage.setItem(this.PKCE_CODE_VERIFIER, codeVerifier);

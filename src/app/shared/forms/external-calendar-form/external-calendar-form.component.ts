@@ -1,6 +1,6 @@
 import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {Environment} from "../../../../environments/environment";
 import {
   CalendarProvider,
@@ -24,10 +24,9 @@ export class ExternalCalendarFormComponent implements OnInit {
 
   googleCredentialsExists: boolean = false;
   msCredentialsExists: boolean = false;
-  credentialsExists: boolean = false;
+  loadingCredentials: boolean = true;
 
-  constructor(private ref: ElementRef, private googleSigninService: GoogleSigninService,
-              private googleCredentialsService: GoogleCredentialsService,
+  constructor(private ref: ElementRef,
               private externalCredentialsService: ExternalCredentialsService,
               private snackbarService: BiitSnackbarService,
               private transloco: TranslocoService) {
@@ -35,9 +34,10 @@ export class ExternalCalendarFormComponent implements OnInit {
 
 
   async ngOnInit(): Promise<void> {
+    this.loadingCredentials = true;
     this.msCredentialsExists = await this.checkCredentials(CalendarProvider.MICROSOFT);
     this.googleCredentialsExists = await this.checkCredentials(CalendarProvider.GOOGLE);
-    this.initializeGoogleClient();
+    this.loadingCredentials = false;
   }
 
 
@@ -46,26 +46,6 @@ export class ExternalCalendarFormComponent implements OnInit {
     if (!this.ref.nativeElement.contains(event.target)) {
       this.onClosed.emit();
     }
-  }
-
-
-  triggerGoogleOathRequest(): void {
-    this.googleSigninService.requestGoogleAuthCode();
-  }
-
-  initializeGoogleClient(): void {
-    this.googleSigninService.initializeOauthClient(Environment.GOOGLE_API_STATE, Environment.GOOGLE_API_CLIENT_ID,
-      (code: string, state: string) => {
-        if (state === Environment.GOOGLE_API_STATE || state === undefined) {
-          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-retrieved-success'), NotificationType.INFO, null, 5);
-          this.googleCredentialsService.exchangeGoogleAuthCodeByTokenByParams(code, state).subscribe();
-          this.googleCredentialsExists = true;
-        } else {
-          console.error("Invalid state");
-          this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
-        }
-      });
-    this.externalCredentialsService.checkIfCurrentUserHasCredentials(this.googleProvider).subscribe((_value: boolean): any => this.credentialsExists = _value);
   }
 
   disconnectFromGoogle() {
@@ -78,12 +58,12 @@ export class ExternalCalendarFormComponent implements OnInit {
       console.log("Popup closed");
 
       this.checkCredentials(provider).then(value => {
-        switch (provider){
+        switch (provider) {
           case CalendarProvider.MICROSOFT:
             this.msCredentialsExists = value;
             break;
           case CalendarProvider.GOOGLE:
-            this.credentialsExists = value;
+            this.googleCredentialsExists = value;
             break;
         }
 
@@ -95,12 +75,12 @@ export class ExternalCalendarFormComponent implements OnInit {
       }).catch(reason => {
         console.error("Error checking credentials", reason);
         this.snackbarService.showNotification(this.transloco.translate('form.calendar-permissions-failed'), NotificationType.ERROR, null, 5);
-        switch (provider){
+        switch (provider) {
           case CalendarProvider.MICROSOFT:
             this.msCredentialsExists = false;
             break;
           case CalendarProvider.GOOGLE:
-            this.credentialsExists = false;
+            this.googleCredentialsExists = false;
             break;
         }
       })
@@ -152,5 +132,6 @@ export class ExternalCalendarFormComponent implements OnInit {
   }
 
   protected readonly CalendarProvider = CalendarProvider;
+  protected readonly BiitProgressBarType = BiitProgressBarType;
 }
 
