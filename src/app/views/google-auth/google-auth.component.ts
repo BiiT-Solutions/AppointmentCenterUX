@@ -3,15 +3,15 @@ import {biitIcon} from "biit-icons-collection";
 import {ActivatedRoute} from "@angular/router";
 import {
   CalendarProvider,
-  ExternalCalendarCreadentials,
-  ExternalCredentialsService, SessionService
+  ExternalCalendarCredentials,
+  ExternalCredentialsService,
+  SessionService
 } from "appointment-center-structure-lib";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {Environment} from "../../../environments/environment";
 import {MsCredentials} from "../ms-auth/ms-credentials";
-import {addMinutes} from "date-fns";
+import {addMinutes, format} from "date-fns";
 import {CredentialData} from "./CredentialData";
-import {UserService} from "user-manager-structure-lib";
 
 @Component({
   selector: 'app-google-auth',
@@ -69,7 +69,7 @@ export class GoogleAuthComponent implements  OnInit {
       .subscribe({
         next: (response) => {
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
-          const externalCredentials: ExternalCalendarCreadentials = new ExternalCalendarCreadentials();
+          const externalCredentials: ExternalCalendarCredentials = new ExternalCalendarCredentials();
           externalCredentials.provider = CalendarProvider.GOOGLE;
           externalCredentials.calendarProvider = CalendarProvider.GOOGLE;
           externalCredentials.userId = this.sessionService.getUser().uuid;
@@ -78,8 +78,9 @@ export class GoogleAuthComponent implements  OnInit {
           credentialData.refreshToken = credential.refresh_token;
           credentialData.expirationTimeMilliseconds = credential.expires_in * 1000;
           credentialData.refreshTokenExpirationTimeMilliseconds = Math.floor(30 * 24 * 60 * 60 * 1000); // 30 days
+          credentialData.createdAt = format(new Date(), "yyyy-MM-dd'T'HH:mm:ss");
           externalCredentials.userCredentials = JSON.stringify(credentialData);
-          externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
+          externalCredentials.expiresAt = format(addMinutes(new Date(), credential.expires_in), "yyyy-MM-dd'T'HH:mm:ss");
           this.externalCredentialsServices.createOwnCredentials(externalCredentials).subscribe({
             next: () => {
               this.status = 'Credentials registered successfully';

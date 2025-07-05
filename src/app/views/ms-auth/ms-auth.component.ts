@@ -5,7 +5,7 @@ import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
 import {biitIcon} from "biit-icons-collection";
 import {
   ExternalCredentialsService,
-  ExternalCalendarCreadentials,
+  ExternalCalendarCredentials,
   CalendarProvider,
   SessionService
 } from "appointment-center-structure-lib";
@@ -70,7 +70,7 @@ export class MsAuthComponent implements OnInit {
         next: (response) => {
           debugger
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
-          const externalCredentials: ExternalCalendarCreadentials = new ExternalCalendarCreadentials();
+          const externalCredentials: ExternalCalendarCredentials = new ExternalCalendarCredentials();
           externalCredentials.provider = CalendarProvider.MICROSOFT;
           externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
           externalCredentials.userCredentials = JSON.stringify(credential);
