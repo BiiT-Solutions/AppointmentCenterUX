@@ -70,6 +70,7 @@ export class MsAuthComponent implements OnInit {
         next: (response) => {
           debugger
           const credential: MsCredentials = MsCredentials.clone(response as MsCredentials);
+          credential.origin = window.location.origin + window.location.pathname;
           const externalCredentials: ExternalCalendarCredentials = new ExternalCalendarCredentials();
           externalCredentials.provider = CalendarProvider.MICROSOFT;
           externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
