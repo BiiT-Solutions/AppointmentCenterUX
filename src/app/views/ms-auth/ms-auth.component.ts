@@ -10,7 +10,7 @@ import {
   SessionService
 } from "appointment-center-structure-lib";
 import {MsCredentials} from "./ms-credentials";
-import {addMinutes} from "date-fns";
+import {addSeconds} from "date-fns";
 
 @Component({
   selector: 'app-ms-auth',
@@ -75,7 +75,7 @@ export class MsAuthComponent implements OnInit {
           externalCredentials.provider = CalendarProvider.MICROSOFT;
           externalCredentials.calendarProvider = CalendarProvider.MICROSOFT;
           externalCredentials.userCredentials = JSON.stringify(credential);
-          externalCredentials.expiresAt = addMinutes(new Date(), credential.expires_in);
+          externalCredentials.expiresAt = addSeconds(new Date(), credential.expires_in);
           externalCredentials.userId = this.sessionServices.getUser().uuid;
           this.http.get('https://graph.microsoft.com/v1.0/me', {
             headers: { Authorization: `Bearer ${credential.access_token}` }
