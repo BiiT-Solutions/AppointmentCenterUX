@@ -1,8 +1,8 @@
 <ng-container *transloco="let t">
   <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
-  <div class="canvas">
+  <div id="canvas" class="canvas">
     <div class="sidebar">
-      <div class="workshops" id="workshops">
+      <div id="workshops" class="workshops">
         <div class="top">
           <a
             *ngIf="[Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission">{{ t('app.workshops') }}</a>
