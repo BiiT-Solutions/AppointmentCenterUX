@@ -12,7 +12,7 @@
             *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.OTHER_WORKSHOPS">{{ t('app.OTHER_WORKSHOPS') }}</a>
           <a
             *ngIf="!([Permission.APPOINTMENT_CENTER.ADMIN, Permission.APPOINTMENT_CENTER.MANAGER] | hasPermission) && workshopMode == WorkshopMode.MY_WORKSHOPS">{{ t('app.MY_WORKSHOPS') }}</a>
-          <button biit-icon
+          <button biit-icon id="add-workshop-button"
                   icon="plus"
                   *ngIf="Permission.WORKSHOP.CREATE | hasPermission"
                   (click)="onAddWorkshop()"
@@ -55,7 +55,7 @@
           </div>
         </div>
         <div class="bottom">
-          <biit-input-text [(ngModel)]="search"
+          <biit-input-text id="search" [(ngModel)]="search"
                            (onActionPerformed)="filterWorkshops();"
                            (focusout)="resetInputValue()"
                            icon="search"

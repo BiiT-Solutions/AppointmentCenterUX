@@ -1,20 +1,20 @@
 <div class="canvas" id="workshop-popup" *transloco="let t">
-  <div id="event-title" class="row">
-    <biit-input-text [(ngModel)]="workshop.title"
+  <div class="row">
+    <biit-input-text id="event-title" [(ngModel)]="workshop.title"
                      [placeholder]="t('form.title')"
                      [required]="true"
                      error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
     ></biit-input-text>
   </div>
-  <div id="event-speakers" class="row">
-    <biit-multiselect [ngModel]="workshop.speakers | multiselectInterface: speakers"
+  <div class="row">
+    <biit-multiselect id="event-speakers" [ngModel]="workshop.speakers | multiselectInterface: speakers"
                       (ngModelChange)="onMultiselectSelection($event)"
                       [data]="speakers"
                       [label]="'label'"
                       [value]="'value'"
                       [title]="t('form.speakers')"
     ></biit-multiselect>
-    <biit-input-text [(ngModel)]="workshop.duration"
+    <biit-input-text id="event-duration" [(ngModel)]="workshop.duration"
                      [type]="Type.NUMBER"
                      [min]="1"
                      [required]="true"
@@ -22,18 +22,18 @@
                      placeholder="{{t('form.duration')}}"
     ></biit-input-text>
   </div>
-  <div id="event-description" class="row">
-    <biit-textarea [(ngModel)]="workshop.description"
+  <div class="row">
+    <biit-textarea id="event-description" [(ngModel)]="workshop.description"
                    placeholder="{{t('form.description')}}"
     ></biit-textarea>
   </div>
-  <div id="event-cost" class="row">
-    <biit-input-text [(ngModel)]="workshop.cost"
+  <div class="row">
+    <biit-input-text id="event-cost" [(ngModel)]="workshop.cost"
                      [type]="Type.NUMBER"
                      [min]="0"
                      placeholder="{{t('form.cost')}}"
     ></biit-input-text>
-    <biit-dropdown [ngModel]="workshop.colorTheme | dropdownInterface: translatedColors"
+    <biit-dropdown id="event-theme"  [ngModel]="workshop.colorTheme | dropdownInterface: translatedColors"
                    (ngModelChange)="workshop.colorTheme = $event.value"
                    [data]="translatedColors"
                    [label]="'label'"
