@@ -5,6 +5,7 @@ import {BiitTabGroupModule} from "biit-ui/navigation";
 import {BiitPopupModule} from "biit-ui/popup";
 import {BiitButtonModule} from "biit-ui/button";
 import {TranslocoModule} from "@ngneat/transloco";
+import {BiitProgressBarModule} from "biit-ui/info";
 
 
 
@@ -15,12 +16,13 @@ import {TranslocoModule} from "@ngneat/transloco";
   exports: [
     ExternalCalendarFormComponent
   ],
-  imports: [
-    CommonModule,
-    BiitTabGroupModule,
-    BiitPopupModule,
-    BiitButtonModule,
-    TranslocoModule
-  ]
+    imports: [
+        CommonModule,
+        BiitTabGroupModule,
+        BiitPopupModule,
+        BiitButtonModule,
+        TranslocoModule,
+        BiitProgressBarModule
+    ]
 })
 export class ExternalCalendarFormModule { }
