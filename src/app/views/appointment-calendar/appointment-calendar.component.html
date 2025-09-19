@@ -206,7 +206,7 @@
     </ng-template>
   </context-menu>
 
-  <context-menu #eventMenu>
+  <context-menu #eventMenu id="appointment-context-menu">
     <ng-template id="edit-appointment-menu-option" contextMenuItem
                  *ngIf="Permission.APPOINTMENT.EDIT | hasPermission"
                  [disabled]="isReadOnly"
@@ -221,7 +221,7 @@
     </ng-template>
   </context-menu>
 
-  <context-menu #workshopMenu id="context_menu">
+  <context-menu #workshopMenu id="workshop-context-menu">
     <ng-template id="edit-workshop-menu-option" contextMenuItem
                  *ngIf="Permission.WORKSHOP.EDIT | hasPermission"
                  (execute)="targetWorkshop = $event.value">
