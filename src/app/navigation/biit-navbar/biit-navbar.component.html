@@ -3,8 +3,8 @@
     <biit-nav-menu [routes]="routes"
     ></biit-nav-menu>
   </div>
-  <div class="right">
-    <biit-component-menu />
+  <div class="right" id="appointmentcenter-menu">
+    <biit-component-menu/>
     <biit-nav-user *ngIf="user"
                    [title]="user?.name + ' ' + user?.lastname"
                    [subtitle]="'Appointment Center'"
@@ -23,6 +23,8 @@
   <ng-template contextMenuItem
                *transloco="let t"
                (execute)="router.navigateByUrl('/login?logout')">
+    <span id="appointmentcenter-menu-logout">
     {{ t('t.logout') }}
+      </span>
   </ng-template>
 </context-menu>

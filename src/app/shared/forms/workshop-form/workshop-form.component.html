@@ -1,12 +1,12 @@
-<div class="canvas" *transloco="let t">
-  <div class="row">
+<div class="canvas" id="workshop-popup" *transloco="let t">
+  <div id="event-title" class="row">
     <biit-input-text [(ngModel)]="workshop.title"
                      [placeholder]="t('form.title')"
                      [required]="true"
                      error="{{errors | mapGet: WorkshopFormValidationFields.TITLE_MANDATORY}}"
     ></biit-input-text>
   </div>
-  <div class="row">
+  <div id="event-speakers" class="row">
     <biit-multiselect [ngModel]="workshop.speakers | multiselectInterface: speakers"
                       (ngModelChange)="onMultiselectSelection($event)"
                       [data]="speakers"
@@ -22,12 +22,12 @@
                      placeholder="{{t('form.duration')}}"
     ></biit-input-text>
   </div>
-  <div class="row">
+  <div id="event-description" class="row">
     <biit-textarea [(ngModel)]="workshop.description"
                    placeholder="{{t('form.description')}}"
     ></biit-textarea>
   </div>
-  <div class="row">
+  <div id="event-cost" class="row">
     <biit-input-text [(ngModel)]="workshop.cost"
                      [type]="Type.NUMBER"
                      [min]="0"
@@ -41,7 +41,7 @@
                    [title]="t('form.color_theme')"
     ></biit-dropdown>
   </div>
-  <button biit-button (click)="onSave()">
-    {{'form.save' | transloco}}
+  <button id="event-button-save" biit-button (click)="onSave()">
+    {{ 'form.save' | transloco }}
   </button>
 </div>

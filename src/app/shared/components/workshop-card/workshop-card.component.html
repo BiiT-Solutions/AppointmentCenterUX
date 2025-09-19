@@ -1,6 +1,6 @@
 <ng-container *transloco="let t">
   <div class="canvas">
-    <div class="row">
+    <div class="row" id="title">
       <a class="title">{{workshop.title}}</a>
       <biit-icon name="cross_wide"
                  class="icon"
@@ -8,14 +8,14 @@
                  (click)="onClosed.emit()"
       ></biit-icon>
     </div>
-    <div class="row">
+    <div class="row" id="speaker">
       <biit-icon name="speaker"
                  class="icon info"
                  [pathStyle]="{fill:'#f20d5e'}"
       ></biit-icon>
       <a>{{speakersLabel}}</a>
     </div>
-    <div class="row" *ngIf="!$any(workshop).subscribed">
+    <div class="row" id="duration" *ngIf="!$any(workshop).subscribed">
       <biit-icon name="timetable"
                  class="icon info"
                  [pathStyle]="{fill:'#f20d5e'}"
@@ -24,14 +24,14 @@
         {{workshop.duration | timeDuration}}
       </a>
     </div>
-    <div class="row" *ngIf="!$any(workshop).subscribed">
+    <div id="next-event" class="row" *ngIf="!$any(workshop).subscribed">
       <button biit-button tertiary
               (click)="onNextDate.emit(undefined)"
       >
         {{t('form.next_event')}}
       </button>
     </div>
-    <div class="row"
+    <div id="date" class="row"
          style="justify-content: space-between"
          *ngFor="let event of subscribedEvents">
       <div style="display: flex">

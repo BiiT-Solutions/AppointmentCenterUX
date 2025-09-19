@@ -1,4 +1,4 @@
-<ng-container *transloco="let t">
+<ng-container id="external-calendar-popup" *transloco="let t">
   <div class="form-canvas">
     <biit-tab-group>
       <biit-tab [name]="t('form.google')">
@@ -9,11 +9,12 @@
           {{ t('form.introductionGoogle-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
-          <button id="googleLoginButton" [disabled]="credentialsExists" class="buttons" biit-button primary
+          <button id="google-login-button" [disabled]="credentialsExists" class="buttons" biit-button primary
                   (click)="triggerOauthRequest(CalendarProvider.GOOGLE)">
             {{ t('form.connect') }}
           </button>
-          <button class="buttons" [disabled]="googleCredentialsExists!=undefined && !googleCredentialsExists" biit-button secondary
+          <button id="google-disconnect-button" class="buttons"
+                  [disabled]="googleCredentialsExists!=undefined && !googleCredentialsExists" biit-button secondary
                   (click)="disconnectFromGoogle()">
             {{ t('form.disconnect') }}
           </button>
@@ -27,11 +28,12 @@
           {{ t('form.introductionMS-already-connected') }}
         </div>
         <div class="row-double" style="margin-top: 3rem">
-          <button id="MsLoginButton" [disabled]="msCredentialsExists" class="buttons" biit-button primary
+          <button id="ms-login-button" [disabled]="msCredentialsExists" class="buttons" biit-button primary
                   (click)="triggerOauthRequest(CalendarProvider.MICROSOFT)">
             {{ t('form.connect') }}
           </button>
-          <button class="buttons" [disabled]="msCredentialsExists!=undefined && !msCredentialsExists" biit-button secondary
+          <button id="ms-disconnect-button" class="buttons"
+                  [disabled]="msCredentialsExists!=undefined && !msCredentialsExists" biit-button secondary
                   (click)="disconnectFromMS()">
             {{ t('form.disconnect') }}
           </button>

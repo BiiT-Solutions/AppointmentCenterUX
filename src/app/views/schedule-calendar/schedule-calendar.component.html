@@ -1,7 +1,7 @@
 <ng-container *transloco="let t">
   <biit-progress-bar *ngIf="waiting" [type]="BiitProgressBarType.INDETERMINATE"></biit-progress-bar>
   <div class="canvas">
-    <div class="main">
+    <div class="main" id="main-calendar">
         <biit-calendar [events]="events"
                        [calendarMode]="CalendarMode.WEEK"
                        [configuration]="calendarConfiguration"
@@ -13,7 +13,7 @@
     </div>
   </div>
   <context-menu #eventMenu>
-    <ng-template contextMenuItem
+    <ng-template id="appointment-delete-button" contextMenuItem
                  *ngIf="Permission.APPOINTMENT.DELETE | hasPermission"
                  (execute)="onDeleteEvent($event.value)">
       {{ t('app.delete_appointment') }}
@@ -23,7 +23,7 @@
 
 <ng-template #template>
   <div class="buttons-row">
-    <button biit-icon
+    <button id="clear-button" biit-icon
             [disabled]="events.length === 0"
             (click)="showCleanConfirmation = true"
             tooltip="{{ 'app.clear' | transloco }}"
