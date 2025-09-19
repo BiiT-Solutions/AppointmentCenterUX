@@ -122,7 +122,7 @@
     </div>
   </div>
 
-  <biit-popup sixty-view closable
+  <biit-popup sixty-view closable id="appointment-popup"
               *ngIf="targetEvent && ([Permission.APPOINTMENT.CREATE, Permission.APPOINTMENT.EDIT] | hasPermission)"
               (onClosed)="targetEvent = undefined; targetEventTemplate = undefined;"
               title="{{targetEvent.id ? t('app.edit_appointment') : t('app.create_appointment')}}"
