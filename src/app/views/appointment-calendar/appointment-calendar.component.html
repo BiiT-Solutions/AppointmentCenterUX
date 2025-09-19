@@ -221,7 +221,7 @@
     </ng-template>
   </context-menu>
 
-  <context-menu #workshopMenu>
+  <context-menu #workshopMenu id="context_menu">
     <ng-template id="edit-workshop-menu-option" contextMenuItem
                  *ngIf="Permission.WORKSHOP.EDIT | hasPermission"
                  (execute)="targetWorkshop = $event.value">
