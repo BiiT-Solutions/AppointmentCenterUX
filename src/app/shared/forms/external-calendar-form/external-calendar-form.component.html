@@ -1,7 +1,7 @@
 <ng-container id="external-calendar-popup" *transloco="let t">
   <div class="form-canvas">
-    <biit-tab-group [loading]="loadingCredentials">
-      <biit-tab [name]="t('form.google')">
+    <biit-tab-group id="external-providers-tabs" [loading]="loadingCredentials">
+      <biit-tab id="google" [name]="t('form.google')">
         <div class="row" *ngIf="googleCredentialsExists==undefined || !googleCredentialsExists">
           {{ t('form.introductionGoogle') }}
         </div>
@@ -22,7 +22,7 @@
           </button>
         </div>
       </biit-tab>
-      <biit-tab [name]="t('form.microsoft')">
+      <biit-tab id="microsoft" [name]="t('form.microsoft')">
         <div class="row" *ngIf="msCredentialsExists==undefined || !msCredentialsExists">
           {{ t('form.introductionMS') }}
         </div>
