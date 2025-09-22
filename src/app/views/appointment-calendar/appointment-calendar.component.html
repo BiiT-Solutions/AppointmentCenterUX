@@ -84,12 +84,12 @@
             {{ viewDate | translocoDate: {month: 'long'} }}
             {{ viewDate | translocoDate: {year: 'numeric'} }}
           </a>
-          <button biit-icon
+          <button biit-icon id="add-appointment"
                   icon="plus"
                   *ngIf="Permission.APPOINTMENT.CREATE | hasPermission"
                   (click)="onAddAppointment()"
           ></button>
-          <button biit-icon
+          <button biit-icon id="link-calendar"
                   icon="linkage"
                   *ngIf="Permission.APPOINTMENT.SYNCHRONIZE | hasPermission"
                   (click)="onSynchronize3rdParty()"
@@ -169,10 +169,10 @@
         {{ t('app.delete_appointment_confirm') }}
       </a>
       <div style="display: flex; gap: 3em">
-        <button biit-button tertiary (click)="deleteEvent = undefined">
+        <button id="confirm-event-cancel-button" biit-button tertiary (click)="deleteEvent = undefined">
           {{ t('app.cancel') }}
         </button>
-        <button biit-button (click)="onDeleteAppointment()">
+        <button id="confirm-event-delete-button" biit-button (click)="onDeleteAppointment()">
           {{ t('app.delete') }}
         </button>
       </div>
