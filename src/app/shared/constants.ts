@@ -4,8 +4,8 @@ export class Constants {
     public static readonly APP_PERMISSION_NAME: string = 'APPOINTMENTCENTER';
   }
   public static readonly PATHS = class {
-    public static readonly APPOINTMENTS: string = '/appointments';
-    public static readonly SCHEDULE: string = '/schedule';
+    public static readonly APPOINTMENTS: string = 'appointments';
+    public static readonly SCHEDULE: string = 'schedule';
 
     public static readonly QUERY = class {
       public static readonly EXPIRED: string = 'expired';
