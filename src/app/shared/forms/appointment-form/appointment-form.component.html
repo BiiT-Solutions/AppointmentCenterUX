@@ -61,7 +61,8 @@
                        [placeholder]="t('form.cost')"
       ></biit-input-text>
     </div>
-    <button biit-button id="appointment-button-save" (click)="onSave()">
+    <button biit-button id="appointment-button-save" (click)="onSave()"
+            [disabled]="saving">
       {{ t('form.save') }}
     </button>
   </div>

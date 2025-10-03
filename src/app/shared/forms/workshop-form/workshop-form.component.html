@@ -41,7 +41,8 @@
                    [title]="t('form.color_theme')"
     ></biit-dropdown>
   </div>
-  <button id="event-button-save" biit-button (click)="onSave()">
+  <button id="event-button-save" biit-button (click)="onSave()"
+          [disabled]="saving">
     {{ 'form.save' | transloco }}
   </button>
 </div>

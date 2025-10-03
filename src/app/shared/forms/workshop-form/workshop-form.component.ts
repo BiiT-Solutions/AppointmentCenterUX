@@ -1,9 +1,6 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {
-  AppointmentTemplate,
-  AppointmentTemplateService
-} from "appointment-center-structure-lib";
+import {AppointmentTemplate, AppointmentTemplateService} from "appointment-center-structure-lib";
 import {BiitSnackbarService, NotificationType} from "biit-ui/info";
 import {WorkshopFormValidationFields} from "../../validations/forms/workshop-form-validation-fields";
 import {Type} from "biit-ui/inputs";
@@ -23,14 +20,16 @@ export class WorkshopFormComponent implements OnInit {
   @Input() workshop: AppointmentTemplate;
   @Input() organizationUsers: User[];
   @Output() onSaved: EventEmitter<AppointmentTemplate> = new EventEmitter<AppointmentTemplate>();
-  protected speakers: {value:string, label:string}[] = [];
+  protected speakers: { value: string, label: string }[] = [];
   protected colors = Object.keys(ColorTheme);
-  protected translatedColors: {value:string, label:string}[] = [];
+  protected translatedColors: { value: string, label: string }[] = [];
 
   protected errors: Map<WorkshopFormValidationFields, string> = new Map<WorkshopFormValidationFields, string>();
   protected readonly WorkshopFormValidationFields = WorkshopFormValidationFields;
 
   protected readonly Type = Type;
+
+  protected saving: boolean = false;
 
   constructor(private appointmentTemplateService: AppointmentTemplateService,
               private userService: UserService,
@@ -47,18 +46,25 @@ export class WorkshopFormComponent implements OnInit {
     }
 
     if (this.workshop.organizationId == currentOrganization) {
-      this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+      this.speakers = this.organizationUsers.map(user => {
+        return {value: user.uuid, label: `${user.name} ${user.lastname}`}
+      });
     } else {
       this.userService.getOrganizationUsers(this.workshop.organizationId).subscribe({
         next: (users: User[]): void => {
-          this.speakers = users.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+          this.speakers = users.map(user => {
+            return {value: user.uuid, label: `${user.name} ${user.lastname}`}
+          });
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     }
 
-    const colorTranslations = this.colors.map(color=> this.transloco.selectTranslate(`${color}`,{}, {scope: 'components/forms', alias: 'form'}));
-    combineLatest(colorTranslations).subscribe((translations)=> {
+    const colorTranslations = this.colors.map(color => this.transloco.selectTranslate(`${color}`, {}, {
+      scope: 'components/forms',
+      alias: 'form'
+    }));
+    combineLatest(colorTranslations).subscribe((translations) => {
       translations.forEach((label, index) => this.translatedColors.push({value: this.colors[index], label: label}));
     });
   }
@@ -77,12 +83,13 @@ export class WorkshopFormComponent implements OnInit {
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     } else {
+      this.saving = true;
       this.appointmentTemplateService.create(this.workshop).subscribe({
         next: (appointmentTemplate: AppointmentTemplate): void => {
           this.onSaved.emit(appointmentTemplate);
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
-      })
+      }).add(() => this.saving = false);
     }
   }
 
@@ -100,7 +107,7 @@ export class WorkshopFormComponent implements OnInit {
     return verdict;
   }
 
-  protected onMultiselectSelection(values: {value:string, label:string}[]): void {
+  protected onMultiselectSelection(values: { value: string, label: string }[]): void {
     this.workshop.speakers = values.map(i => i.value);
   }
 }

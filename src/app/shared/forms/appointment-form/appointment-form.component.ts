@@ -27,12 +27,13 @@ export class AppointmentFormComponent implements OnInit {
   protected appointment: Appointment = new Appointment();
   protected errors: Map<AppointmentFormValidationFields, string> = new Map<AppointmentFormValidationFields, string>();
   protected status = Object.keys(Status);
-  protected translatedStatus: {value:string, label:string}[] = [];
+  protected translatedStatus: { value: string, label: string }[] = [];
   protected colors = Object.keys(ColorTheme);
-  protected translatedColors: {value:string, label:string}[] = [];
-  protected speakers: {value:string, label:string}[] = [];
-  protected attendees: {value:string, label:string}[] = [];
+  protected translatedColors: { value: string, label: string }[] = [];
+  protected speakers: { value: string, label: string }[] = [];
+  protected attendees: { value: string, label: string }[] = [];
   protected restrictedMode = false;
+  protected saving: boolean = false;
 
   protected readonly Type = Type;
   protected readonly AppointmentFormValidationFields = AppointmentFormValidationFields;
@@ -44,7 +45,9 @@ export class AppointmentFormComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+    this.speakers = this.organizationUsers.map(user => {
+      return {value: user.uuid, label: `${user.name} ${user.lastname}`}
+    });
 
     if (this.event.id) {
       this.restrictedMode = true;
@@ -55,7 +58,7 @@ export class AppointmentFormComponent implements OnInit {
           error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
         })
         .add(() => {
-          if(this.appointment.attendees.length) {
+          if (this.appointment.attendees.length) {
             this.userService.getByUuids(this.appointment.attendees)
               .subscribe({
                 next: users =>
@@ -86,17 +89,25 @@ export class AppointmentFormComponent implements OnInit {
       this.appointment.startTime = this.event.start;
     }
 
-    const statusTranslations = this.status.map(status=> this.transloco.selectTranslate(`${status}`,{}, {scope: 'components/forms', alias: 'form'}));
-    combineLatest(statusTranslations).subscribe((translations)=> {
+    const statusTranslations = this.status.map(status => this.transloco.selectTranslate(`${status}`, {}, {
+      scope: 'components/forms',
+      alias: 'form'
+    }));
+    combineLatest(statusTranslations).subscribe((translations) => {
       translations.forEach((label, index) => this.translatedStatus.push({value: this.status[index], label: label}));
     });
 
-    const colorTranslations = this.colors.map(color=> this.transloco.selectTranslate(`${color}`,{}, {scope: 'components/forms', alias: 'form'}));
-    combineLatest(colorTranslations).subscribe((translations)=> {
+    const colorTranslations = this.colors.map(color => this.transloco.selectTranslate(`${color}`, {}, {
+      scope: 'components/forms',
+      alias: 'form'
+    }));
+    combineLatest(colorTranslations).subscribe((translations) => {
       translations.forEach((label, index) => this.translatedColors.push({value: this.colors[index], label: label}));
     });
 
-    this.speakers = this.organizationUsers.map(user => {return {value:user.uuid, label:`${user.name} ${user.lastname}`}});
+    this.speakers = this.organizationUsers.map(user => {
+      return {value: user.uuid, label: `${user.name} ${user.lastname}`}
+    });
   }
 
   onSave() {
@@ -113,12 +124,13 @@ export class AppointmentFormComponent implements OnInit {
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
       })
     } else {
+      this.saving = true;
       this.appointmentService.create(this.appointment).subscribe({
         next: (appointment: Appointment): void => {
           this.onSaved.emit(CalendarEventConverter.convertToCalendarEvent(appointment));
         },
         error: error => ErrorHandler.notify(error, this.transloco, this.snackbarService)
-      })
+      }).add(() => this.saving = false);
     }
   }
 
@@ -140,7 +152,7 @@ export class AppointmentFormComponent implements OnInit {
     return verdict;
   }
 
-  protected onMultiselectSelection(values: {value:string, label:string}[], target: string): void {
+  protected onMultiselectSelection(values: { value: string, label: string }[], target: string): void {
     (this.appointment as any)[target] = values.map(i => i.value);
   }
 
