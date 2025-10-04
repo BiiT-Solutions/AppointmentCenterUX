@@ -12,7 +12,7 @@ export class UserNameListPipe implements PipeTransform {
   }
 
   transform(uuids: string[], speakers: User[]): string {
-    if (uuids.length == 0) {
+    if (!uuids || uuids.length == 0) {
       return `(${this.transloco.translate('empty')})`;
     }
     const selected = speakers.filter(u => uuids.includes(u.uuid));
