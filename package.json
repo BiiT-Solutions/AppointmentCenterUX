@@ -1,6 +1,6 @@
 {
   "name": "appointment-center",
-  "version": "0.1.101",
+  "version": "0.1.102",
   "scripts": {
     "ng": "ng",
     "start": "npm run prepare:translations && ng serve",
