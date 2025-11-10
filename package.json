@@ -13,7 +13,7 @@
     "prepare:translations": "npm run clean:translations && cpx \"./node_modules/@biit-solutions/wizardry-theme/assets/i18n/**/*.json\" \"src/assets/i18n/wizardry-theme/\"",
     "prepare:docs": "cpx ./README.md ./dist/appointment-center && echo \"{\\\"name\\\": \\\"`node -e \"console.log(require('./package.json').name);\"\n`\\\", \\\"version\\\": \\\"`node -e \"console.log(require('./package.json').version);\"\n`\\\"}\" > ./dist/appointment-center/package.json",
     "prepare:publication": "npm run build && npm run prepare:docs",
-    "publish": "npm run prepare:publication && npm publish ./dist/appointment-center",
+    "publish": "npm run prepare:publication && npm publish --access=public ./dist/appointment-center",
     "test": "ng test"
   },
   "dependencies": {
