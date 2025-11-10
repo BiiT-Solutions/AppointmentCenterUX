@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {HasPermissionPipe} from "./has-permission.pipe";
-import {TranslocoRootModule} from "biit-ui/i18n";
+import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 
 @NgModule({
   declarations: [HasPermissionPipe],

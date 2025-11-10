@@ -1,13 +1,13 @@
 import {AfterViewInit, Component, OnDestroy, OnInit, TemplateRef, ViewChild, ViewEncapsulation} from '@angular/core';
-import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
-import {CalendarConfiguration, CalendarEvent, CalendarMode} from "biit-ui/calendar";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
+import {CalendarConfiguration, CalendarEvent, CalendarMode} from "@biit-solutions/wizardry-theme/calendar";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {
   DayOfWeek,
   Schedule,
   ScheduleRange,
   ScheduleService
-} from "appointment-center-structure-lib";
+} from "@biit-solutions/appointment-center-structure";
 import {ScheduleCalendarUtility} from "./schedule-calendar-utility";
 import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
 import {Permission} from "../../config/rbac/permission";
@@ -41,7 +41,7 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
 
   @ViewChild('template', {static: true}) template: TemplateRef<any>;
 
-  constructor (private biitSnackbarService: BiitSnackbarService,
+  constructor(private biitSnackbarService: BiitSnackbarService,
               private templateService: TemplateService,
               private translocoService: TranslocoService,
               private scheduleService: ScheduleService) {
@@ -50,15 +50,15 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
 
   ngOnInit(): void {
     this.waiting = true;
-    this.scheduleService.getMySchedule().subscribe( {
+    this.scheduleService.getMySchedule().subscribe({
       next: (schedule: Schedule): void => {
         this.waiting = false;
         this.refreshCalendar(schedule);
       },
       error: (error: any): void => {
         this.waiting = false;
-        this.translocoService.selectTranslate('app.error-loading-schedule').subscribe( translation => {
-            this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
+        this.translocoService.selectTranslate('app.error-loading-schedule').subscribe(translation => {
+          this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
         })
       }
     })
@@ -77,7 +77,7 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
   refreshCalendar(schedule: Schedule) {
     this.events = [];
     if (schedule) {
-      this.events = schedule.ranges.map(r => {
+      this.events = schedule.ranges.map((r: ScheduleRange) => {
         return CalendarEventConverter.convertRangeToCalendarEvent(r);
       })
     }
@@ -102,7 +102,7 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
           },
           error: (error: any): void => {
             this.waiting = false;
-            this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+            this.translocoService.selectTranslate('app.error-updating-schedule').subscribe(translation => {
               this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
             })
           }
@@ -110,6 +110,7 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
       );
     }
   }
+
   onDeleteEvent(calendarEvent: CalendarEvent) {
     const scheduleRange = new ScheduleRange();
     scheduleRange.dayOfWeek = DayOfWeek.getByNumber(calendarEvent.start.getDay());
@@ -122,12 +123,13 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
       },
       error: (error: any): void => {
         this.waiting = false;
-        this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+        this.translocoService.selectTranslate('app.error-updating-schedule').subscribe(translation => {
           this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
         })
       }
     })
   }
+
   protected readonly Permission = Permission;
 
   protected clearSchedules() {
@@ -140,13 +142,14 @@ export class ScheduleCalendarComponent implements OnInit, AfterViewInit, OnDestr
         },
         error: (error: any): void => {
           this.waiting = false;
-          this.translocoService.selectTranslate('app.error-updating-schedule').subscribe( translation => {
+          this.translocoService.selectTranslate('app.error-updating-schedule').subscribe(translation => {
             this.biitSnackbarService.showNotification(translation, NotificationType.ERROR, undefined, 5000);
           })
         }
       }
     )
   }
+
   protected onEventDrop(event: CalendarEventTimesChangedEvent): void {
     const scheduleRange = new ScheduleRange();
     scheduleRange.dayOfWeek = DayOfWeek.getByNumber((new Date(event.newStart)).getDay());

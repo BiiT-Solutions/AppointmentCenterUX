@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {RoleBinding} from "../config/rbac/role-binding";
 import {Permission} from "../config/rbac/permission";
-import {AppRole} from "authorization-services-lib/lib/models/app-role";
+import {AppRole} from "@biit-solutions/authorization-services/lib/models/app-role";
 
 @Injectable({
   providedIn: 'root'

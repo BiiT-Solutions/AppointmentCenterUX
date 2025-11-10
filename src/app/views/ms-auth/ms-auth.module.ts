@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MsAuthComponent } from './ms-auth.component';
 import {MsAuthRoutingModule} from "./ms-auth-routing.module";
-import {BiitIconModule} from "biit-ui/icon";
+import {BiitIconModule} from "@biit-solutions/wizardry-theme/icon";
 
 
 

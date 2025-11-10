@@ -4,8 +4,8 @@ import {BrowserModule} from '@angular/platform-browser';
 import {AppRoutingModule} from './app-routing.module';
 import {AppComponent} from './app.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {BiitSnackbarModule} from "biit-ui/info";
-import {TranslocoRootModule} from "biit-ui/i18n";
+import {BiitSnackbarModule} from "@biit-solutions/wizardry-theme/info";
+import {TranslocoRootModule} from "@biit-solutions/wizardry-theme/i18n";
 import {CommonModule, registerLocaleData} from "@angular/common";
 import {HeaderInterceptor} from "./config/header-interceptor";
 

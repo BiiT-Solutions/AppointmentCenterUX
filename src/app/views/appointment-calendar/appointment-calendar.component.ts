@@ -1,5 +1,5 @@
 import {Component, OnInit} from '@angular/core';
-import {CalendarEvent, CalendarMode, castTo, EventColor} from "biit-ui/calendar";
+import {CalendarEvent, CalendarMode, castTo, EventColor} from "@biit-solutions/wizardry-theme/calendar";
 import {
   Appointment,
   AppointmentService,
@@ -7,20 +7,20 @@ import {
   AppointmentTemplateService,
   SessionService,
   ExternalAppointmentsService
-} from "appointment-center-structure-lib";
+} from "@biit-solutions/appointment-center-structure";
 import {CalendarEventConverter} from "../../shared/utils/calendar-event-converter.module";
-import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {TRANSLOCO_SCOPE, TranslocoService} from "@ngneat/transloco";
 import {CalendarEventTimesChangedEvent, CalendarEventTimesChangedEventType} from "angular-calendar";
-import {User} from "authorization-services-lib";
-import {UserService} from "user-manager-structure-lib";
+import {User} from "@biit-solutions/authorization-services";
+import {UserService} from "@biit-solutions/user-manager-structure";
 import {combineLatest, defaultIfEmpty, EMPTY, Observable} from "rxjs";
 import {PermissionService} from "../../services/permission.service";
 import {Permission} from "../../config/rbac/permission";
 import {WorkshopMode} from "./enums/workshop-mode";
 import {addWeeks, startOfToday, subWeeks, startOfDay, startOfWeek, endOfWeek} from "date-fns";
 import {ValidateDragParams} from "angular-draggable-droppable/lib/draggable.directive";
-import {ErrorHandler} from "biit-ui/utils";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 
 @Component({
   selector: 'appointment-calendar',

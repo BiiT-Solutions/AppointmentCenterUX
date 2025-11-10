@@ -1,5 +1,5 @@
-import {CalendarUtility} from "biit-ui/calendar/biit-calendar/calendar-utility";
-import {DayOfWeek} from "appointment-center-structure-lib";
+import {CalendarUtility} from "@biit-solutions/wizardry-theme/calendar/biit-calendar/calendar-utility";
+import {DayOfWeek} from "@biit-solutions/appointment-center-structure";
 import {Translation, TranslocoService} from "@ngneat/transloco";
 import { combineLatest, Observable} from "rxjs";
 export class ScheduleCalendarUtility implements CalendarUtility {

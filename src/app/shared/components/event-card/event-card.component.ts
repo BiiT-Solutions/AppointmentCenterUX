@@ -1,7 +1,7 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {CalendarEvent, castTo} from "biit-ui/calendar";
-import {User} from "authorization-services-lib";
+import {CalendarEvent, castTo} from "@biit-solutions/wizardry-theme/calendar";
+import {User} from "@biit-solutions/authorization-services";
 import {Permission} from "../../../config/rbac/permission";
 
 @Component({

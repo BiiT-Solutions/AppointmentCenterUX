@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {EventColor} from "biit-ui/calendar";
+import {EventColor} from "@biit-solutions/wizardry-theme/calendar";
 
 @Pipe({
   name: 'colorTheme',

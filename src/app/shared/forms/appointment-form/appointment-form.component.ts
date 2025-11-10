@@ -1,17 +1,17 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {CalendarEvent} from "biit-ui/calendar";
-import {Appointment, AppointmentService, AppointmentTemplate, Status} from "appointment-center-structure-lib";
-import {Type} from "biit-ui/inputs";
+import {CalendarEvent} from "@biit-solutions/wizardry-theme/calendar";
+import {Appointment, AppointmentService, AppointmentTemplate, Status} from "@biit-solutions/appointment-center-structure";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
 import {addMinutes} from "date-fns"
 import {CalendarEventConverter} from "../../utils/calendar-event-converter.module";
-import {BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {AppointmentFormValidationFields} from "../../validations/forms/appointment-form-validation-fields";
 import {combineLatest} from "rxjs";
-import {UserService} from "user-manager-structure-lib";
-import {User} from "authorization-services-lib";
+import {UserService} from "@biit-solutions/user-manager-structure";
+import {User} from "@biit-solutions/authorization-services";
 import {ColorTheme} from "../../enums/color-theme";
-import {ErrorHandler} from "biit-ui/utils";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 
 @Component({
   selector: 'appointment-form',

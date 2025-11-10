@@ -1,8 +1,8 @@
 import {Component, ElementRef, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {CalendarEvent, castTo} from "biit-ui/calendar";
+import {CalendarEvent, castTo} from "@biit-solutions/wizardry-theme/calendar";
 import {Permission} from "../../../config/rbac/permission";
-import {AppointmentTemplate} from "appointment-center-structure-lib";
+import {AppointmentTemplate} from "@biit-solutions/appointment-center-structure";
 
 @Component({
   selector: 'workshop-card',

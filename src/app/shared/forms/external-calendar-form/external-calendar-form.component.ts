@@ -1,13 +1,13 @@
 import {Component, ElementRef, EventEmitter, HostListener, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {BiitProgressBarType, BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {Environment} from "../../../../environments/environment";
 import {
   CalendarProvider,
   ExternalCredentialsService,
   GoogleCredentialsService,
   GoogleSigninService
-} from "appointment-center-structure-lib";
+} from "@biit-solutions/appointment-center-structure";
 import {firstValueFrom} from "rxjs";
 
 @Component({

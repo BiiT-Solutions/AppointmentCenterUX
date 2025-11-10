@@ -1,8 +1,8 @@
 import {AfterViewInit, Component, ElementRef, ViewChild} from '@angular/core';
 import {Route, Router} from '@angular/router';
 import {provideTranslocoScope, TranslocoService} from '@ngneat/transloco';
-import {User} from 'authorization-services-lib';
-import {SessionService} from "appointment-center-structure-lib";
+import {User} from '@biit-solutions/authorization-services';
+import {SessionService} from "@biit-solutions/appointment-center-structure";
 import {ContextMenuComponent, ContextMenuService} from "@perfectmemory/ngx-contextmenu";
 import {Constants} from "../../shared/constants";
 import {AuthGuard} from "../../services/auth-guard.service";

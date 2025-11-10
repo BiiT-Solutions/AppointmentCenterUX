@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {CalendarEvent} from "biit-ui/calendar";
+import {CalendarEvent} from "@biit-solutions/wizardry-theme/calendar";
 import {isSameDay} from "date-fns";
 import {DatePipe} from "@angular/common";
 

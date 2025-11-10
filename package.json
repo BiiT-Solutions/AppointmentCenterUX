@@ -1,19 +1,21 @@
 {
   "name": "appointment-center",
   "version": "0.1.94",
+  "license": "AGPLv3",
+  "author": "BiiT Sourcing Solutions",
+  "private": false,
   "scripts": {
     "ng": "ng",
     "start": "npm run prepare:translations && ng serve",
     "build": "npm run prepare:translations && ng build --output-hashing=all --configuration docker --base-href /appointment-center/",
     "watch": "npm run prepare:translations && ng build --watch --configuration docker",
-    "clean:translations": "del-cli --force ./src/assets/i18n/biit-ui/",
-    "prepare:translations": "npm run clean:translations && cpx \"./node_modules/biit-ui/assets/i18n/**/*.json\" \"./src/assets/i18n/biit-ui/\"",
+    "clean:translations": "del-cli --force src/assets/i18n/wizardry-theme/",
+    "prepare:translations": "npm run clean:translations && cpx \"./node_modules/@biit-solutions/wizardry-theme/assets/i18n/**/*.json\" \"src/assets/i18n/wizardry-theme/\"",
     "prepare:docs": "cpx ./README.md ./dist/appointment-center && echo \"{\\\"name\\\": \\\"`node -e \"console.log(require('./package.json').name);\"\n`\\\", \\\"version\\\": \\\"`node -e \"console.log(require('./package.json').version);\"\n`\\\"}\" > ./dist/appointment-center/package.json",
     "prepare:publication": "npm run build && npm run prepare:docs",
     "publish": "npm run prepare:publication && npm publish ./dist/appointment-center",
     "test": "ng test"
   },
-  "private": true,
   "dependencies": {
     "@angular/animations": "v15-lts",
     "@angular/common": "v15-lts",
@@ -23,14 +25,15 @@
     "@angular/platform-browser": "v15-lts",
     "@angular/platform-browser-dynamic": "v15-lts",
     "@angular/router": "v15-lts",
+    "@biit-solutions/appointment-center-structure": "latest",
+    "@biit-solutions/authorization-services": "latest",
+    "@biit-solutions/biit-icons-collection": "latest",
+    "@biit-solutions/user-manager-structure": "latest",
+    "@biit-solutions/wizardry-theme": "latest",
     "@ngneat/transloco": "^4.3.0",
     "@perfectmemory/ngx-contextmenu": "^15.0.0",
-    "appointment-center-structure-lib": "latest",
-    "biit-icons-collection": "latest",
-    "biit-ui": "latest",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
-    "user-manager-structure-lib": "latest",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
@@ -48,5 +51,9 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.0.0",
     "typescript": "~4.9.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/BiiT-Solutions/AppointmentCenterUX.git"
   }
 }

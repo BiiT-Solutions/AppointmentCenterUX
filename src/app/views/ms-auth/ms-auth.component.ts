@@ -2,13 +2,13 @@ import {Component, OnInit} from '@angular/core';
 import {Environment} from "../../../environments/environment";
 import {ActivatedRoute} from "@angular/router";
 import {HttpClient, HttpHeaders, HttpParams} from "@angular/common/http";
-import {biitIcon} from "biit-icons-collection";
+import {biitIcon} from "@biit-solutions/biit-icons-collection";
 import {
   ExternalCredentialsService,
   ExternalCalendarCredentials,
   CalendarProvider,
   SessionService
-} from "appointment-center-structure-lib";
+} from "@biit-solutions/appointment-center-structure";
 import {MsCredentials} from "./ms-credentials";
 import {addSeconds} from "date-fns";
 

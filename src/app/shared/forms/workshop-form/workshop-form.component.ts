@@ -1,14 +1,14 @@
 import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
 import {provideTranslocoScope, TranslocoService} from "@ngneat/transloco";
-import {AppointmentTemplate, AppointmentTemplateService} from "appointment-center-structure-lib";
-import {BiitSnackbarService, NotificationType} from "biit-ui/info";
+import {AppointmentTemplate, AppointmentTemplateService} from "@biit-solutions/appointment-center-structure";
+import {BiitSnackbarService, NotificationType} from "@biit-solutions/wizardry-theme/info";
 import {WorkshopFormValidationFields} from "../../validations/forms/workshop-form-validation-fields";
-import {Type} from "biit-ui/inputs";
-import {UserService} from "user-manager-structure-lib";
-import {User} from "authorization-services-lib";
+import {Type} from "@biit-solutions/wizardry-theme/inputs";
+import {UserService} from "@biit-solutions/user-manager-structure";
+import {User} from "@biit-solutions/authorization-services";
 import {ColorTheme} from "../../enums/color-theme";
 import {combineLatest} from "rxjs";
-import {ErrorHandler} from "biit-ui/utils";
+import {ErrorHandler} from "@biit-solutions/wizardry-theme/utils";
 
 @Component({
   selector: 'workshop-form',

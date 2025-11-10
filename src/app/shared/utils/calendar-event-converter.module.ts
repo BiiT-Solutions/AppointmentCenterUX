@@ -1,8 +1,8 @@
-import {Appointment, CalendarProvider, DayOfWeek} from "appointment-center-structure-lib";
-import {CalendarEvent, EventColor} from "biit-ui/calendar";
+import {Appointment, CalendarProvider, DayOfWeek} from "@biit-solutions/appointment-center-structure";
+import {CalendarEvent, EventColor} from "@biit-solutions/wizardry-theme/calendar";
 import {NgModule} from "@angular/core";
 import {ColorThemePipeModule} from "../pipes/color-theme-event/color-theme-pipe.module";
-import {ScheduleRange} from "appointment-center-structure-lib/lib/models/schedule-range";
+import {ScheduleRange} from "@biit-solutions/appointment-center-structure/lib/models/schedule-range";
 import { startOfWeek } from 'date-fns'
 import {isNumber} from "@ngneat/transloco";
 

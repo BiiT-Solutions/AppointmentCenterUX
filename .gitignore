@@ -40,6 +40,6 @@ testem.log
 # System files
 .DS_Store
 Thumbs.db
-/src/assets/i18n/biit-ui/
+/src/assets/i18n/wizardry-theme/
 
 package-lock.json

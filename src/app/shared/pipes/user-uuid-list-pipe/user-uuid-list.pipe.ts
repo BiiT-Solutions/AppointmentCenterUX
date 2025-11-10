@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import {User} from "authorization-services-lib";
+import {User} from "@biit-solutions/authorization-services";
 import {TranslocoService} from "@ngneat/transloco";
 
 @Pipe({
